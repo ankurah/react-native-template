@@ -22,22 +22,39 @@
 - [x] Set up `tracing` subscriber to forward Rust logs to RN console
 - [x] Test node creation and server connection in the app
 
-## Phase 3: Model Derive Macros (Next)
+## Phase 3: Model Derive Macros (Current)
 
 **Planning doc**: `ankurah/specs/uniffi-derive-integration.md`
 
-- [ ] Add `uniffi` feature to `ankurah-derive/Cargo.toml` ✅ (done)
+### 3a: Scaffolding
+- [x] Add `uniffi` feature to `ankurah-derive/Cargo.toml`
 - [ ] Add `uniffi` feature to `ankurah/Cargo.toml`
-- [ ] Design shared vs divergent code strategy (see planning doc)
-- [ ] Start minimal: Add UniFFI attributes to `View` struct
-- [ ] Create `uniffi.rs` with `Ref` wrapper
-- [ ] Test with `model/` crate in this repo
-- [ ] Expand to full wrapper set:
-  - [ ] `*View`, `*Mutable` types
-  - [ ] `*ResultSet`, `*LiveQuery`, `*ChangeSet`
-  - [ ] Static namespace methods (`Model.get()`, `Model.query()`, `Model.create()`)
-- [ ] Design callback interface for reactive subscriptions
-- [ ] Maintain API parity with WASM bindings
+- [ ] Add mutual exclusivity `compile_error!` for bindings features
+- [ ] Create empty `derive/src/model/uniffi.rs`
+- [ ] Wire up `uniffi_impl()` call in `lib.rs`
+
+### 3b: View + Mutable with UniFFI
+- [ ] Update `view.rs` to add `#[derive(uniffi::Object)]` when uniffi feature enabled
+- [ ] Update `mutable.rs` similarly
+- [ ] Test: Can we export `MessageView` via UniFFI?
+
+### 3c: Ref Wrapper
+- [ ] Create `uniffi_ref_wrapper()` in `uniffi.rs`
+- [ ] Test: Can we pass `MessageRef` across FFI?
+
+### 3d: CRUD Operations (Ops Singleton)
+- [ ] Create `uniffi_ops_wrapper()` for `FooOps` singleton
+- [ ] Implement `get`, `fetch`, `create` methods
+- [ ] Add conditional `uniffi::Error` derives to relevant error types
+
+### 3e: Reactive Patterns
+- [ ] Create `uniffi_livequery_callback_trait()` for per-model callback traits
+- [ ] Implement `LiveQuery`, `ResultSet`, `ChangeSet` wrappers
+- [ ] Test subscription lifecycle
+
+### 3f: Refactor for Sharing
+- [ ] Extract shared method bodies to helper functions
+- [ ] Reduce duplication between `wasm.rs` and `uniffi.rs`
 
 ## Phase 4: Reactive UI & Full App Port
 
@@ -56,6 +73,31 @@
 - [ ] Replace `localStorage` with `AsyncStorage`
 - [ ] Test full chat app functionality
 
+---
+
+## Decisions Made
+
+### 1. Static Methods → Singleton Ops Object ✅
+UniFFI doesn't support static methods. Use `MessageOps` singleton pattern:
+```typescript
+const messageOps = new MessageOps();
+const msg = await messageOps.get(ctx, id);
+```
+
+### 2. Callback Interfaces → Per-Model Traits ✅
+Each model gets its own typed callback trait (`MessageLiveQueryCallback`, etc.) for full type safety.
+
+### 3. Error Handling → Minimal Changes ✅
+No changes to existing error types. Add `#[cfg_attr(feature = "uniffi", derive(uniffi::Error))]` conditionally where needed.
+
+### 4. Feature Exclusivity → Mutually Exclusive ✅
+Bindings features (`wasm`, `uniffi`) are mutually exclusive with `compile_error!`.
+
+### 5. Async Runtime → Left to Bindings Crate ✅
+Generated code doesn't manage tokio runtime; that's handled in `rn-bindings`.
+
+---
+
 ## Known Issues / Notes
 
 - `uniffi-bindgen-react-native` generates overly broad `s.source_files` in podspec
@@ -65,11 +107,20 @@
 - Metro cache should be reset after native rebuilds (`--reset-cache`)
 - UniFFI async functions need a tokio runtime (handled via global `RUNTIME` in `rn-bindings`)
 
-## Key Decisions Made
+---
 
-1. **Ephemeral node pattern**: RN app creates ephemeral node that connects to durable server (same as WASM pattern)
-2. **WebSocket client**: Using native `ankurah-websocket-client` (not the WASM version)
-3. **Storage**: Sled for local persistence
-4. **Logging**: Custom `tracing` layer forwards Rust logs to JS console via callback
-5. **Derive macros**: Will update `ankurah-derive` to generate UniFFI bindings alongside WASM (not separate crate)
+## UniFFI Capabilities Validated in PoC
 
+| Feature | Status | Notes |
+|---------|--------|-------|
+| Free functions | ✅ | `greet()`, `init_node()` |
+| Async functions | ✅ | `greet_async()` |
+| Objects | ✅ | `Counter` class |
+| Object methods | ✅ | `counter.get()`, `counter.increment()` |
+| Constructors | ✅ | `new Counter()` |
+| Callback interfaces | ✅ | `CounterCallback`, `LogCallback` |
+| Error enums | ✅ | `AnkurahError` with variants |
+| Option types | ✅ | `Option<String>` → `string \| null` |
+| Vec types | ⚠️ | Not yet tested with objects |
+| Nested objects | ⚠️ | Not yet tested |
+| Object in callback | ⚠️ | Not yet tested (needed for ChangeSet) |
