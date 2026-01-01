@@ -1,0 +1,4 @@
+rust:
+  directory: ../rn-bindings
+  manifestPath: Cargo.toml
+

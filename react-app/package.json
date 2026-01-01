@@ -2,6 +2,14 @@
   "name": "AnkurahApp",
   "version": "0.0.1",
   "private": true,
+  "description": "Ankurah React Native Template with UniFFI bindings",
+  "author": "Ankurah",
+  "license": "MIT",
+  "homepage": "https://github.com/ankurah/ankurah-react-native-template",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ankurah/ankurah-react-native-template.git"
+  },
   "scripts": {
     "android": "react-native run-android",
     "ios": "react-native run-ios",
@@ -10,10 +18,11 @@
     "test": "jest"
   },
   "dependencies": {
+    "@react-native/new-app-screen": "0.83.1",
     "react": "19.2.0",
     "react-native": "0.83.1",
-    "@react-native/new-app-screen": "0.83.1",
-    "react-native-safe-area-context": "^5.5.2"
+    "react-native-safe-area-context": "^5.5.2",
+    "uniffi-bindgen-react-native": "^0.29.3-1"
   },
   "devDependencies": {
     "@babel/core": "^7.25.2",
@@ -37,5 +46,10 @@
   },
   "engines": {
     "node": ">=20"
+  },
+  "codegenConfig": {
+    "name": "RNNativeModuleSpec",
+    "type": "modules",
+    "jsSrcsDir": "src"
   }
 }

@@ -23,6 +23,9 @@ target 'AnkurahApp' do
     :app_path => "#{Pod::Config.instance.installation_root}/.."
   )
 
+  # UniFFI native module
+  pod 'AnkurahApp', :path => '..'
+
   post_install do |installer|
     react_native_post_install(
       installer,

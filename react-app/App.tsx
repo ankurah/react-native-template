@@ -1,44 +1,71 @@
 /**
- * Sample React Native App
- * https://github.com/facebook/react-native
- *
- * @format
+ * Ankurah React Native UniFFI PoC
+ * Step 1: Sync function test
  */
 
-import { NewAppScreen } from '@react-native/new-app-screen';
-import { StatusBar, StyleSheet, useColorScheme, View } from 'react-native';
+import React from 'react';
 import {
-  SafeAreaProvider,
-  useSafeAreaInsets,
-} from 'react-native-safe-area-context';
+  SafeAreaView,
+  StatusBar,
+  StyleSheet,
+  Text,
+  useColorScheme,
+  View,
+} from 'react-native';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 
-function App() {
+// Import from src/index.tsx which handles native module initialization
+import { greet } from './src';
+
+function App(): React.JSX.Element {
   const isDarkMode = useColorScheme() === 'dark';
+
+  // Call the Rust function
+  const greeting = greet('React Native');
 
   return (
     <SafeAreaProvider>
       <StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'} />
-      <AppContent />
+      <SafeAreaView style={[styles.container, isDarkMode && styles.containerDark]}>
+        <View style={styles.content}>
+          <Text style={[styles.title, isDarkMode && styles.textLight]}>
+            🦀 UniFFI + React Native
+          </Text>
+          <Text style={[styles.result, isDarkMode && styles.textLight]}>
+            {greeting}
+          </Text>
+        </View>
+      </SafeAreaView>
     </SafeAreaProvider>
-  );
-}
-
-function AppContent() {
-  const safeAreaInsets = useSafeAreaInsets();
-
-  return (
-    <View style={styles.container}>
-      <NewAppScreen
-        templateFileName="App.tsx"
-        safeAreaInsets={safeAreaInsets}
-      />
-    </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: '#fff',
+  },
+  containerDark: {
+    backgroundColor: '#1a1a1a',
+  },
+  content: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 24,
+  },
+  title: {
+    fontSize: 28,
+    fontWeight: 'bold',
+    marginBottom: 24,
+    color: '#000',
+  },
+  result: {
+    fontSize: 20,
+    color: '#000',
+  },
+  textLight: {
+    color: '#fff',
   },
 });
 
