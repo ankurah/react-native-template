@@ -27,7 +27,159 @@ interface NativeModuleInterface {
     name: Uint8Array,
     uniffi_out_err: UniffiRustCallStatus,
   ): Uint8Array;
+  ubrn_uniffi_ankurah_rn_bindings_fn_func_greet_async(
+    name: Uint8Array,
+    delayMs: bigint,
+  ): bigint;
+  ubrn_ffi_ankurah_rn_bindings_rust_future_poll_u8(
+    handle: bigint,
+    callback: UniffiRustFutureContinuationCallback,
+    callbackData: bigint,
+  ): void;
+  ubrn_ffi_ankurah_rn_bindings_rust_future_cancel_u8(handle: bigint): void;
+  ubrn_ffi_ankurah_rn_bindings_rust_future_free_u8(handle: bigint): void;
+  ubrn_ffi_ankurah_rn_bindings_rust_future_complete_u8(
+    handle: bigint,
+    uniffi_out_err: UniffiRustCallStatus,
+  ): number;
+  ubrn_ffi_ankurah_rn_bindings_rust_future_poll_i8(
+    handle: bigint,
+    callback: UniffiRustFutureContinuationCallback,
+    callbackData: bigint,
+  ): void;
+  ubrn_ffi_ankurah_rn_bindings_rust_future_cancel_i8(handle: bigint): void;
+  ubrn_ffi_ankurah_rn_bindings_rust_future_free_i8(handle: bigint): void;
+  ubrn_ffi_ankurah_rn_bindings_rust_future_complete_i8(
+    handle: bigint,
+    uniffi_out_err: UniffiRustCallStatus,
+  ): number;
+  ubrn_ffi_ankurah_rn_bindings_rust_future_poll_u16(
+    handle: bigint,
+    callback: UniffiRustFutureContinuationCallback,
+    callbackData: bigint,
+  ): void;
+  ubrn_ffi_ankurah_rn_bindings_rust_future_cancel_u16(handle: bigint): void;
+  ubrn_ffi_ankurah_rn_bindings_rust_future_free_u16(handle: bigint): void;
+  ubrn_ffi_ankurah_rn_bindings_rust_future_complete_u16(
+    handle: bigint,
+    uniffi_out_err: UniffiRustCallStatus,
+  ): number;
+  ubrn_ffi_ankurah_rn_bindings_rust_future_poll_i16(
+    handle: bigint,
+    callback: UniffiRustFutureContinuationCallback,
+    callbackData: bigint,
+  ): void;
+  ubrn_ffi_ankurah_rn_bindings_rust_future_cancel_i16(handle: bigint): void;
+  ubrn_ffi_ankurah_rn_bindings_rust_future_free_i16(handle: bigint): void;
+  ubrn_ffi_ankurah_rn_bindings_rust_future_complete_i16(
+    handle: bigint,
+    uniffi_out_err: UniffiRustCallStatus,
+  ): number;
+  ubrn_ffi_ankurah_rn_bindings_rust_future_poll_u32(
+    handle: bigint,
+    callback: UniffiRustFutureContinuationCallback,
+    callbackData: bigint,
+  ): void;
+  ubrn_ffi_ankurah_rn_bindings_rust_future_cancel_u32(handle: bigint): void;
+  ubrn_ffi_ankurah_rn_bindings_rust_future_free_u32(handle: bigint): void;
+  ubrn_ffi_ankurah_rn_bindings_rust_future_complete_u32(
+    handle: bigint,
+    uniffi_out_err: UniffiRustCallStatus,
+  ): number;
+  ubrn_ffi_ankurah_rn_bindings_rust_future_poll_i32(
+    handle: bigint,
+    callback: UniffiRustFutureContinuationCallback,
+    callbackData: bigint,
+  ): void;
+  ubrn_ffi_ankurah_rn_bindings_rust_future_cancel_i32(handle: bigint): void;
+  ubrn_ffi_ankurah_rn_bindings_rust_future_free_i32(handle: bigint): void;
+  ubrn_ffi_ankurah_rn_bindings_rust_future_complete_i32(
+    handle: bigint,
+    uniffi_out_err: UniffiRustCallStatus,
+  ): number;
+  ubrn_ffi_ankurah_rn_bindings_rust_future_poll_u64(
+    handle: bigint,
+    callback: UniffiRustFutureContinuationCallback,
+    callbackData: bigint,
+  ): void;
+  ubrn_ffi_ankurah_rn_bindings_rust_future_cancel_u64(handle: bigint): void;
+  ubrn_ffi_ankurah_rn_bindings_rust_future_free_u64(handle: bigint): void;
+  ubrn_ffi_ankurah_rn_bindings_rust_future_complete_u64(
+    handle: bigint,
+    uniffi_out_err: UniffiRustCallStatus,
+  ): bigint;
+  ubrn_ffi_ankurah_rn_bindings_rust_future_poll_i64(
+    handle: bigint,
+    callback: UniffiRustFutureContinuationCallback,
+    callbackData: bigint,
+  ): void;
+  ubrn_ffi_ankurah_rn_bindings_rust_future_cancel_i64(handle: bigint): void;
+  ubrn_ffi_ankurah_rn_bindings_rust_future_free_i64(handle: bigint): void;
+  ubrn_ffi_ankurah_rn_bindings_rust_future_complete_i64(
+    handle: bigint,
+    uniffi_out_err: UniffiRustCallStatus,
+  ): bigint;
+  ubrn_ffi_ankurah_rn_bindings_rust_future_poll_f32(
+    handle: bigint,
+    callback: UniffiRustFutureContinuationCallback,
+    callbackData: bigint,
+  ): void;
+  ubrn_ffi_ankurah_rn_bindings_rust_future_cancel_f32(handle: bigint): void;
+  ubrn_ffi_ankurah_rn_bindings_rust_future_free_f32(handle: bigint): void;
+  ubrn_ffi_ankurah_rn_bindings_rust_future_complete_f32(
+    handle: bigint,
+    uniffi_out_err: UniffiRustCallStatus,
+  ): number;
+  ubrn_ffi_ankurah_rn_bindings_rust_future_poll_f64(
+    handle: bigint,
+    callback: UniffiRustFutureContinuationCallback,
+    callbackData: bigint,
+  ): void;
+  ubrn_ffi_ankurah_rn_bindings_rust_future_cancel_f64(handle: bigint): void;
+  ubrn_ffi_ankurah_rn_bindings_rust_future_free_f64(handle: bigint): void;
+  ubrn_ffi_ankurah_rn_bindings_rust_future_complete_f64(
+    handle: bigint,
+    uniffi_out_err: UniffiRustCallStatus,
+  ): number;
+  ubrn_ffi_ankurah_rn_bindings_rust_future_poll_pointer(
+    handle: bigint,
+    callback: UniffiRustFutureContinuationCallback,
+    callbackData: bigint,
+  ): void;
+  ubrn_ffi_ankurah_rn_bindings_rust_future_cancel_pointer(handle: bigint): void;
+  ubrn_ffi_ankurah_rn_bindings_rust_future_free_pointer(handle: bigint): void;
+  ubrn_ffi_ankurah_rn_bindings_rust_future_complete_pointer(
+    handle: bigint,
+    uniffi_out_err: UniffiRustCallStatus,
+  ): bigint;
+  ubrn_ffi_ankurah_rn_bindings_rust_future_poll_rust_buffer(
+    handle: bigint,
+    callback: UniffiRustFutureContinuationCallback,
+    callbackData: bigint,
+  ): void;
+  ubrn_ffi_ankurah_rn_bindings_rust_future_cancel_rust_buffer(
+    handle: bigint,
+  ): void;
+  ubrn_ffi_ankurah_rn_bindings_rust_future_free_rust_buffer(
+    handle: bigint,
+  ): void;
+  ubrn_ffi_ankurah_rn_bindings_rust_future_complete_rust_buffer(
+    handle: bigint,
+    uniffi_out_err: UniffiRustCallStatus,
+  ): Uint8Array;
+  ubrn_ffi_ankurah_rn_bindings_rust_future_poll_void(
+    handle: bigint,
+    callback: UniffiRustFutureContinuationCallback,
+    callbackData: bigint,
+  ): void;
+  ubrn_ffi_ankurah_rn_bindings_rust_future_cancel_void(handle: bigint): void;
+  ubrn_ffi_ankurah_rn_bindings_rust_future_free_void(handle: bigint): void;
+  ubrn_ffi_ankurah_rn_bindings_rust_future_complete_void(
+    handle: bigint,
+    uniffi_out_err: UniffiRustCallStatus,
+  ): void;
   ubrn_uniffi_ankurah_rn_bindings_checksum_func_greet(): number;
+  ubrn_uniffi_ankurah_rn_bindings_checksum_func_greet_async(): number;
   ubrn_ffi_ankurah_rn_bindings_uniffi_contract_version(): number;
 }
 

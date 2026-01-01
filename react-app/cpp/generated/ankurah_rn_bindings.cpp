@@ -137,6 +137,10 @@ extern "C" {
         RustBuffer name, 
         RustCallStatus *uniffi_out_err
     );
+    /*handle*/ uint64_t uniffi_ankurah_rn_bindings_fn_func_greet_async(
+        RustBuffer name, 
+        uint64_t delay_ms
+    );
     RustBuffer ffi_ankurah_rn_bindings_rustbuffer_alloc(
         uint64_t size, 
         RustCallStatus *uniffi_out_err
@@ -350,6 +354,8 @@ extern "C" {
         RustCallStatus *uniffi_out_err
     );
     uint16_t uniffi_ankurah_rn_bindings_checksum_func_greet(
+    );
+    uint16_t uniffi_ankurah_rn_bindings_checksum_func_greet_async(
     );
     uint32_t ffi_ankurah_rn_bindings_uniffi_contract_version(
     );
@@ -1903,12 +1909,444 @@ NativeAnkurahRnBindings::NativeAnkurahRnBindings(
             return this->cpp_uniffi_ankurah_rn_bindings_fn_func_greet(rt, thisVal, args, count);
         }
     );
+    props["ubrn_uniffi_ankurah_rn_bindings_fn_func_greet_async"] = jsi::Function::createFromHostFunction(
+        rt,
+        jsi::PropNameID::forAscii(rt, "ubrn_uniffi_ankurah_rn_bindings_fn_func_greet_async"),
+        2,
+        [this](jsi::Runtime &rt, const jsi::Value &thisVal, const jsi::Value *args, size_t count) -> jsi::Value {
+            return this->cpp_uniffi_ankurah_rn_bindings_fn_func_greet_async(rt, thisVal, args, count);
+        }
+    );
+    props["ubrn_ffi_ankurah_rn_bindings_rust_future_poll_u8"] = jsi::Function::createFromHostFunction(
+        rt,
+        jsi::PropNameID::forAscii(rt, "ubrn_ffi_ankurah_rn_bindings_rust_future_poll_u8"),
+        3,
+        [this](jsi::Runtime &rt, const jsi::Value &thisVal, const jsi::Value *args, size_t count) -> jsi::Value {
+            return this->cpp_ffi_ankurah_rn_bindings_rust_future_poll_u8(rt, thisVal, args, count);
+        }
+    );
+    props["ubrn_ffi_ankurah_rn_bindings_rust_future_cancel_u8"] = jsi::Function::createFromHostFunction(
+        rt,
+        jsi::PropNameID::forAscii(rt, "ubrn_ffi_ankurah_rn_bindings_rust_future_cancel_u8"),
+        1,
+        [this](jsi::Runtime &rt, const jsi::Value &thisVal, const jsi::Value *args, size_t count) -> jsi::Value {
+            return this->cpp_ffi_ankurah_rn_bindings_rust_future_cancel_u8(rt, thisVal, args, count);
+        }
+    );
+    props["ubrn_ffi_ankurah_rn_bindings_rust_future_free_u8"] = jsi::Function::createFromHostFunction(
+        rt,
+        jsi::PropNameID::forAscii(rt, "ubrn_ffi_ankurah_rn_bindings_rust_future_free_u8"),
+        1,
+        [this](jsi::Runtime &rt, const jsi::Value &thisVal, const jsi::Value *args, size_t count) -> jsi::Value {
+            return this->cpp_ffi_ankurah_rn_bindings_rust_future_free_u8(rt, thisVal, args, count);
+        }
+    );
+    props["ubrn_ffi_ankurah_rn_bindings_rust_future_complete_u8"] = jsi::Function::createFromHostFunction(
+        rt,
+        jsi::PropNameID::forAscii(rt, "ubrn_ffi_ankurah_rn_bindings_rust_future_complete_u8"),
+        1,
+        [this](jsi::Runtime &rt, const jsi::Value &thisVal, const jsi::Value *args, size_t count) -> jsi::Value {
+            return this->cpp_ffi_ankurah_rn_bindings_rust_future_complete_u8(rt, thisVal, args, count);
+        }
+    );
+    props["ubrn_ffi_ankurah_rn_bindings_rust_future_poll_i8"] = jsi::Function::createFromHostFunction(
+        rt,
+        jsi::PropNameID::forAscii(rt, "ubrn_ffi_ankurah_rn_bindings_rust_future_poll_i8"),
+        3,
+        [this](jsi::Runtime &rt, const jsi::Value &thisVal, const jsi::Value *args, size_t count) -> jsi::Value {
+            return this->cpp_ffi_ankurah_rn_bindings_rust_future_poll_i8(rt, thisVal, args, count);
+        }
+    );
+    props["ubrn_ffi_ankurah_rn_bindings_rust_future_cancel_i8"] = jsi::Function::createFromHostFunction(
+        rt,
+        jsi::PropNameID::forAscii(rt, "ubrn_ffi_ankurah_rn_bindings_rust_future_cancel_i8"),
+        1,
+        [this](jsi::Runtime &rt, const jsi::Value &thisVal, const jsi::Value *args, size_t count) -> jsi::Value {
+            return this->cpp_ffi_ankurah_rn_bindings_rust_future_cancel_i8(rt, thisVal, args, count);
+        }
+    );
+    props["ubrn_ffi_ankurah_rn_bindings_rust_future_free_i8"] = jsi::Function::createFromHostFunction(
+        rt,
+        jsi::PropNameID::forAscii(rt, "ubrn_ffi_ankurah_rn_bindings_rust_future_free_i8"),
+        1,
+        [this](jsi::Runtime &rt, const jsi::Value &thisVal, const jsi::Value *args, size_t count) -> jsi::Value {
+            return this->cpp_ffi_ankurah_rn_bindings_rust_future_free_i8(rt, thisVal, args, count);
+        }
+    );
+    props["ubrn_ffi_ankurah_rn_bindings_rust_future_complete_i8"] = jsi::Function::createFromHostFunction(
+        rt,
+        jsi::PropNameID::forAscii(rt, "ubrn_ffi_ankurah_rn_bindings_rust_future_complete_i8"),
+        1,
+        [this](jsi::Runtime &rt, const jsi::Value &thisVal, const jsi::Value *args, size_t count) -> jsi::Value {
+            return this->cpp_ffi_ankurah_rn_bindings_rust_future_complete_i8(rt, thisVal, args, count);
+        }
+    );
+    props["ubrn_ffi_ankurah_rn_bindings_rust_future_poll_u16"] = jsi::Function::createFromHostFunction(
+        rt,
+        jsi::PropNameID::forAscii(rt, "ubrn_ffi_ankurah_rn_bindings_rust_future_poll_u16"),
+        3,
+        [this](jsi::Runtime &rt, const jsi::Value &thisVal, const jsi::Value *args, size_t count) -> jsi::Value {
+            return this->cpp_ffi_ankurah_rn_bindings_rust_future_poll_u16(rt, thisVal, args, count);
+        }
+    );
+    props["ubrn_ffi_ankurah_rn_bindings_rust_future_cancel_u16"] = jsi::Function::createFromHostFunction(
+        rt,
+        jsi::PropNameID::forAscii(rt, "ubrn_ffi_ankurah_rn_bindings_rust_future_cancel_u16"),
+        1,
+        [this](jsi::Runtime &rt, const jsi::Value &thisVal, const jsi::Value *args, size_t count) -> jsi::Value {
+            return this->cpp_ffi_ankurah_rn_bindings_rust_future_cancel_u16(rt, thisVal, args, count);
+        }
+    );
+    props["ubrn_ffi_ankurah_rn_bindings_rust_future_free_u16"] = jsi::Function::createFromHostFunction(
+        rt,
+        jsi::PropNameID::forAscii(rt, "ubrn_ffi_ankurah_rn_bindings_rust_future_free_u16"),
+        1,
+        [this](jsi::Runtime &rt, const jsi::Value &thisVal, const jsi::Value *args, size_t count) -> jsi::Value {
+            return this->cpp_ffi_ankurah_rn_bindings_rust_future_free_u16(rt, thisVal, args, count);
+        }
+    );
+    props["ubrn_ffi_ankurah_rn_bindings_rust_future_complete_u16"] = jsi::Function::createFromHostFunction(
+        rt,
+        jsi::PropNameID::forAscii(rt, "ubrn_ffi_ankurah_rn_bindings_rust_future_complete_u16"),
+        1,
+        [this](jsi::Runtime &rt, const jsi::Value &thisVal, const jsi::Value *args, size_t count) -> jsi::Value {
+            return this->cpp_ffi_ankurah_rn_bindings_rust_future_complete_u16(rt, thisVal, args, count);
+        }
+    );
+    props["ubrn_ffi_ankurah_rn_bindings_rust_future_poll_i16"] = jsi::Function::createFromHostFunction(
+        rt,
+        jsi::PropNameID::forAscii(rt, "ubrn_ffi_ankurah_rn_bindings_rust_future_poll_i16"),
+        3,
+        [this](jsi::Runtime &rt, const jsi::Value &thisVal, const jsi::Value *args, size_t count) -> jsi::Value {
+            return this->cpp_ffi_ankurah_rn_bindings_rust_future_poll_i16(rt, thisVal, args, count);
+        }
+    );
+    props["ubrn_ffi_ankurah_rn_bindings_rust_future_cancel_i16"] = jsi::Function::createFromHostFunction(
+        rt,
+        jsi::PropNameID::forAscii(rt, "ubrn_ffi_ankurah_rn_bindings_rust_future_cancel_i16"),
+        1,
+        [this](jsi::Runtime &rt, const jsi::Value &thisVal, const jsi::Value *args, size_t count) -> jsi::Value {
+            return this->cpp_ffi_ankurah_rn_bindings_rust_future_cancel_i16(rt, thisVal, args, count);
+        }
+    );
+    props["ubrn_ffi_ankurah_rn_bindings_rust_future_free_i16"] = jsi::Function::createFromHostFunction(
+        rt,
+        jsi::PropNameID::forAscii(rt, "ubrn_ffi_ankurah_rn_bindings_rust_future_free_i16"),
+        1,
+        [this](jsi::Runtime &rt, const jsi::Value &thisVal, const jsi::Value *args, size_t count) -> jsi::Value {
+            return this->cpp_ffi_ankurah_rn_bindings_rust_future_free_i16(rt, thisVal, args, count);
+        }
+    );
+    props["ubrn_ffi_ankurah_rn_bindings_rust_future_complete_i16"] = jsi::Function::createFromHostFunction(
+        rt,
+        jsi::PropNameID::forAscii(rt, "ubrn_ffi_ankurah_rn_bindings_rust_future_complete_i16"),
+        1,
+        [this](jsi::Runtime &rt, const jsi::Value &thisVal, const jsi::Value *args, size_t count) -> jsi::Value {
+            return this->cpp_ffi_ankurah_rn_bindings_rust_future_complete_i16(rt, thisVal, args, count);
+        }
+    );
+    props["ubrn_ffi_ankurah_rn_bindings_rust_future_poll_u32"] = jsi::Function::createFromHostFunction(
+        rt,
+        jsi::PropNameID::forAscii(rt, "ubrn_ffi_ankurah_rn_bindings_rust_future_poll_u32"),
+        3,
+        [this](jsi::Runtime &rt, const jsi::Value &thisVal, const jsi::Value *args, size_t count) -> jsi::Value {
+            return this->cpp_ffi_ankurah_rn_bindings_rust_future_poll_u32(rt, thisVal, args, count);
+        }
+    );
+    props["ubrn_ffi_ankurah_rn_bindings_rust_future_cancel_u32"] = jsi::Function::createFromHostFunction(
+        rt,
+        jsi::PropNameID::forAscii(rt, "ubrn_ffi_ankurah_rn_bindings_rust_future_cancel_u32"),
+        1,
+        [this](jsi::Runtime &rt, const jsi::Value &thisVal, const jsi::Value *args, size_t count) -> jsi::Value {
+            return this->cpp_ffi_ankurah_rn_bindings_rust_future_cancel_u32(rt, thisVal, args, count);
+        }
+    );
+    props["ubrn_ffi_ankurah_rn_bindings_rust_future_free_u32"] = jsi::Function::createFromHostFunction(
+        rt,
+        jsi::PropNameID::forAscii(rt, "ubrn_ffi_ankurah_rn_bindings_rust_future_free_u32"),
+        1,
+        [this](jsi::Runtime &rt, const jsi::Value &thisVal, const jsi::Value *args, size_t count) -> jsi::Value {
+            return this->cpp_ffi_ankurah_rn_bindings_rust_future_free_u32(rt, thisVal, args, count);
+        }
+    );
+    props["ubrn_ffi_ankurah_rn_bindings_rust_future_complete_u32"] = jsi::Function::createFromHostFunction(
+        rt,
+        jsi::PropNameID::forAscii(rt, "ubrn_ffi_ankurah_rn_bindings_rust_future_complete_u32"),
+        1,
+        [this](jsi::Runtime &rt, const jsi::Value &thisVal, const jsi::Value *args, size_t count) -> jsi::Value {
+            return this->cpp_ffi_ankurah_rn_bindings_rust_future_complete_u32(rt, thisVal, args, count);
+        }
+    );
+    props["ubrn_ffi_ankurah_rn_bindings_rust_future_poll_i32"] = jsi::Function::createFromHostFunction(
+        rt,
+        jsi::PropNameID::forAscii(rt, "ubrn_ffi_ankurah_rn_bindings_rust_future_poll_i32"),
+        3,
+        [this](jsi::Runtime &rt, const jsi::Value &thisVal, const jsi::Value *args, size_t count) -> jsi::Value {
+            return this->cpp_ffi_ankurah_rn_bindings_rust_future_poll_i32(rt, thisVal, args, count);
+        }
+    );
+    props["ubrn_ffi_ankurah_rn_bindings_rust_future_cancel_i32"] = jsi::Function::createFromHostFunction(
+        rt,
+        jsi::PropNameID::forAscii(rt, "ubrn_ffi_ankurah_rn_bindings_rust_future_cancel_i32"),
+        1,
+        [this](jsi::Runtime &rt, const jsi::Value &thisVal, const jsi::Value *args, size_t count) -> jsi::Value {
+            return this->cpp_ffi_ankurah_rn_bindings_rust_future_cancel_i32(rt, thisVal, args, count);
+        }
+    );
+    props["ubrn_ffi_ankurah_rn_bindings_rust_future_free_i32"] = jsi::Function::createFromHostFunction(
+        rt,
+        jsi::PropNameID::forAscii(rt, "ubrn_ffi_ankurah_rn_bindings_rust_future_free_i32"),
+        1,
+        [this](jsi::Runtime &rt, const jsi::Value &thisVal, const jsi::Value *args, size_t count) -> jsi::Value {
+            return this->cpp_ffi_ankurah_rn_bindings_rust_future_free_i32(rt, thisVal, args, count);
+        }
+    );
+    props["ubrn_ffi_ankurah_rn_bindings_rust_future_complete_i32"] = jsi::Function::createFromHostFunction(
+        rt,
+        jsi::PropNameID::forAscii(rt, "ubrn_ffi_ankurah_rn_bindings_rust_future_complete_i32"),
+        1,
+        [this](jsi::Runtime &rt, const jsi::Value &thisVal, const jsi::Value *args, size_t count) -> jsi::Value {
+            return this->cpp_ffi_ankurah_rn_bindings_rust_future_complete_i32(rt, thisVal, args, count);
+        }
+    );
+    props["ubrn_ffi_ankurah_rn_bindings_rust_future_poll_u64"] = jsi::Function::createFromHostFunction(
+        rt,
+        jsi::PropNameID::forAscii(rt, "ubrn_ffi_ankurah_rn_bindings_rust_future_poll_u64"),
+        3,
+        [this](jsi::Runtime &rt, const jsi::Value &thisVal, const jsi::Value *args, size_t count) -> jsi::Value {
+            return this->cpp_ffi_ankurah_rn_bindings_rust_future_poll_u64(rt, thisVal, args, count);
+        }
+    );
+    props["ubrn_ffi_ankurah_rn_bindings_rust_future_cancel_u64"] = jsi::Function::createFromHostFunction(
+        rt,
+        jsi::PropNameID::forAscii(rt, "ubrn_ffi_ankurah_rn_bindings_rust_future_cancel_u64"),
+        1,
+        [this](jsi::Runtime &rt, const jsi::Value &thisVal, const jsi::Value *args, size_t count) -> jsi::Value {
+            return this->cpp_ffi_ankurah_rn_bindings_rust_future_cancel_u64(rt, thisVal, args, count);
+        }
+    );
+    props["ubrn_ffi_ankurah_rn_bindings_rust_future_free_u64"] = jsi::Function::createFromHostFunction(
+        rt,
+        jsi::PropNameID::forAscii(rt, "ubrn_ffi_ankurah_rn_bindings_rust_future_free_u64"),
+        1,
+        [this](jsi::Runtime &rt, const jsi::Value &thisVal, const jsi::Value *args, size_t count) -> jsi::Value {
+            return this->cpp_ffi_ankurah_rn_bindings_rust_future_free_u64(rt, thisVal, args, count);
+        }
+    );
+    props["ubrn_ffi_ankurah_rn_bindings_rust_future_complete_u64"] = jsi::Function::createFromHostFunction(
+        rt,
+        jsi::PropNameID::forAscii(rt, "ubrn_ffi_ankurah_rn_bindings_rust_future_complete_u64"),
+        1,
+        [this](jsi::Runtime &rt, const jsi::Value &thisVal, const jsi::Value *args, size_t count) -> jsi::Value {
+            return this->cpp_ffi_ankurah_rn_bindings_rust_future_complete_u64(rt, thisVal, args, count);
+        }
+    );
+    props["ubrn_ffi_ankurah_rn_bindings_rust_future_poll_i64"] = jsi::Function::createFromHostFunction(
+        rt,
+        jsi::PropNameID::forAscii(rt, "ubrn_ffi_ankurah_rn_bindings_rust_future_poll_i64"),
+        3,
+        [this](jsi::Runtime &rt, const jsi::Value &thisVal, const jsi::Value *args, size_t count) -> jsi::Value {
+            return this->cpp_ffi_ankurah_rn_bindings_rust_future_poll_i64(rt, thisVal, args, count);
+        }
+    );
+    props["ubrn_ffi_ankurah_rn_bindings_rust_future_cancel_i64"] = jsi::Function::createFromHostFunction(
+        rt,
+        jsi::PropNameID::forAscii(rt, "ubrn_ffi_ankurah_rn_bindings_rust_future_cancel_i64"),
+        1,
+        [this](jsi::Runtime &rt, const jsi::Value &thisVal, const jsi::Value *args, size_t count) -> jsi::Value {
+            return this->cpp_ffi_ankurah_rn_bindings_rust_future_cancel_i64(rt, thisVal, args, count);
+        }
+    );
+    props["ubrn_ffi_ankurah_rn_bindings_rust_future_free_i64"] = jsi::Function::createFromHostFunction(
+        rt,
+        jsi::PropNameID::forAscii(rt, "ubrn_ffi_ankurah_rn_bindings_rust_future_free_i64"),
+        1,
+        [this](jsi::Runtime &rt, const jsi::Value &thisVal, const jsi::Value *args, size_t count) -> jsi::Value {
+            return this->cpp_ffi_ankurah_rn_bindings_rust_future_free_i64(rt, thisVal, args, count);
+        }
+    );
+    props["ubrn_ffi_ankurah_rn_bindings_rust_future_complete_i64"] = jsi::Function::createFromHostFunction(
+        rt,
+        jsi::PropNameID::forAscii(rt, "ubrn_ffi_ankurah_rn_bindings_rust_future_complete_i64"),
+        1,
+        [this](jsi::Runtime &rt, const jsi::Value &thisVal, const jsi::Value *args, size_t count) -> jsi::Value {
+            return this->cpp_ffi_ankurah_rn_bindings_rust_future_complete_i64(rt, thisVal, args, count);
+        }
+    );
+    props["ubrn_ffi_ankurah_rn_bindings_rust_future_poll_f32"] = jsi::Function::createFromHostFunction(
+        rt,
+        jsi::PropNameID::forAscii(rt, "ubrn_ffi_ankurah_rn_bindings_rust_future_poll_f32"),
+        3,
+        [this](jsi::Runtime &rt, const jsi::Value &thisVal, const jsi::Value *args, size_t count) -> jsi::Value {
+            return this->cpp_ffi_ankurah_rn_bindings_rust_future_poll_f32(rt, thisVal, args, count);
+        }
+    );
+    props["ubrn_ffi_ankurah_rn_bindings_rust_future_cancel_f32"] = jsi::Function::createFromHostFunction(
+        rt,
+        jsi::PropNameID::forAscii(rt, "ubrn_ffi_ankurah_rn_bindings_rust_future_cancel_f32"),
+        1,
+        [this](jsi::Runtime &rt, const jsi::Value &thisVal, const jsi::Value *args, size_t count) -> jsi::Value {
+            return this->cpp_ffi_ankurah_rn_bindings_rust_future_cancel_f32(rt, thisVal, args, count);
+        }
+    );
+    props["ubrn_ffi_ankurah_rn_bindings_rust_future_free_f32"] = jsi::Function::createFromHostFunction(
+        rt,
+        jsi::PropNameID::forAscii(rt, "ubrn_ffi_ankurah_rn_bindings_rust_future_free_f32"),
+        1,
+        [this](jsi::Runtime &rt, const jsi::Value &thisVal, const jsi::Value *args, size_t count) -> jsi::Value {
+            return this->cpp_ffi_ankurah_rn_bindings_rust_future_free_f32(rt, thisVal, args, count);
+        }
+    );
+    props["ubrn_ffi_ankurah_rn_bindings_rust_future_complete_f32"] = jsi::Function::createFromHostFunction(
+        rt,
+        jsi::PropNameID::forAscii(rt, "ubrn_ffi_ankurah_rn_bindings_rust_future_complete_f32"),
+        1,
+        [this](jsi::Runtime &rt, const jsi::Value &thisVal, const jsi::Value *args, size_t count) -> jsi::Value {
+            return this->cpp_ffi_ankurah_rn_bindings_rust_future_complete_f32(rt, thisVal, args, count);
+        }
+    );
+    props["ubrn_ffi_ankurah_rn_bindings_rust_future_poll_f64"] = jsi::Function::createFromHostFunction(
+        rt,
+        jsi::PropNameID::forAscii(rt, "ubrn_ffi_ankurah_rn_bindings_rust_future_poll_f64"),
+        3,
+        [this](jsi::Runtime &rt, const jsi::Value &thisVal, const jsi::Value *args, size_t count) -> jsi::Value {
+            return this->cpp_ffi_ankurah_rn_bindings_rust_future_poll_f64(rt, thisVal, args, count);
+        }
+    );
+    props["ubrn_ffi_ankurah_rn_bindings_rust_future_cancel_f64"] = jsi::Function::createFromHostFunction(
+        rt,
+        jsi::PropNameID::forAscii(rt, "ubrn_ffi_ankurah_rn_bindings_rust_future_cancel_f64"),
+        1,
+        [this](jsi::Runtime &rt, const jsi::Value &thisVal, const jsi::Value *args, size_t count) -> jsi::Value {
+            return this->cpp_ffi_ankurah_rn_bindings_rust_future_cancel_f64(rt, thisVal, args, count);
+        }
+    );
+    props["ubrn_ffi_ankurah_rn_bindings_rust_future_free_f64"] = jsi::Function::createFromHostFunction(
+        rt,
+        jsi::PropNameID::forAscii(rt, "ubrn_ffi_ankurah_rn_bindings_rust_future_free_f64"),
+        1,
+        [this](jsi::Runtime &rt, const jsi::Value &thisVal, const jsi::Value *args, size_t count) -> jsi::Value {
+            return this->cpp_ffi_ankurah_rn_bindings_rust_future_free_f64(rt, thisVal, args, count);
+        }
+    );
+    props["ubrn_ffi_ankurah_rn_bindings_rust_future_complete_f64"] = jsi::Function::createFromHostFunction(
+        rt,
+        jsi::PropNameID::forAscii(rt, "ubrn_ffi_ankurah_rn_bindings_rust_future_complete_f64"),
+        1,
+        [this](jsi::Runtime &rt, const jsi::Value &thisVal, const jsi::Value *args, size_t count) -> jsi::Value {
+            return this->cpp_ffi_ankurah_rn_bindings_rust_future_complete_f64(rt, thisVal, args, count);
+        }
+    );
+    props["ubrn_ffi_ankurah_rn_bindings_rust_future_poll_pointer"] = jsi::Function::createFromHostFunction(
+        rt,
+        jsi::PropNameID::forAscii(rt, "ubrn_ffi_ankurah_rn_bindings_rust_future_poll_pointer"),
+        3,
+        [this](jsi::Runtime &rt, const jsi::Value &thisVal, const jsi::Value *args, size_t count) -> jsi::Value {
+            return this->cpp_ffi_ankurah_rn_bindings_rust_future_poll_pointer(rt, thisVal, args, count);
+        }
+    );
+    props["ubrn_ffi_ankurah_rn_bindings_rust_future_cancel_pointer"] = jsi::Function::createFromHostFunction(
+        rt,
+        jsi::PropNameID::forAscii(rt, "ubrn_ffi_ankurah_rn_bindings_rust_future_cancel_pointer"),
+        1,
+        [this](jsi::Runtime &rt, const jsi::Value &thisVal, const jsi::Value *args, size_t count) -> jsi::Value {
+            return this->cpp_ffi_ankurah_rn_bindings_rust_future_cancel_pointer(rt, thisVal, args, count);
+        }
+    );
+    props["ubrn_ffi_ankurah_rn_bindings_rust_future_free_pointer"] = jsi::Function::createFromHostFunction(
+        rt,
+        jsi::PropNameID::forAscii(rt, "ubrn_ffi_ankurah_rn_bindings_rust_future_free_pointer"),
+        1,
+        [this](jsi::Runtime &rt, const jsi::Value &thisVal, const jsi::Value *args, size_t count) -> jsi::Value {
+            return this->cpp_ffi_ankurah_rn_bindings_rust_future_free_pointer(rt, thisVal, args, count);
+        }
+    );
+    props["ubrn_ffi_ankurah_rn_bindings_rust_future_complete_pointer"] = jsi::Function::createFromHostFunction(
+        rt,
+        jsi::PropNameID::forAscii(rt, "ubrn_ffi_ankurah_rn_bindings_rust_future_complete_pointer"),
+        1,
+        [this](jsi::Runtime &rt, const jsi::Value &thisVal, const jsi::Value *args, size_t count) -> jsi::Value {
+            return this->cpp_ffi_ankurah_rn_bindings_rust_future_complete_pointer(rt, thisVal, args, count);
+        }
+    );
+    props["ubrn_ffi_ankurah_rn_bindings_rust_future_poll_rust_buffer"] = jsi::Function::createFromHostFunction(
+        rt,
+        jsi::PropNameID::forAscii(rt, "ubrn_ffi_ankurah_rn_bindings_rust_future_poll_rust_buffer"),
+        3,
+        [this](jsi::Runtime &rt, const jsi::Value &thisVal, const jsi::Value *args, size_t count) -> jsi::Value {
+            return this->cpp_ffi_ankurah_rn_bindings_rust_future_poll_rust_buffer(rt, thisVal, args, count);
+        }
+    );
+    props["ubrn_ffi_ankurah_rn_bindings_rust_future_cancel_rust_buffer"] = jsi::Function::createFromHostFunction(
+        rt,
+        jsi::PropNameID::forAscii(rt, "ubrn_ffi_ankurah_rn_bindings_rust_future_cancel_rust_buffer"),
+        1,
+        [this](jsi::Runtime &rt, const jsi::Value &thisVal, const jsi::Value *args, size_t count) -> jsi::Value {
+            return this->cpp_ffi_ankurah_rn_bindings_rust_future_cancel_rust_buffer(rt, thisVal, args, count);
+        }
+    );
+    props["ubrn_ffi_ankurah_rn_bindings_rust_future_free_rust_buffer"] = jsi::Function::createFromHostFunction(
+        rt,
+        jsi::PropNameID::forAscii(rt, "ubrn_ffi_ankurah_rn_bindings_rust_future_free_rust_buffer"),
+        1,
+        [this](jsi::Runtime &rt, const jsi::Value &thisVal, const jsi::Value *args, size_t count) -> jsi::Value {
+            return this->cpp_ffi_ankurah_rn_bindings_rust_future_free_rust_buffer(rt, thisVal, args, count);
+        }
+    );
+    props["ubrn_ffi_ankurah_rn_bindings_rust_future_complete_rust_buffer"] = jsi::Function::createFromHostFunction(
+        rt,
+        jsi::PropNameID::forAscii(rt, "ubrn_ffi_ankurah_rn_bindings_rust_future_complete_rust_buffer"),
+        1,
+        [this](jsi::Runtime &rt, const jsi::Value &thisVal, const jsi::Value *args, size_t count) -> jsi::Value {
+            return this->cpp_ffi_ankurah_rn_bindings_rust_future_complete_rust_buffer(rt, thisVal, args, count);
+        }
+    );
+    props["ubrn_ffi_ankurah_rn_bindings_rust_future_poll_void"] = jsi::Function::createFromHostFunction(
+        rt,
+        jsi::PropNameID::forAscii(rt, "ubrn_ffi_ankurah_rn_bindings_rust_future_poll_void"),
+        3,
+        [this](jsi::Runtime &rt, const jsi::Value &thisVal, const jsi::Value *args, size_t count) -> jsi::Value {
+            return this->cpp_ffi_ankurah_rn_bindings_rust_future_poll_void(rt, thisVal, args, count);
+        }
+    );
+    props["ubrn_ffi_ankurah_rn_bindings_rust_future_cancel_void"] = jsi::Function::createFromHostFunction(
+        rt,
+        jsi::PropNameID::forAscii(rt, "ubrn_ffi_ankurah_rn_bindings_rust_future_cancel_void"),
+        1,
+        [this](jsi::Runtime &rt, const jsi::Value &thisVal, const jsi::Value *args, size_t count) -> jsi::Value {
+            return this->cpp_ffi_ankurah_rn_bindings_rust_future_cancel_void(rt, thisVal, args, count);
+        }
+    );
+    props["ubrn_ffi_ankurah_rn_bindings_rust_future_free_void"] = jsi::Function::createFromHostFunction(
+        rt,
+        jsi::PropNameID::forAscii(rt, "ubrn_ffi_ankurah_rn_bindings_rust_future_free_void"),
+        1,
+        [this](jsi::Runtime &rt, const jsi::Value &thisVal, const jsi::Value *args, size_t count) -> jsi::Value {
+            return this->cpp_ffi_ankurah_rn_bindings_rust_future_free_void(rt, thisVal, args, count);
+        }
+    );
+    props["ubrn_ffi_ankurah_rn_bindings_rust_future_complete_void"] = jsi::Function::createFromHostFunction(
+        rt,
+        jsi::PropNameID::forAscii(rt, "ubrn_ffi_ankurah_rn_bindings_rust_future_complete_void"),
+        1,
+        [this](jsi::Runtime &rt, const jsi::Value &thisVal, const jsi::Value *args, size_t count) -> jsi::Value {
+            return this->cpp_ffi_ankurah_rn_bindings_rust_future_complete_void(rt, thisVal, args, count);
+        }
+    );
     props["ubrn_uniffi_ankurah_rn_bindings_checksum_func_greet"] = jsi::Function::createFromHostFunction(
         rt,
         jsi::PropNameID::forAscii(rt, "ubrn_uniffi_ankurah_rn_bindings_checksum_func_greet"),
         0,
         [this](jsi::Runtime &rt, const jsi::Value &thisVal, const jsi::Value *args, size_t count) -> jsi::Value {
             return this->cpp_uniffi_ankurah_rn_bindings_checksum_func_greet(rt, thisVal, args, count);
+        }
+    );
+    props["ubrn_uniffi_ankurah_rn_bindings_checksum_func_greet_async"] = jsi::Function::createFromHostFunction(
+        rt,
+        jsi::PropNameID::forAscii(rt, "ubrn_uniffi_ankurah_rn_bindings_checksum_func_greet_async"),
+        0,
+        [this](jsi::Runtime &rt, const jsi::Value &thisVal, const jsi::Value *args, size_t count) -> jsi::Value {
+            return this->cpp_uniffi_ankurah_rn_bindings_checksum_func_greet_async(rt, thisVal, args, count);
         }
     );
     props["ubrn_ffi_ankurah_rn_bindings_uniffi_contract_version"] = jsi::Function::createFromHostFunction(
@@ -1984,8 +2422,425 @@ jsi::Value NativeAnkurahRnBindings::cpp_uniffi_ankurah_rn_bindings_fn_func_greet
         
         return uniffi::ankurah_rn_bindings::Bridging<RustBuffer>::toJs(rt, callInvoker, value);
 }
+jsi::Value NativeAnkurahRnBindings::cpp_uniffi_ankurah_rn_bindings_fn_func_greet_async(jsi::Runtime& rt, const jsi::Value& thisVal, const jsi::Value* args, size_t count) {
+        auto value = uniffi_ankurah_rn_bindings_fn_func_greet_async(uniffi::ankurah_rn_bindings::Bridging<RustBuffer>::fromJs(rt, callInvoker, args[0]), uniffi_jsi::Bridging<uint64_t>::fromJs(rt, callInvoker, args[1])
+        );
+
+        
+        return uniffi_jsi::Bridging</*handle*/ uint64_t>::toJs(rt, callInvoker, value);
+}
+jsi::Value NativeAnkurahRnBindings::cpp_ffi_ankurah_rn_bindings_rust_future_poll_u8(jsi::Runtime& rt, const jsi::Value& thisVal, const jsi::Value* args, size_t count) {
+        ffi_ankurah_rn_bindings_rust_future_poll_u8(uniffi_jsi::Bridging</*handle*/ uint64_t>::fromJs(rt, callInvoker, args[0]), uniffi::ankurah_rn_bindings::Bridging<UniffiRustFutureContinuationCallback>::fromJs(rt, callInvoker, args[1]), uniffi_jsi::Bridging</*handle*/ uint64_t>::fromJs(rt, callInvoker, args[2])
+        );
+
+        
+        return jsi::Value::undefined();
+}
+jsi::Value NativeAnkurahRnBindings::cpp_ffi_ankurah_rn_bindings_rust_future_cancel_u8(jsi::Runtime& rt, const jsi::Value& thisVal, const jsi::Value* args, size_t count) {
+        ffi_ankurah_rn_bindings_rust_future_cancel_u8(uniffi_jsi::Bridging</*handle*/ uint64_t>::fromJs(rt, callInvoker, args[0])
+        );
+
+        
+        return jsi::Value::undefined();
+}
+jsi::Value NativeAnkurahRnBindings::cpp_ffi_ankurah_rn_bindings_rust_future_free_u8(jsi::Runtime& rt, const jsi::Value& thisVal, const jsi::Value* args, size_t count) {
+        ffi_ankurah_rn_bindings_rust_future_free_u8(uniffi_jsi::Bridging</*handle*/ uint64_t>::fromJs(rt, callInvoker, args[0])
+        );
+
+        
+        return jsi::Value::undefined();
+}
+jsi::Value NativeAnkurahRnBindings::cpp_ffi_ankurah_rn_bindings_rust_future_complete_u8(jsi::Runtime& rt, const jsi::Value& thisVal, const jsi::Value* args, size_t count) {
+        RustCallStatus status = uniffi::ankurah_rn_bindings::Bridging<RustCallStatus>::rustSuccess(rt);
+        auto value = ffi_ankurah_rn_bindings_rust_future_complete_u8(uniffi_jsi::Bridging</*handle*/ uint64_t>::fromJs(rt, callInvoker, args[0]), 
+            &status
+        );
+        uniffi::ankurah_rn_bindings::Bridging<RustCallStatus>::copyIntoJs(rt, callInvoker, status, args[count - 1]);
+
+        
+        return uniffi_jsi::Bridging<uint8_t>::toJs(rt, callInvoker, value);
+}
+jsi::Value NativeAnkurahRnBindings::cpp_ffi_ankurah_rn_bindings_rust_future_poll_i8(jsi::Runtime& rt, const jsi::Value& thisVal, const jsi::Value* args, size_t count) {
+        ffi_ankurah_rn_bindings_rust_future_poll_i8(uniffi_jsi::Bridging</*handle*/ uint64_t>::fromJs(rt, callInvoker, args[0]), uniffi::ankurah_rn_bindings::Bridging<UniffiRustFutureContinuationCallback>::fromJs(rt, callInvoker, args[1]), uniffi_jsi::Bridging</*handle*/ uint64_t>::fromJs(rt, callInvoker, args[2])
+        );
+
+        
+        return jsi::Value::undefined();
+}
+jsi::Value NativeAnkurahRnBindings::cpp_ffi_ankurah_rn_bindings_rust_future_cancel_i8(jsi::Runtime& rt, const jsi::Value& thisVal, const jsi::Value* args, size_t count) {
+        ffi_ankurah_rn_bindings_rust_future_cancel_i8(uniffi_jsi::Bridging</*handle*/ uint64_t>::fromJs(rt, callInvoker, args[0])
+        );
+
+        
+        return jsi::Value::undefined();
+}
+jsi::Value NativeAnkurahRnBindings::cpp_ffi_ankurah_rn_bindings_rust_future_free_i8(jsi::Runtime& rt, const jsi::Value& thisVal, const jsi::Value* args, size_t count) {
+        ffi_ankurah_rn_bindings_rust_future_free_i8(uniffi_jsi::Bridging</*handle*/ uint64_t>::fromJs(rt, callInvoker, args[0])
+        );
+
+        
+        return jsi::Value::undefined();
+}
+jsi::Value NativeAnkurahRnBindings::cpp_ffi_ankurah_rn_bindings_rust_future_complete_i8(jsi::Runtime& rt, const jsi::Value& thisVal, const jsi::Value* args, size_t count) {
+        RustCallStatus status = uniffi::ankurah_rn_bindings::Bridging<RustCallStatus>::rustSuccess(rt);
+        auto value = ffi_ankurah_rn_bindings_rust_future_complete_i8(uniffi_jsi::Bridging</*handle*/ uint64_t>::fromJs(rt, callInvoker, args[0]), 
+            &status
+        );
+        uniffi::ankurah_rn_bindings::Bridging<RustCallStatus>::copyIntoJs(rt, callInvoker, status, args[count - 1]);
+
+        
+        return uniffi_jsi::Bridging<int8_t>::toJs(rt, callInvoker, value);
+}
+jsi::Value NativeAnkurahRnBindings::cpp_ffi_ankurah_rn_bindings_rust_future_poll_u16(jsi::Runtime& rt, const jsi::Value& thisVal, const jsi::Value* args, size_t count) {
+        ffi_ankurah_rn_bindings_rust_future_poll_u16(uniffi_jsi::Bridging</*handle*/ uint64_t>::fromJs(rt, callInvoker, args[0]), uniffi::ankurah_rn_bindings::Bridging<UniffiRustFutureContinuationCallback>::fromJs(rt, callInvoker, args[1]), uniffi_jsi::Bridging</*handle*/ uint64_t>::fromJs(rt, callInvoker, args[2])
+        );
+
+        
+        return jsi::Value::undefined();
+}
+jsi::Value NativeAnkurahRnBindings::cpp_ffi_ankurah_rn_bindings_rust_future_cancel_u16(jsi::Runtime& rt, const jsi::Value& thisVal, const jsi::Value* args, size_t count) {
+        ffi_ankurah_rn_bindings_rust_future_cancel_u16(uniffi_jsi::Bridging</*handle*/ uint64_t>::fromJs(rt, callInvoker, args[0])
+        );
+
+        
+        return jsi::Value::undefined();
+}
+jsi::Value NativeAnkurahRnBindings::cpp_ffi_ankurah_rn_bindings_rust_future_free_u16(jsi::Runtime& rt, const jsi::Value& thisVal, const jsi::Value* args, size_t count) {
+        ffi_ankurah_rn_bindings_rust_future_free_u16(uniffi_jsi::Bridging</*handle*/ uint64_t>::fromJs(rt, callInvoker, args[0])
+        );
+
+        
+        return jsi::Value::undefined();
+}
+jsi::Value NativeAnkurahRnBindings::cpp_ffi_ankurah_rn_bindings_rust_future_complete_u16(jsi::Runtime& rt, const jsi::Value& thisVal, const jsi::Value* args, size_t count) {
+        RustCallStatus status = uniffi::ankurah_rn_bindings::Bridging<RustCallStatus>::rustSuccess(rt);
+        auto value = ffi_ankurah_rn_bindings_rust_future_complete_u16(uniffi_jsi::Bridging</*handle*/ uint64_t>::fromJs(rt, callInvoker, args[0]), 
+            &status
+        );
+        uniffi::ankurah_rn_bindings::Bridging<RustCallStatus>::copyIntoJs(rt, callInvoker, status, args[count - 1]);
+
+        
+        return uniffi_jsi::Bridging<uint16_t>::toJs(rt, callInvoker, value);
+}
+jsi::Value NativeAnkurahRnBindings::cpp_ffi_ankurah_rn_bindings_rust_future_poll_i16(jsi::Runtime& rt, const jsi::Value& thisVal, const jsi::Value* args, size_t count) {
+        ffi_ankurah_rn_bindings_rust_future_poll_i16(uniffi_jsi::Bridging</*handle*/ uint64_t>::fromJs(rt, callInvoker, args[0]), uniffi::ankurah_rn_bindings::Bridging<UniffiRustFutureContinuationCallback>::fromJs(rt, callInvoker, args[1]), uniffi_jsi::Bridging</*handle*/ uint64_t>::fromJs(rt, callInvoker, args[2])
+        );
+
+        
+        return jsi::Value::undefined();
+}
+jsi::Value NativeAnkurahRnBindings::cpp_ffi_ankurah_rn_bindings_rust_future_cancel_i16(jsi::Runtime& rt, const jsi::Value& thisVal, const jsi::Value* args, size_t count) {
+        ffi_ankurah_rn_bindings_rust_future_cancel_i16(uniffi_jsi::Bridging</*handle*/ uint64_t>::fromJs(rt, callInvoker, args[0])
+        );
+
+        
+        return jsi::Value::undefined();
+}
+jsi::Value NativeAnkurahRnBindings::cpp_ffi_ankurah_rn_bindings_rust_future_free_i16(jsi::Runtime& rt, const jsi::Value& thisVal, const jsi::Value* args, size_t count) {
+        ffi_ankurah_rn_bindings_rust_future_free_i16(uniffi_jsi::Bridging</*handle*/ uint64_t>::fromJs(rt, callInvoker, args[0])
+        );
+
+        
+        return jsi::Value::undefined();
+}
+jsi::Value NativeAnkurahRnBindings::cpp_ffi_ankurah_rn_bindings_rust_future_complete_i16(jsi::Runtime& rt, const jsi::Value& thisVal, const jsi::Value* args, size_t count) {
+        RustCallStatus status = uniffi::ankurah_rn_bindings::Bridging<RustCallStatus>::rustSuccess(rt);
+        auto value = ffi_ankurah_rn_bindings_rust_future_complete_i16(uniffi_jsi::Bridging</*handle*/ uint64_t>::fromJs(rt, callInvoker, args[0]), 
+            &status
+        );
+        uniffi::ankurah_rn_bindings::Bridging<RustCallStatus>::copyIntoJs(rt, callInvoker, status, args[count - 1]);
+
+        
+        return uniffi_jsi::Bridging<int16_t>::toJs(rt, callInvoker, value);
+}
+jsi::Value NativeAnkurahRnBindings::cpp_ffi_ankurah_rn_bindings_rust_future_poll_u32(jsi::Runtime& rt, const jsi::Value& thisVal, const jsi::Value* args, size_t count) {
+        ffi_ankurah_rn_bindings_rust_future_poll_u32(uniffi_jsi::Bridging</*handle*/ uint64_t>::fromJs(rt, callInvoker, args[0]), uniffi::ankurah_rn_bindings::Bridging<UniffiRustFutureContinuationCallback>::fromJs(rt, callInvoker, args[1]), uniffi_jsi::Bridging</*handle*/ uint64_t>::fromJs(rt, callInvoker, args[2])
+        );
+
+        
+        return jsi::Value::undefined();
+}
+jsi::Value NativeAnkurahRnBindings::cpp_ffi_ankurah_rn_bindings_rust_future_cancel_u32(jsi::Runtime& rt, const jsi::Value& thisVal, const jsi::Value* args, size_t count) {
+        ffi_ankurah_rn_bindings_rust_future_cancel_u32(uniffi_jsi::Bridging</*handle*/ uint64_t>::fromJs(rt, callInvoker, args[0])
+        );
+
+        
+        return jsi::Value::undefined();
+}
+jsi::Value NativeAnkurahRnBindings::cpp_ffi_ankurah_rn_bindings_rust_future_free_u32(jsi::Runtime& rt, const jsi::Value& thisVal, const jsi::Value* args, size_t count) {
+        ffi_ankurah_rn_bindings_rust_future_free_u32(uniffi_jsi::Bridging</*handle*/ uint64_t>::fromJs(rt, callInvoker, args[0])
+        );
+
+        
+        return jsi::Value::undefined();
+}
+jsi::Value NativeAnkurahRnBindings::cpp_ffi_ankurah_rn_bindings_rust_future_complete_u32(jsi::Runtime& rt, const jsi::Value& thisVal, const jsi::Value* args, size_t count) {
+        RustCallStatus status = uniffi::ankurah_rn_bindings::Bridging<RustCallStatus>::rustSuccess(rt);
+        auto value = ffi_ankurah_rn_bindings_rust_future_complete_u32(uniffi_jsi::Bridging</*handle*/ uint64_t>::fromJs(rt, callInvoker, args[0]), 
+            &status
+        );
+        uniffi::ankurah_rn_bindings::Bridging<RustCallStatus>::copyIntoJs(rt, callInvoker, status, args[count - 1]);
+
+        
+        return uniffi_jsi::Bridging<uint32_t>::toJs(rt, callInvoker, value);
+}
+jsi::Value NativeAnkurahRnBindings::cpp_ffi_ankurah_rn_bindings_rust_future_poll_i32(jsi::Runtime& rt, const jsi::Value& thisVal, const jsi::Value* args, size_t count) {
+        ffi_ankurah_rn_bindings_rust_future_poll_i32(uniffi_jsi::Bridging</*handle*/ uint64_t>::fromJs(rt, callInvoker, args[0]), uniffi::ankurah_rn_bindings::Bridging<UniffiRustFutureContinuationCallback>::fromJs(rt, callInvoker, args[1]), uniffi_jsi::Bridging</*handle*/ uint64_t>::fromJs(rt, callInvoker, args[2])
+        );
+
+        
+        return jsi::Value::undefined();
+}
+jsi::Value NativeAnkurahRnBindings::cpp_ffi_ankurah_rn_bindings_rust_future_cancel_i32(jsi::Runtime& rt, const jsi::Value& thisVal, const jsi::Value* args, size_t count) {
+        ffi_ankurah_rn_bindings_rust_future_cancel_i32(uniffi_jsi::Bridging</*handle*/ uint64_t>::fromJs(rt, callInvoker, args[0])
+        );
+
+        
+        return jsi::Value::undefined();
+}
+jsi::Value NativeAnkurahRnBindings::cpp_ffi_ankurah_rn_bindings_rust_future_free_i32(jsi::Runtime& rt, const jsi::Value& thisVal, const jsi::Value* args, size_t count) {
+        ffi_ankurah_rn_bindings_rust_future_free_i32(uniffi_jsi::Bridging</*handle*/ uint64_t>::fromJs(rt, callInvoker, args[0])
+        );
+
+        
+        return jsi::Value::undefined();
+}
+jsi::Value NativeAnkurahRnBindings::cpp_ffi_ankurah_rn_bindings_rust_future_complete_i32(jsi::Runtime& rt, const jsi::Value& thisVal, const jsi::Value* args, size_t count) {
+        RustCallStatus status = uniffi::ankurah_rn_bindings::Bridging<RustCallStatus>::rustSuccess(rt);
+        auto value = ffi_ankurah_rn_bindings_rust_future_complete_i32(uniffi_jsi::Bridging</*handle*/ uint64_t>::fromJs(rt, callInvoker, args[0]), 
+            &status
+        );
+        uniffi::ankurah_rn_bindings::Bridging<RustCallStatus>::copyIntoJs(rt, callInvoker, status, args[count - 1]);
+
+        
+        return uniffi_jsi::Bridging<int32_t>::toJs(rt, callInvoker, value);
+}
+jsi::Value NativeAnkurahRnBindings::cpp_ffi_ankurah_rn_bindings_rust_future_poll_u64(jsi::Runtime& rt, const jsi::Value& thisVal, const jsi::Value* args, size_t count) {
+        ffi_ankurah_rn_bindings_rust_future_poll_u64(uniffi_jsi::Bridging</*handle*/ uint64_t>::fromJs(rt, callInvoker, args[0]), uniffi::ankurah_rn_bindings::Bridging<UniffiRustFutureContinuationCallback>::fromJs(rt, callInvoker, args[1]), uniffi_jsi::Bridging</*handle*/ uint64_t>::fromJs(rt, callInvoker, args[2])
+        );
+
+        
+        return jsi::Value::undefined();
+}
+jsi::Value NativeAnkurahRnBindings::cpp_ffi_ankurah_rn_bindings_rust_future_cancel_u64(jsi::Runtime& rt, const jsi::Value& thisVal, const jsi::Value* args, size_t count) {
+        ffi_ankurah_rn_bindings_rust_future_cancel_u64(uniffi_jsi::Bridging</*handle*/ uint64_t>::fromJs(rt, callInvoker, args[0])
+        );
+
+        
+        return jsi::Value::undefined();
+}
+jsi::Value NativeAnkurahRnBindings::cpp_ffi_ankurah_rn_bindings_rust_future_free_u64(jsi::Runtime& rt, const jsi::Value& thisVal, const jsi::Value* args, size_t count) {
+        ffi_ankurah_rn_bindings_rust_future_free_u64(uniffi_jsi::Bridging</*handle*/ uint64_t>::fromJs(rt, callInvoker, args[0])
+        );
+
+        
+        return jsi::Value::undefined();
+}
+jsi::Value NativeAnkurahRnBindings::cpp_ffi_ankurah_rn_bindings_rust_future_complete_u64(jsi::Runtime& rt, const jsi::Value& thisVal, const jsi::Value* args, size_t count) {
+        RustCallStatus status = uniffi::ankurah_rn_bindings::Bridging<RustCallStatus>::rustSuccess(rt);
+        auto value = ffi_ankurah_rn_bindings_rust_future_complete_u64(uniffi_jsi::Bridging</*handle*/ uint64_t>::fromJs(rt, callInvoker, args[0]), 
+            &status
+        );
+        uniffi::ankurah_rn_bindings::Bridging<RustCallStatus>::copyIntoJs(rt, callInvoker, status, args[count - 1]);
+
+        
+        return uniffi_jsi::Bridging<uint64_t>::toJs(rt, callInvoker, value);
+}
+jsi::Value NativeAnkurahRnBindings::cpp_ffi_ankurah_rn_bindings_rust_future_poll_i64(jsi::Runtime& rt, const jsi::Value& thisVal, const jsi::Value* args, size_t count) {
+        ffi_ankurah_rn_bindings_rust_future_poll_i64(uniffi_jsi::Bridging</*handle*/ uint64_t>::fromJs(rt, callInvoker, args[0]), uniffi::ankurah_rn_bindings::Bridging<UniffiRustFutureContinuationCallback>::fromJs(rt, callInvoker, args[1]), uniffi_jsi::Bridging</*handle*/ uint64_t>::fromJs(rt, callInvoker, args[2])
+        );
+
+        
+        return jsi::Value::undefined();
+}
+jsi::Value NativeAnkurahRnBindings::cpp_ffi_ankurah_rn_bindings_rust_future_cancel_i64(jsi::Runtime& rt, const jsi::Value& thisVal, const jsi::Value* args, size_t count) {
+        ffi_ankurah_rn_bindings_rust_future_cancel_i64(uniffi_jsi::Bridging</*handle*/ uint64_t>::fromJs(rt, callInvoker, args[0])
+        );
+
+        
+        return jsi::Value::undefined();
+}
+jsi::Value NativeAnkurahRnBindings::cpp_ffi_ankurah_rn_bindings_rust_future_free_i64(jsi::Runtime& rt, const jsi::Value& thisVal, const jsi::Value* args, size_t count) {
+        ffi_ankurah_rn_bindings_rust_future_free_i64(uniffi_jsi::Bridging</*handle*/ uint64_t>::fromJs(rt, callInvoker, args[0])
+        );
+
+        
+        return jsi::Value::undefined();
+}
+jsi::Value NativeAnkurahRnBindings::cpp_ffi_ankurah_rn_bindings_rust_future_complete_i64(jsi::Runtime& rt, const jsi::Value& thisVal, const jsi::Value* args, size_t count) {
+        RustCallStatus status = uniffi::ankurah_rn_bindings::Bridging<RustCallStatus>::rustSuccess(rt);
+        auto value = ffi_ankurah_rn_bindings_rust_future_complete_i64(uniffi_jsi::Bridging</*handle*/ uint64_t>::fromJs(rt, callInvoker, args[0]), 
+            &status
+        );
+        uniffi::ankurah_rn_bindings::Bridging<RustCallStatus>::copyIntoJs(rt, callInvoker, status, args[count - 1]);
+
+        
+        return uniffi_jsi::Bridging<int64_t>::toJs(rt, callInvoker, value);
+}
+jsi::Value NativeAnkurahRnBindings::cpp_ffi_ankurah_rn_bindings_rust_future_poll_f32(jsi::Runtime& rt, const jsi::Value& thisVal, const jsi::Value* args, size_t count) {
+        ffi_ankurah_rn_bindings_rust_future_poll_f32(uniffi_jsi::Bridging</*handle*/ uint64_t>::fromJs(rt, callInvoker, args[0]), uniffi::ankurah_rn_bindings::Bridging<UniffiRustFutureContinuationCallback>::fromJs(rt, callInvoker, args[1]), uniffi_jsi::Bridging</*handle*/ uint64_t>::fromJs(rt, callInvoker, args[2])
+        );
+
+        
+        return jsi::Value::undefined();
+}
+jsi::Value NativeAnkurahRnBindings::cpp_ffi_ankurah_rn_bindings_rust_future_cancel_f32(jsi::Runtime& rt, const jsi::Value& thisVal, const jsi::Value* args, size_t count) {
+        ffi_ankurah_rn_bindings_rust_future_cancel_f32(uniffi_jsi::Bridging</*handle*/ uint64_t>::fromJs(rt, callInvoker, args[0])
+        );
+
+        
+        return jsi::Value::undefined();
+}
+jsi::Value NativeAnkurahRnBindings::cpp_ffi_ankurah_rn_bindings_rust_future_free_f32(jsi::Runtime& rt, const jsi::Value& thisVal, const jsi::Value* args, size_t count) {
+        ffi_ankurah_rn_bindings_rust_future_free_f32(uniffi_jsi::Bridging</*handle*/ uint64_t>::fromJs(rt, callInvoker, args[0])
+        );
+
+        
+        return jsi::Value::undefined();
+}
+jsi::Value NativeAnkurahRnBindings::cpp_ffi_ankurah_rn_bindings_rust_future_complete_f32(jsi::Runtime& rt, const jsi::Value& thisVal, const jsi::Value* args, size_t count) {
+        RustCallStatus status = uniffi::ankurah_rn_bindings::Bridging<RustCallStatus>::rustSuccess(rt);
+        auto value = ffi_ankurah_rn_bindings_rust_future_complete_f32(uniffi_jsi::Bridging</*handle*/ uint64_t>::fromJs(rt, callInvoker, args[0]), 
+            &status
+        );
+        uniffi::ankurah_rn_bindings::Bridging<RustCallStatus>::copyIntoJs(rt, callInvoker, status, args[count - 1]);
+
+        
+        return uniffi_jsi::Bridging<float>::toJs(rt, callInvoker, value);
+}
+jsi::Value NativeAnkurahRnBindings::cpp_ffi_ankurah_rn_bindings_rust_future_poll_f64(jsi::Runtime& rt, const jsi::Value& thisVal, const jsi::Value* args, size_t count) {
+        ffi_ankurah_rn_bindings_rust_future_poll_f64(uniffi_jsi::Bridging</*handle*/ uint64_t>::fromJs(rt, callInvoker, args[0]), uniffi::ankurah_rn_bindings::Bridging<UniffiRustFutureContinuationCallback>::fromJs(rt, callInvoker, args[1]), uniffi_jsi::Bridging</*handle*/ uint64_t>::fromJs(rt, callInvoker, args[2])
+        );
+
+        
+        return jsi::Value::undefined();
+}
+jsi::Value NativeAnkurahRnBindings::cpp_ffi_ankurah_rn_bindings_rust_future_cancel_f64(jsi::Runtime& rt, const jsi::Value& thisVal, const jsi::Value* args, size_t count) {
+        ffi_ankurah_rn_bindings_rust_future_cancel_f64(uniffi_jsi::Bridging</*handle*/ uint64_t>::fromJs(rt, callInvoker, args[0])
+        );
+
+        
+        return jsi::Value::undefined();
+}
+jsi::Value NativeAnkurahRnBindings::cpp_ffi_ankurah_rn_bindings_rust_future_free_f64(jsi::Runtime& rt, const jsi::Value& thisVal, const jsi::Value* args, size_t count) {
+        ffi_ankurah_rn_bindings_rust_future_free_f64(uniffi_jsi::Bridging</*handle*/ uint64_t>::fromJs(rt, callInvoker, args[0])
+        );
+
+        
+        return jsi::Value::undefined();
+}
+jsi::Value NativeAnkurahRnBindings::cpp_ffi_ankurah_rn_bindings_rust_future_complete_f64(jsi::Runtime& rt, const jsi::Value& thisVal, const jsi::Value* args, size_t count) {
+        RustCallStatus status = uniffi::ankurah_rn_bindings::Bridging<RustCallStatus>::rustSuccess(rt);
+        auto value = ffi_ankurah_rn_bindings_rust_future_complete_f64(uniffi_jsi::Bridging</*handle*/ uint64_t>::fromJs(rt, callInvoker, args[0]), 
+            &status
+        );
+        uniffi::ankurah_rn_bindings::Bridging<RustCallStatus>::copyIntoJs(rt, callInvoker, status, args[count - 1]);
+
+        
+        return uniffi_jsi::Bridging<double>::toJs(rt, callInvoker, value);
+}
+jsi::Value NativeAnkurahRnBindings::cpp_ffi_ankurah_rn_bindings_rust_future_poll_pointer(jsi::Runtime& rt, const jsi::Value& thisVal, const jsi::Value* args, size_t count) {
+        ffi_ankurah_rn_bindings_rust_future_poll_pointer(uniffi_jsi::Bridging</*handle*/ uint64_t>::fromJs(rt, callInvoker, args[0]), uniffi::ankurah_rn_bindings::Bridging<UniffiRustFutureContinuationCallback>::fromJs(rt, callInvoker, args[1]), uniffi_jsi::Bridging</*handle*/ uint64_t>::fromJs(rt, callInvoker, args[2])
+        );
+
+        
+        return jsi::Value::undefined();
+}
+jsi::Value NativeAnkurahRnBindings::cpp_ffi_ankurah_rn_bindings_rust_future_cancel_pointer(jsi::Runtime& rt, const jsi::Value& thisVal, const jsi::Value* args, size_t count) {
+        ffi_ankurah_rn_bindings_rust_future_cancel_pointer(uniffi_jsi::Bridging</*handle*/ uint64_t>::fromJs(rt, callInvoker, args[0])
+        );
+
+        
+        return jsi::Value::undefined();
+}
+jsi::Value NativeAnkurahRnBindings::cpp_ffi_ankurah_rn_bindings_rust_future_free_pointer(jsi::Runtime& rt, const jsi::Value& thisVal, const jsi::Value* args, size_t count) {
+        ffi_ankurah_rn_bindings_rust_future_free_pointer(uniffi_jsi::Bridging</*handle*/ uint64_t>::fromJs(rt, callInvoker, args[0])
+        );
+
+        
+        return jsi::Value::undefined();
+}
+jsi::Value NativeAnkurahRnBindings::cpp_ffi_ankurah_rn_bindings_rust_future_complete_pointer(jsi::Runtime& rt, const jsi::Value& thisVal, const jsi::Value* args, size_t count) {
+        RustCallStatus status = uniffi::ankurah_rn_bindings::Bridging<RustCallStatus>::rustSuccess(rt);
+        auto value = ffi_ankurah_rn_bindings_rust_future_complete_pointer(uniffi_jsi::Bridging</*handle*/ uint64_t>::fromJs(rt, callInvoker, args[0]), 
+            &status
+        );
+        uniffi::ankurah_rn_bindings::Bridging<RustCallStatus>::copyIntoJs(rt, callInvoker, status, args[count - 1]);
+
+        
+        return uniffi_jsi::Bridging<void *>::toJs(rt, callInvoker, value);
+}
+jsi::Value NativeAnkurahRnBindings::cpp_ffi_ankurah_rn_bindings_rust_future_poll_rust_buffer(jsi::Runtime& rt, const jsi::Value& thisVal, const jsi::Value* args, size_t count) {
+        ffi_ankurah_rn_bindings_rust_future_poll_rust_buffer(uniffi_jsi::Bridging</*handle*/ uint64_t>::fromJs(rt, callInvoker, args[0]), uniffi::ankurah_rn_bindings::Bridging<UniffiRustFutureContinuationCallback>::fromJs(rt, callInvoker, args[1]), uniffi_jsi::Bridging</*handle*/ uint64_t>::fromJs(rt, callInvoker, args[2])
+        );
+
+        
+        return jsi::Value::undefined();
+}
+jsi::Value NativeAnkurahRnBindings::cpp_ffi_ankurah_rn_bindings_rust_future_cancel_rust_buffer(jsi::Runtime& rt, const jsi::Value& thisVal, const jsi::Value* args, size_t count) {
+        ffi_ankurah_rn_bindings_rust_future_cancel_rust_buffer(uniffi_jsi::Bridging</*handle*/ uint64_t>::fromJs(rt, callInvoker, args[0])
+        );
+
+        
+        return jsi::Value::undefined();
+}
+jsi::Value NativeAnkurahRnBindings::cpp_ffi_ankurah_rn_bindings_rust_future_free_rust_buffer(jsi::Runtime& rt, const jsi::Value& thisVal, const jsi::Value* args, size_t count) {
+        ffi_ankurah_rn_bindings_rust_future_free_rust_buffer(uniffi_jsi::Bridging</*handle*/ uint64_t>::fromJs(rt, callInvoker, args[0])
+        );
+
+        
+        return jsi::Value::undefined();
+}
+jsi::Value NativeAnkurahRnBindings::cpp_ffi_ankurah_rn_bindings_rust_future_complete_rust_buffer(jsi::Runtime& rt, const jsi::Value& thisVal, const jsi::Value* args, size_t count) {
+        RustCallStatus status = uniffi::ankurah_rn_bindings::Bridging<RustCallStatus>::rustSuccess(rt);
+        auto value = ffi_ankurah_rn_bindings_rust_future_complete_rust_buffer(uniffi_jsi::Bridging</*handle*/ uint64_t>::fromJs(rt, callInvoker, args[0]), 
+            &status
+        );
+        uniffi::ankurah_rn_bindings::Bridging<RustCallStatus>::copyIntoJs(rt, callInvoker, status, args[count - 1]);
+
+        
+        return uniffi::ankurah_rn_bindings::Bridging<RustBuffer>::toJs(rt, callInvoker, value);
+}
+jsi::Value NativeAnkurahRnBindings::cpp_ffi_ankurah_rn_bindings_rust_future_poll_void(jsi::Runtime& rt, const jsi::Value& thisVal, const jsi::Value* args, size_t count) {
+        ffi_ankurah_rn_bindings_rust_future_poll_void(uniffi_jsi::Bridging</*handle*/ uint64_t>::fromJs(rt, callInvoker, args[0]), uniffi::ankurah_rn_bindings::Bridging<UniffiRustFutureContinuationCallback>::fromJs(rt, callInvoker, args[1]), uniffi_jsi::Bridging</*handle*/ uint64_t>::fromJs(rt, callInvoker, args[2])
+        );
+
+        
+        return jsi::Value::undefined();
+}
+jsi::Value NativeAnkurahRnBindings::cpp_ffi_ankurah_rn_bindings_rust_future_cancel_void(jsi::Runtime& rt, const jsi::Value& thisVal, const jsi::Value* args, size_t count) {
+        ffi_ankurah_rn_bindings_rust_future_cancel_void(uniffi_jsi::Bridging</*handle*/ uint64_t>::fromJs(rt, callInvoker, args[0])
+        );
+
+        
+        return jsi::Value::undefined();
+}
+jsi::Value NativeAnkurahRnBindings::cpp_ffi_ankurah_rn_bindings_rust_future_free_void(jsi::Runtime& rt, const jsi::Value& thisVal, const jsi::Value* args, size_t count) {
+        ffi_ankurah_rn_bindings_rust_future_free_void(uniffi_jsi::Bridging</*handle*/ uint64_t>::fromJs(rt, callInvoker, args[0])
+        );
+
+        
+        return jsi::Value::undefined();
+}
+jsi::Value NativeAnkurahRnBindings::cpp_ffi_ankurah_rn_bindings_rust_future_complete_void(jsi::Runtime& rt, const jsi::Value& thisVal, const jsi::Value* args, size_t count) {
+        RustCallStatus status = uniffi::ankurah_rn_bindings::Bridging<RustCallStatus>::rustSuccess(rt);
+        ffi_ankurah_rn_bindings_rust_future_complete_void(uniffi_jsi::Bridging</*handle*/ uint64_t>::fromJs(rt, callInvoker, args[0]), 
+            &status
+        );
+        uniffi::ankurah_rn_bindings::Bridging<RustCallStatus>::copyIntoJs(rt, callInvoker, status, args[count - 1]);
+
+        
+        return jsi::Value::undefined();
+}
 jsi::Value NativeAnkurahRnBindings::cpp_uniffi_ankurah_rn_bindings_checksum_func_greet(jsi::Runtime& rt, const jsi::Value& thisVal, const jsi::Value* args, size_t count) {
         auto value = uniffi_ankurah_rn_bindings_checksum_func_greet(
+        );
+
+        
+        return uniffi_jsi::Bridging<uint16_t>::toJs(rt, callInvoker, value);
+}
+jsi::Value NativeAnkurahRnBindings::cpp_uniffi_ankurah_rn_bindings_checksum_func_greet_async(jsi::Runtime& rt, const jsi::Value& thisVal, const jsi::Value* args, size_t count) {
+        auto value = uniffi_ankurah_rn_bindings_checksum_func_greet_async(
         );
 
         

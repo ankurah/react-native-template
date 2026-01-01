@@ -32,10 +32,12 @@ import nativeModule, {
 } from './ankurah_rn_bindings-ffi';
 import {
   type UniffiByteArray,
+  FfiConverterUInt64,
   RustBuffer,
   UniffiInternalError,
   UniffiRustCaller,
   uniffiCreateFfiConverterString,
+  uniffiRustCallAsync,
 } from 'uniffi-bindgen-react-native';
 
 // Get converters from the other files, if any.
@@ -64,6 +66,44 @@ export function greet(name: string): string {
       /*liftString:*/ FfiConverterString.lift,
     ),
   );
+}
+/**
+ * Async function to verify promises work across FFI
+ * Note: UniFFI async uses its own executor, so we just use std::thread::sleep
+ */
+export async function greetAsync(
+  name: string,
+  delayMs: /*u64*/ bigint,
+  asyncOpts_?: { signal: AbortSignal },
+): Promise<string> {
+  const __stack = uniffiIsDebug ? new Error().stack : undefined;
+  try {
+    return await uniffiRustCallAsync(
+      /*rustCaller:*/ uniffiCaller,
+      /*rustFutureFunc:*/ () => {
+        return nativeModule().ubrn_uniffi_ankurah_rn_bindings_fn_func_greet_async(
+          FfiConverterString.lower(name),
+          FfiConverterUInt64.lower(delayMs),
+        );
+      },
+      /*pollFunc:*/ nativeModule()
+        .ubrn_ffi_ankurah_rn_bindings_rust_future_poll_rust_buffer,
+      /*cancelFunc:*/ nativeModule()
+        .ubrn_ffi_ankurah_rn_bindings_rust_future_cancel_rust_buffer,
+      /*completeFunc:*/ nativeModule()
+        .ubrn_ffi_ankurah_rn_bindings_rust_future_complete_rust_buffer,
+      /*freeFunc:*/ nativeModule()
+        .ubrn_ffi_ankurah_rn_bindings_rust_future_free_rust_buffer,
+      /*liftFunc:*/ FfiConverterString.lift.bind(FfiConverterString),
+      /*liftString:*/ FfiConverterString.lift,
+      /*asyncOpts:*/ asyncOpts_,
+    );
+  } catch (__error: any) {
+    if (uniffiIsDebug && __error instanceof Error) {
+      __error.stack = __stack;
+    }
+    throw __error;
+  }
 }
 
 const stringConverter = {
@@ -119,6 +159,14 @@ function uniffiEnsureInitialized() {
   ) {
     throw new UniffiInternalError.ApiChecksumMismatch(
       'uniffi_ankurah_rn_bindings_checksum_func_greet',
+    );
+  }
+  if (
+    nativeModule().ubrn_uniffi_ankurah_rn_bindings_checksum_func_greet_async() !==
+    47028
+  ) {
+    throw new UniffiInternalError.ApiChecksumMismatch(
+      'uniffi_ankurah_rn_bindings_checksum_func_greet_async',
     );
   }
 }
