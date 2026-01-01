@@ -29,15 +29,32 @@ import nativeModule, {
   type UniffiForeignFutureCompleteRustBuffer,
   type UniffiForeignFutureStructVoid,
   type UniffiForeignFutureCompleteVoid,
+  type UniffiVTableCallbackInterfaceCounterCallback,
 } from './ankurah_rn_bindings-ffi';
 import {
+  type FfiConverter,
   type UniffiByteArray,
+  type UniffiHandle,
+  type UniffiObjectFactory,
+  type UniffiReferenceHolder,
+  type UniffiRustArcPtr,
+  type UniffiRustCallStatus,
+  type UnsafeMutableRawPointer,
+  FfiConverterCallback,
+  FfiConverterObject,
+  FfiConverterUInt32,
   FfiConverterUInt64,
   RustBuffer,
+  UniffiAbstractObject,
   UniffiInternalError,
+  UniffiResult,
   UniffiRustCaller,
+  destructorGuardSymbol,
+  pointerLiteralSymbol,
   uniffiCreateFfiConverterString,
   uniffiRustCallAsync,
+  uniffiTraitInterfaceCall,
+  uniffiTypeNameSymbol,
 } from 'uniffi-bindgen-react-native';
 
 // Get converters from the other files, if any.
@@ -69,7 +86,6 @@ export function greet(name: string): string {
 }
 /**
  * Async function to verify promises work across FFI
- * Note: UniFFI async uses its own executor, so we just use std::thread::sleep
  */
 export async function greetAsync(
   name: string,
@@ -106,6 +122,55 @@ export async function greetAsync(
   }
 }
 
+/**
+ * Callback interface - JS implements this, Rust calls it
+ */
+export interface CounterCallback {
+  onUpdate(count: /*u32*/ number): void;
+}
+
+// Put the implementation in a struct so we don't pollute the top-level namespace
+const uniffiCallbackInterfaceCounterCallback: {
+  vtable: UniffiVTableCallbackInterfaceCounterCallback;
+  register: () => void;
+} = {
+  // Create the VTable using a series of closures.
+  // ts automatically converts these into C callback functions.
+  vtable: {
+    onUpdate: (uniffiHandle: bigint, count: number) => {
+      const uniffiMakeCall = (): void => {
+        const jsCallback = FfiConverterTypeCounterCallback.lift(uniffiHandle);
+        return jsCallback.onUpdate(FfiConverterUInt32.lift(count));
+      };
+      const uniffiResult = UniffiResult.ready<void>();
+      const uniffiHandleSuccess = (obj: any) => {};
+      const uniffiHandleError = (code: number, errBuf: UniffiByteArray) => {
+        UniffiResult.writeError(uniffiResult, code, errBuf);
+      };
+      uniffiTraitInterfaceCall(
+        /*makeCall:*/ uniffiMakeCall,
+        /*handleSuccess:*/ uniffiHandleSuccess,
+        /*handleError:*/ uniffiHandleError,
+        /*lowerString:*/ FfiConverterString.lower,
+      );
+      return uniffiResult;
+    },
+    uniffiFree: (uniffiHandle: UniffiHandle): void => {
+      // CounterCallback: this will throw a stale handle error if the handle isn't found.
+      FfiConverterTypeCounterCallback.drop(uniffiHandle);
+    },
+  },
+  register: () => {
+    nativeModule().ubrn_uniffi_ankurah_rn_bindings_fn_init_callback_vtable_countercallback(
+      uniffiCallbackInterfaceCounterCallback.vtable,
+    );
+  },
+};
+
+// FfiConverter protocol for callback interfaces
+const FfiConverterTypeCounterCallback =
+  new FfiConverterCallback<CounterCallback>();
+
 const stringConverter = {
   stringToBytes: (s: string) =>
     uniffiCaller.rustCall(status =>
@@ -130,6 +195,169 @@ const stringConverter = {
     ),
 };
 const FfiConverterString = uniffiCreateFfiConverterString(stringConverter);
+
+/**
+ * Counter object that calls back to JS on each increment
+ */
+export interface CounterInterface {
+  get(): /*u32*/ number;
+  increment(): /*u32*/ number;
+  /**
+   * Set the callback after construction
+   */
+  setCallback(callback: CounterCallback): void;
+}
+
+/**
+ * Counter object that calls back to JS on each increment
+ */
+export class Counter extends UniffiAbstractObject implements CounterInterface {
+  readonly [uniffiTypeNameSymbol] = 'Counter';
+  readonly [destructorGuardSymbol]: UniffiRustArcPtr;
+  readonly [pointerLiteralSymbol]: UnsafeMutableRawPointer;
+  constructor() {
+    super();
+    const pointer = uniffiCaller.rustCall(
+      /*caller:*/ callStatus => {
+        return nativeModule().ubrn_uniffi_ankurah_rn_bindings_fn_constructor_counter_new(
+          callStatus,
+        );
+      },
+      /*liftString:*/ FfiConverterString.lift,
+    );
+    this[pointerLiteralSymbol] = pointer;
+    this[destructorGuardSymbol] = uniffiTypeCounterObjectFactory.bless(pointer);
+  }
+
+  public get(): /*u32*/ number {
+    return FfiConverterUInt32.lift(
+      uniffiCaller.rustCall(
+        /*caller:*/ callStatus => {
+          return nativeModule().ubrn_uniffi_ankurah_rn_bindings_fn_method_counter_get(
+            uniffiTypeCounterObjectFactory.clonePointer(this),
+            callStatus,
+          );
+        },
+        /*liftString:*/ FfiConverterString.lift,
+      ),
+    );
+  }
+
+  public increment(): /*u32*/ number {
+    return FfiConverterUInt32.lift(
+      uniffiCaller.rustCall(
+        /*caller:*/ callStatus => {
+          return nativeModule().ubrn_uniffi_ankurah_rn_bindings_fn_method_counter_increment(
+            uniffiTypeCounterObjectFactory.clonePointer(this),
+            callStatus,
+          );
+        },
+        /*liftString:*/ FfiConverterString.lift,
+      ),
+    );
+  }
+
+  /**
+   * Set the callback after construction
+   */
+  public setCallback(callback: CounterCallback): void {
+    uniffiCaller.rustCall(
+      /*caller:*/ callStatus => {
+        nativeModule().ubrn_uniffi_ankurah_rn_bindings_fn_method_counter_set_callback(
+          uniffiTypeCounterObjectFactory.clonePointer(this),
+          FfiConverterTypeCounterCallback.lower(callback),
+          callStatus,
+        );
+      },
+      /*liftString:*/ FfiConverterString.lift,
+    );
+  }
+
+  /**
+   * {@inheritDoc uniffi-bindgen-react-native#UniffiAbstractObject.uniffiDestroy}
+   */
+  uniffiDestroy(): void {
+    const ptr = (this as any)[destructorGuardSymbol];
+    if (ptr !== undefined) {
+      const pointer = uniffiTypeCounterObjectFactory.pointer(this);
+      uniffiTypeCounterObjectFactory.freePointer(pointer);
+      uniffiTypeCounterObjectFactory.unbless(ptr);
+      delete (this as any)[destructorGuardSymbol];
+    }
+  }
+
+  static instanceOf(obj: any): obj is Counter {
+    return uniffiTypeCounterObjectFactory.isConcreteType(obj);
+  }
+}
+
+const uniffiTypeCounterObjectFactory: UniffiObjectFactory<CounterInterface> =
+  (() => {
+    return {
+      create(pointer: UnsafeMutableRawPointer): CounterInterface {
+        const instance = Object.create(Counter.prototype);
+        instance[pointerLiteralSymbol] = pointer;
+        instance[destructorGuardSymbol] = this.bless(pointer);
+        instance[uniffiTypeNameSymbol] = 'Counter';
+        return instance;
+      },
+
+      bless(p: UnsafeMutableRawPointer): UniffiRustArcPtr {
+        return uniffiCaller.rustCall(
+          /*caller:*/ status =>
+            nativeModule().ubrn_uniffi_internal_fn_method_counter_ffi__bless_pointer(
+              p,
+              status,
+            ),
+          /*liftString:*/ FfiConverterString.lift,
+        );
+      },
+
+      unbless(ptr: UniffiRustArcPtr) {
+        ptr.markDestroyed();
+      },
+
+      pointer(obj: CounterInterface): UnsafeMutableRawPointer {
+        if ((obj as any)[destructorGuardSymbol] === undefined) {
+          throw new UniffiInternalError.UnexpectedNullPointer();
+        }
+        return (obj as any)[pointerLiteralSymbol];
+      },
+
+      clonePointer(obj: CounterInterface): UnsafeMutableRawPointer {
+        const pointer = this.pointer(obj);
+        return uniffiCaller.rustCall(
+          /*caller:*/ callStatus =>
+            nativeModule().ubrn_uniffi_ankurah_rn_bindings_fn_clone_counter(
+              pointer,
+              callStatus,
+            ),
+          /*liftString:*/ FfiConverterString.lift,
+        );
+      },
+
+      freePointer(pointer: UnsafeMutableRawPointer): void {
+        uniffiCaller.rustCall(
+          /*caller:*/ callStatus =>
+            nativeModule().ubrn_uniffi_ankurah_rn_bindings_fn_free_counter(
+              pointer,
+              callStatus,
+            ),
+          /*liftString:*/ FfiConverterString.lift,
+        );
+      },
+
+      isConcreteType(obj: any): obj is CounterInterface {
+        return (
+          obj[destructorGuardSymbol] && obj[uniffiTypeNameSymbol] === 'Counter'
+        );
+      },
+    };
+  })();
+// FfiConverter for CounterInterface
+const FfiConverterTypeCounter = new FfiConverterObject(
+  uniffiTypeCounterObjectFactory,
+);
 
 /**
  * This should be called before anything else.
@@ -163,14 +391,59 @@ function uniffiEnsureInitialized() {
   }
   if (
     nativeModule().ubrn_uniffi_ankurah_rn_bindings_checksum_func_greet_async() !==
-    47028
+    42141
   ) {
     throw new UniffiInternalError.ApiChecksumMismatch(
       'uniffi_ankurah_rn_bindings_checksum_func_greet_async',
     );
   }
+  if (
+    nativeModule().ubrn_uniffi_ankurah_rn_bindings_checksum_method_counter_get() !==
+    1235
+  ) {
+    throw new UniffiInternalError.ApiChecksumMismatch(
+      'uniffi_ankurah_rn_bindings_checksum_method_counter_get',
+    );
+  }
+  if (
+    nativeModule().ubrn_uniffi_ankurah_rn_bindings_checksum_method_counter_increment() !==
+    57291
+  ) {
+    throw new UniffiInternalError.ApiChecksumMismatch(
+      'uniffi_ankurah_rn_bindings_checksum_method_counter_increment',
+    );
+  }
+  if (
+    nativeModule().ubrn_uniffi_ankurah_rn_bindings_checksum_method_counter_set_callback() !==
+    16147
+  ) {
+    throw new UniffiInternalError.ApiChecksumMismatch(
+      'uniffi_ankurah_rn_bindings_checksum_method_counter_set_callback',
+    );
+  }
+  if (
+    nativeModule().ubrn_uniffi_ankurah_rn_bindings_checksum_constructor_counter_new() !==
+    39574
+  ) {
+    throw new UniffiInternalError.ApiChecksumMismatch(
+      'uniffi_ankurah_rn_bindings_checksum_constructor_counter_new',
+    );
+  }
+  if (
+    nativeModule().ubrn_uniffi_ankurah_rn_bindings_checksum_method_countercallback_on_update() !==
+    32332
+  ) {
+    throw new UniffiInternalError.ApiChecksumMismatch(
+      'uniffi_ankurah_rn_bindings_checksum_method_countercallback_on_update',
+    );
+  }
+
+  uniffiCallbackInterfaceCounterCallback.register();
 }
 
 export default Object.freeze({
   initialize: uniffiEnsureInitialized,
+  converters: {
+    FfiConverterTypeCounter,
+  },
 });

@@ -133,6 +133,41 @@ extern "C" {
     uint64_t callback_data, 
     UniffiForeignFutureStructVoid result
     );
+    typedef void
+    (*UniffiCallbackInterfaceCounterCallbackMethod0)(
+    uint64_t uniffi_handle, 
+    uint32_t count, 
+    void * uniffi_out_return, RustCallStatus* rust_call_status
+    );typedef struct UniffiVTableCallbackInterfaceCounterCallback {
+        UniffiCallbackInterfaceCounterCallbackMethod0 on_update;
+        UniffiCallbackInterfaceFree uniffi_free;
+    } UniffiVTableCallbackInterfaceCounterCallback;
+    void * uniffi_ankurah_rn_bindings_fn_clone_counter(
+        void * ptr, 
+        RustCallStatus *uniffi_out_err
+    );
+    void uniffi_ankurah_rn_bindings_fn_free_counter(
+        void * ptr, 
+        RustCallStatus *uniffi_out_err
+    );
+    void * uniffi_ankurah_rn_bindings_fn_constructor_counter_new(RustCallStatus *uniffi_out_err
+    );
+    uint32_t uniffi_ankurah_rn_bindings_fn_method_counter_get(
+        void * ptr, 
+        RustCallStatus *uniffi_out_err
+    );
+    uint32_t uniffi_ankurah_rn_bindings_fn_method_counter_increment(
+        void * ptr, 
+        RustCallStatus *uniffi_out_err
+    );
+    void uniffi_ankurah_rn_bindings_fn_method_counter_set_callback(
+        void * ptr, 
+        uint64_t callback, 
+        RustCallStatus *uniffi_out_err
+    );
+    void uniffi_ankurah_rn_bindings_fn_init_callback_vtable_countercallback(
+        UniffiVTableCallbackInterfaceCounterCallback * vtable
+    );
     RustBuffer uniffi_ankurah_rn_bindings_fn_func_greet(
         RustBuffer name, 
         RustCallStatus *uniffi_out_err
@@ -356,6 +391,16 @@ extern "C" {
     uint16_t uniffi_ankurah_rn_bindings_checksum_func_greet(
     );
     uint16_t uniffi_ankurah_rn_bindings_checksum_func_greet_async(
+    );
+    uint16_t uniffi_ankurah_rn_bindings_checksum_method_counter_get(
+    );
+    uint16_t uniffi_ankurah_rn_bindings_checksum_method_counter_increment(
+    );
+    uint16_t uniffi_ankurah_rn_bindings_checksum_method_counter_set_callback(
+    );
+    uint16_t uniffi_ankurah_rn_bindings_checksum_constructor_counter_new(
+    );
+    uint16_t uniffi_ankurah_rn_bindings_checksum_method_countercallback_on_update(
     );
     uint32_t ffi_ankurah_rn_bindings_uniffi_contract_version(
     );
@@ -854,6 +899,121 @@ namespace uniffi::ankurah_rn_bindings::st::foreignfuture::foreignfuture::free {
         rsLambda = nullptr;
     }
 } // namespace uniffi::ankurah_rn_bindings::st::foreignfuture::foreignfuture::free
+
+// Callback function: uniffi::ankurah_rn_bindings::st::vtablecallbackinterfacecountercallback::vtablecallbackinterfacecountercallback::free::UniffiCallbackInterfaceFree
+//
+// We have the following constraints:
+// - we need to pass a function pointer to Rust.
+// - we need a jsi::Runtime and jsi::Function to call into JS.
+// - function pointers can't store state, so we can't use a lamda.
+//
+// For this, we store a lambda as a global, as `rsLambda`. The `callback` function calls
+// the lambda, which itself calls the `body` which then calls into JS.
+//
+// We then give the `callback` function pointer to Rust which will call the lambda sometime in the
+// future.
+namespace uniffi::ankurah_rn_bindings::st::vtablecallbackinterfacecountercallback::vtablecallbackinterfacecountercallback::free {
+    using namespace facebook;
+
+    // We need to store a lambda in a global so we can call it from
+    // a function pointer. The function pointer is passed to Rust.
+    static std::function<void(uint64_t)> rsLambda = nullptr;
+
+    // This is the main body of the callback. It's called from the lambda,
+    // which itself is called from the callback function which is passed to Rust.
+    static void body(jsi::Runtime &rt,
+                     std::shared_ptr<uniffi_runtime::UniffiCallInvoker> callInvoker,
+                     std::shared_ptr<jsi::Value> callbackValue
+            ,uint64_t rs_handle) {
+
+        // Convert the arguments from Rust, into jsi::Values.
+        // We'll use the Bridging class to do this…
+        auto js_handle = uniffi_jsi::Bridging<uint64_t>::toJs(rt, callInvoker, rs_handle);
+
+        // Now we are ready to call the callback.
+        // We are already on the JS thread, because this `body` function was
+        // invoked from the CallInvoker.
+        try {
+            // Getting the callback function
+            auto cb = callbackValue->asObject(rt).asFunction(rt);
+            auto uniffiResult = cb.call(rt, js_handle
+            );
+
+            
+
+            
+        } catch (const jsi::JSError &error) {
+            std::cout << "Error in callback UniffiCallbackInterfaceFree: "
+                    << error.what() << std::endl;
+            throw error;
+        }
+    }
+
+    static void callback(uint64_t rs_handle) {
+        // If the runtime has shutdown, then there is no point in trying to
+        // call into Javascript. BUT how do we tell if the runtime has shutdown?
+        //
+        // Answer: the module destructor calls into callback `cleanup` method,
+        // which nulls out the rsLamda.
+        //
+        // If rsLamda is null, then there is no runtime to call into.
+        if (rsLambda == nullptr) {
+            // This only occurs when destructors are calling into Rust free/drop,
+            // which causes the JS callback to be dropped.
+            return;
+        }
+
+        // The runtime, the actual callback jsi::funtion, and the callInvoker
+        // are all in the lambda.
+        rsLambda(
+            rs_handle);
+    }
+
+    static UniffiCallbackInterfaceFree
+    makeCallbackFunction( // uniffi::ankurah_rn_bindings::st::vtablecallbackinterfacecountercallback::vtablecallbackinterfacecountercallback::free
+                    jsi::Runtime &rt,
+                     std::shared_ptr<uniffi_runtime::UniffiCallInvoker> callInvoker,
+                     const jsi::Value &value) {
+        if (rsLambda != nullptr) {
+            // `makeCallbackFunction` is called in two circumstances:
+            //
+            // 1. at startup, when initializing callback interface vtables.
+            // 2. when polling futures. This happens at least once per future that is
+            //    exposed to Javascript. We know that this is always the same function,
+            //    `uniffiFutureContinuationCallback` in `async-rust-calls.ts`.
+            //
+            // We can therefore return the callback function without making anything
+            // new if we've been initialized already.
+            return callback;
+        }
+        auto callbackFunction = value.asObject(rt).asFunction(rt);
+        auto callbackValue = std::make_shared<jsi::Value>(rt, callbackFunction);
+        rsLambda = [&rt, callInvoker, callbackValue](uint64_t rs_handle) {
+                // We immediately make a lambda which will do the work of transforming the
+                // arguments into JSI values and calling the callback.
+                uniffi_runtime::UniffiCallFunc jsLambda = [
+                    callInvoker,
+                    callbackValue
+                    , rs_handle](jsi::Runtime &rt) mutable {
+                    body(rt, callInvoker, callbackValue
+                        , rs_handle);
+                };
+                // We'll then call that lambda from the callInvoker which will
+                // look after calling it on the correct thread.
+                
+                callInvoker->invokeNonBlocking(rt, jsLambda);
+        };
+        return callback;
+    }
+
+    // This method is called from the destructor of NativeAnkurahRnBindings, which only happens
+    // when the jsi::Runtime is being destroyed.
+    static void cleanup() {
+        // The lambda holds a reference to the the Runtime, so when this is nulled out,
+        // then the pointer will no longer be left dangling.
+        rsLambda = nullptr;
+    }
+} // namespace uniffi::ankurah_rn_bindings::st::vtablecallbackinterfacecountercallback::vtablecallbackinterfacecountercallback::free
 namespace uniffi::ankurah_rn_bindings {
 using namespace facebook;
 using CallInvoker = uniffi_runtime::UniffiCallInvoker;
@@ -1846,6 +2006,169 @@ template <> struct Bridging<UniffiForeignFutureCompleteVoid> {
   }
 };
 } // namespace uniffi::ankurah_rn_bindings
+    // Implementation of callback function calling from Rust to JS CallbackInterfaceCounterCallbackMethod0
+
+// Callback function: uniffi::ankurah_rn_bindings::cb::callbackinterfacecountercallbackmethod0::UniffiCallbackInterfaceCounterCallbackMethod0
+//
+// We have the following constraints:
+// - we need to pass a function pointer to Rust.
+// - we need a jsi::Runtime and jsi::Function to call into JS.
+// - function pointers can't store state, so we can't use a lamda.
+//
+// For this, we store a lambda as a global, as `rsLambda`. The `callback` function calls
+// the lambda, which itself calls the `body` which then calls into JS.
+//
+// We then give the `callback` function pointer to Rust which will call the lambda sometime in the
+// future.
+namespace uniffi::ankurah_rn_bindings::cb::callbackinterfacecountercallbackmethod0 {
+    using namespace facebook;
+
+    // We need to store a lambda in a global so we can call it from
+    // a function pointer. The function pointer is passed to Rust.
+    static std::function<void(uint64_t, uint32_t, void *, RustCallStatus*)> rsLambda = nullptr;
+
+    // This is the main body of the callback. It's called from the lambda,
+    // which itself is called from the callback function which is passed to Rust.
+    static void body(jsi::Runtime &rt,
+                     std::shared_ptr<uniffi_runtime::UniffiCallInvoker> callInvoker,
+                     std::shared_ptr<jsi::Value> callbackValue
+            ,uint64_t rs_uniffiHandle
+            ,uint32_t rs_count
+            ,void * rs_uniffiOutReturn, RustCallStatus* uniffi_call_status) {
+
+        // Convert the arguments from Rust, into jsi::Values.
+        // We'll use the Bridging class to do this…
+        auto js_uniffiHandle = uniffi_jsi::Bridging<uint64_t>::toJs(rt, callInvoker, rs_uniffiHandle);
+        auto js_count = uniffi_jsi::Bridging<uint32_t>::toJs(rt, callInvoker, rs_count);
+
+        // Now we are ready to call the callback.
+        // We are already on the JS thread, because this `body` function was
+        // invoked from the CallInvoker.
+        try {
+            // Getting the callback function
+            auto cb = callbackValue->asObject(rt).asFunction(rt);
+            auto uniffiResult = cb.call(rt, js_uniffiHandle, js_count
+            );
+
+            // Now copy the result back from JS into the RustCallStatus object.
+            uniffi::ankurah_rn_bindings::Bridging<RustCallStatus>::copyFromJs(rt, callInvoker, uniffiResult, uniffi_call_status);
+
+            if (uniffi_call_status->code != UNIFFI_CALL_STATUS_OK) {
+                // The JS callback finished abnormally, so we cannot retrieve the return value.
+                return;
+            }
+
+            
+        } catch (const jsi::JSError &error) {
+            std::cout << "Error in callback UniffiCallbackInterfaceCounterCallbackMethod0: "
+                    << error.what() << std::endl;
+            throw error;
+        }
+    }
+
+    static void callback(uint64_t rs_uniffiHandle, uint32_t rs_count, void * rs_uniffiOutReturn, RustCallStatus* uniffi_call_status) {
+        // If the runtime has shutdown, then there is no point in trying to
+        // call into Javascript. BUT how do we tell if the runtime has shutdown?
+        //
+        // Answer: the module destructor calls into callback `cleanup` method,
+        // which nulls out the rsLamda.
+        //
+        // If rsLamda is null, then there is no runtime to call into.
+        if (rsLambda == nullptr) {
+            // This only occurs when destructors are calling into Rust free/drop,
+            // which causes the JS callback to be dropped.
+            return;
+        }
+
+        // The runtime, the actual callback jsi::funtion, and the callInvoker
+        // are all in the lambda.
+        rsLambda(
+            rs_uniffiHandle, 
+            rs_count, 
+            rs_uniffiOutReturn, uniffi_call_status);
+    }
+
+    static UniffiCallbackInterfaceCounterCallbackMethod0
+    makeCallbackFunction( // uniffi::ankurah_rn_bindings::cb::callbackinterfacecountercallbackmethod0
+                    jsi::Runtime &rt,
+                     std::shared_ptr<uniffi_runtime::UniffiCallInvoker> callInvoker,
+                     const jsi::Value &value) {
+        if (rsLambda != nullptr) {
+            // `makeCallbackFunction` is called in two circumstances:
+            //
+            // 1. at startup, when initializing callback interface vtables.
+            // 2. when polling futures. This happens at least once per future that is
+            //    exposed to Javascript. We know that this is always the same function,
+            //    `uniffiFutureContinuationCallback` in `async-rust-calls.ts`.
+            //
+            // We can therefore return the callback function without making anything
+            // new if we've been initialized already.
+            return callback;
+        }
+        auto callbackFunction = value.asObject(rt).asFunction(rt);
+        auto callbackValue = std::make_shared<jsi::Value>(rt, callbackFunction);
+        rsLambda = [&rt, callInvoker, callbackValue](uint64_t rs_uniffiHandle, uint32_t rs_count, void * rs_uniffiOutReturn, RustCallStatus* uniffi_call_status) {
+                // We immediately make a lambda which will do the work of transforming the
+                // arguments into JSI values and calling the callback.
+                uniffi_runtime::UniffiCallFunc jsLambda = [
+                    callInvoker,
+                    callbackValue
+                    , rs_uniffiHandle
+                    , rs_count
+                    , rs_uniffiOutReturn, uniffi_call_status](jsi::Runtime &rt) mutable {
+                    body(rt, callInvoker, callbackValue
+                        , rs_uniffiHandle
+                        , rs_count
+                        , rs_uniffiOutReturn, uniffi_call_status);
+                };
+                // We'll then call that lambda from the callInvoker which will
+                // look after calling it on the correct thread.
+                callInvoker->invokeBlocking(rt, jsLambda);
+        };
+        return callback;
+    }
+
+    // This method is called from the destructor of NativeAnkurahRnBindings, which only happens
+    // when the jsi::Runtime is being destroyed.
+    static void cleanup() {
+        // The lambda holds a reference to the the Runtime, so when this is nulled out,
+        // then the pointer will no longer be left dangling.
+        rsLambda = nullptr;
+    }
+} // namespace uniffi::ankurah_rn_bindings::cb::callbackinterfacecountercallbackmethod0
+namespace uniffi::ankurah_rn_bindings {
+using namespace facebook;
+using CallInvoker = uniffi_runtime::UniffiCallInvoker;
+
+template <> struct Bridging<UniffiVTableCallbackInterfaceCounterCallback> {
+  static UniffiVTableCallbackInterfaceCounterCallback fromJs(jsi::Runtime &rt,
+    std::shared_ptr<CallInvoker> callInvoker,
+    const jsi::Value &jsValue
+  ) {
+    // Check if the input is an object
+    if (!jsValue.isObject()) {
+      throw jsi::JSError(rt, "Expected an object for UniffiVTableCallbackInterfaceCounterCallback");
+    }
+
+    // Get the object from the jsi::Value
+    auto jsObject = jsValue.getObject(rt);
+
+    // Create the vtable struct
+    UniffiVTableCallbackInterfaceCounterCallback rsObject;
+
+    // Create the vtable from the js callbacks.
+    rsObject.on_update = uniffi::ankurah_rn_bindings::cb::callbackinterfacecountercallbackmethod0::makeCallbackFunction(
+          rt, callInvoker, jsObject.getProperty(rt, "onUpdate")
+        );
+    rsObject.uniffi_free = uniffi::ankurah_rn_bindings::st::vtablecallbackinterfacecountercallback::vtablecallbackinterfacecountercallback::free::makeCallbackFunction(
+          rt, callInvoker, jsObject.getProperty(rt, "uniffiFree")
+        );
+
+    return rsObject;
+  }
+};
+
+} // namespace uniffi::ankurah_rn_bindings
 
 
 namespace uniffi::ankurah_rn_bindings {
@@ -1899,6 +2222,62 @@ NativeAnkurahRnBindings::NativeAnkurahRnBindings(
         1,
         [this](jsi::Runtime &rt, const jsi::Value &thisVal, const jsi::Value *args, size_t count) -> jsi::Value {
             return this->cpp_uniffi_internal_fn_func_ffi__arraybuffer_to_string(rt, thisVal, args, count);
+        }
+    );
+    props["ubrn_uniffi_ankurah_rn_bindings_fn_clone_counter"] = jsi::Function::createFromHostFunction(
+        rt,
+        jsi::PropNameID::forAscii(rt, "ubrn_uniffi_ankurah_rn_bindings_fn_clone_counter"),
+        1,
+        [this](jsi::Runtime &rt, const jsi::Value &thisVal, const jsi::Value *args, size_t count) -> jsi::Value {
+            return this->cpp_uniffi_ankurah_rn_bindings_fn_clone_counter(rt, thisVal, args, count);
+        }
+    );
+    props["ubrn_uniffi_ankurah_rn_bindings_fn_free_counter"] = jsi::Function::createFromHostFunction(
+        rt,
+        jsi::PropNameID::forAscii(rt, "ubrn_uniffi_ankurah_rn_bindings_fn_free_counter"),
+        1,
+        [this](jsi::Runtime &rt, const jsi::Value &thisVal, const jsi::Value *args, size_t count) -> jsi::Value {
+            return this->cpp_uniffi_ankurah_rn_bindings_fn_free_counter(rt, thisVal, args, count);
+        }
+    );
+    props["ubrn_uniffi_ankurah_rn_bindings_fn_constructor_counter_new"] = jsi::Function::createFromHostFunction(
+        rt,
+        jsi::PropNameID::forAscii(rt, "ubrn_uniffi_ankurah_rn_bindings_fn_constructor_counter_new"),
+        0,
+        [this](jsi::Runtime &rt, const jsi::Value &thisVal, const jsi::Value *args, size_t count) -> jsi::Value {
+            return this->cpp_uniffi_ankurah_rn_bindings_fn_constructor_counter_new(rt, thisVal, args, count);
+        }
+    );
+    props["ubrn_uniffi_ankurah_rn_bindings_fn_method_counter_get"] = jsi::Function::createFromHostFunction(
+        rt,
+        jsi::PropNameID::forAscii(rt, "ubrn_uniffi_ankurah_rn_bindings_fn_method_counter_get"),
+        1,
+        [this](jsi::Runtime &rt, const jsi::Value &thisVal, const jsi::Value *args, size_t count) -> jsi::Value {
+            return this->cpp_uniffi_ankurah_rn_bindings_fn_method_counter_get(rt, thisVal, args, count);
+        }
+    );
+    props["ubrn_uniffi_ankurah_rn_bindings_fn_method_counter_increment"] = jsi::Function::createFromHostFunction(
+        rt,
+        jsi::PropNameID::forAscii(rt, "ubrn_uniffi_ankurah_rn_bindings_fn_method_counter_increment"),
+        1,
+        [this](jsi::Runtime &rt, const jsi::Value &thisVal, const jsi::Value *args, size_t count) -> jsi::Value {
+            return this->cpp_uniffi_ankurah_rn_bindings_fn_method_counter_increment(rt, thisVal, args, count);
+        }
+    );
+    props["ubrn_uniffi_ankurah_rn_bindings_fn_method_counter_set_callback"] = jsi::Function::createFromHostFunction(
+        rt,
+        jsi::PropNameID::forAscii(rt, "ubrn_uniffi_ankurah_rn_bindings_fn_method_counter_set_callback"),
+        2,
+        [this](jsi::Runtime &rt, const jsi::Value &thisVal, const jsi::Value *args, size_t count) -> jsi::Value {
+            return this->cpp_uniffi_ankurah_rn_bindings_fn_method_counter_set_callback(rt, thisVal, args, count);
+        }
+    );
+    props["ubrn_uniffi_ankurah_rn_bindings_fn_init_callback_vtable_countercallback"] = jsi::Function::createFromHostFunction(
+        rt,
+        jsi::PropNameID::forAscii(rt, "ubrn_uniffi_ankurah_rn_bindings_fn_init_callback_vtable_countercallback"),
+        1,
+        [this](jsi::Runtime &rt, const jsi::Value &thisVal, const jsi::Value *args, size_t count) -> jsi::Value {
+            return this->cpp_uniffi_ankurah_rn_bindings_fn_init_callback_vtable_countercallback(rt, thisVal, args, count);
         }
     );
     props["ubrn_uniffi_ankurah_rn_bindings_fn_func_greet"] = jsi::Function::createFromHostFunction(
@@ -2349,12 +2728,60 @@ NativeAnkurahRnBindings::NativeAnkurahRnBindings(
             return this->cpp_uniffi_ankurah_rn_bindings_checksum_func_greet_async(rt, thisVal, args, count);
         }
     );
+    props["ubrn_uniffi_ankurah_rn_bindings_checksum_method_counter_get"] = jsi::Function::createFromHostFunction(
+        rt,
+        jsi::PropNameID::forAscii(rt, "ubrn_uniffi_ankurah_rn_bindings_checksum_method_counter_get"),
+        0,
+        [this](jsi::Runtime &rt, const jsi::Value &thisVal, const jsi::Value *args, size_t count) -> jsi::Value {
+            return this->cpp_uniffi_ankurah_rn_bindings_checksum_method_counter_get(rt, thisVal, args, count);
+        }
+    );
+    props["ubrn_uniffi_ankurah_rn_bindings_checksum_method_counter_increment"] = jsi::Function::createFromHostFunction(
+        rt,
+        jsi::PropNameID::forAscii(rt, "ubrn_uniffi_ankurah_rn_bindings_checksum_method_counter_increment"),
+        0,
+        [this](jsi::Runtime &rt, const jsi::Value &thisVal, const jsi::Value *args, size_t count) -> jsi::Value {
+            return this->cpp_uniffi_ankurah_rn_bindings_checksum_method_counter_increment(rt, thisVal, args, count);
+        }
+    );
+    props["ubrn_uniffi_ankurah_rn_bindings_checksum_method_counter_set_callback"] = jsi::Function::createFromHostFunction(
+        rt,
+        jsi::PropNameID::forAscii(rt, "ubrn_uniffi_ankurah_rn_bindings_checksum_method_counter_set_callback"),
+        0,
+        [this](jsi::Runtime &rt, const jsi::Value &thisVal, const jsi::Value *args, size_t count) -> jsi::Value {
+            return this->cpp_uniffi_ankurah_rn_bindings_checksum_method_counter_set_callback(rt, thisVal, args, count);
+        }
+    );
+    props["ubrn_uniffi_ankurah_rn_bindings_checksum_constructor_counter_new"] = jsi::Function::createFromHostFunction(
+        rt,
+        jsi::PropNameID::forAscii(rt, "ubrn_uniffi_ankurah_rn_bindings_checksum_constructor_counter_new"),
+        0,
+        [this](jsi::Runtime &rt, const jsi::Value &thisVal, const jsi::Value *args, size_t count) -> jsi::Value {
+            return this->cpp_uniffi_ankurah_rn_bindings_checksum_constructor_counter_new(rt, thisVal, args, count);
+        }
+    );
+    props["ubrn_uniffi_ankurah_rn_bindings_checksum_method_countercallback_on_update"] = jsi::Function::createFromHostFunction(
+        rt,
+        jsi::PropNameID::forAscii(rt, "ubrn_uniffi_ankurah_rn_bindings_checksum_method_countercallback_on_update"),
+        0,
+        [this](jsi::Runtime &rt, const jsi::Value &thisVal, const jsi::Value *args, size_t count) -> jsi::Value {
+            return this->cpp_uniffi_ankurah_rn_bindings_checksum_method_countercallback_on_update(rt, thisVal, args, count);
+        }
+    );
     props["ubrn_ffi_ankurah_rn_bindings_uniffi_contract_version"] = jsi::Function::createFromHostFunction(
         rt,
         jsi::PropNameID::forAscii(rt, "ubrn_ffi_ankurah_rn_bindings_uniffi_contract_version"),
         0,
         [this](jsi::Runtime &rt, const jsi::Value &thisVal, const jsi::Value *args, size_t count) -> jsi::Value {
             return this->cpp_ffi_ankurah_rn_bindings_uniffi_contract_version(rt, thisVal, args, count);
+        }
+    );
+    props["ubrn_uniffi_internal_fn_method_counter_ffi__bless_pointer"] = jsi::Function::createFromHostFunction(
+        rt,
+        jsi::PropNameID::forAscii(rt, "ubrn_uniffi_internal_fn_method_counter_ffi__bless_pointer"),
+        1,
+        [this](jsi::Runtime &rt, const jsi::Value &thisVal, const jsi::Value *args, size_t count) -> jsi::Value {
+            return this->cpp_uniffi_internal_fn_method_counter_ffi__bless_pointer(rt, thisVal, args, count);
         }
     );
 }
@@ -2395,7 +2822,9 @@ NativeAnkurahRnBindings::~NativeAnkurahRnBindings() {
     // Cleanup for callback function RustFutureContinuationCallback
 uniffi::ankurah_rn_bindings::cb::rustfuturecontinuationcallback::cleanup();
     // Cleanup for "free" callback function CallbackInterfaceFree
-uniffi::ankurah_rn_bindings::st::foreignfuture::foreignfuture::free::cleanup();
+uniffi::ankurah_rn_bindings::st::foreignfuture::foreignfuture::free::cleanup();uniffi::ankurah_rn_bindings::st::vtablecallbackinterfacecountercallback::vtablecallbackinterfacecountercallback::free::cleanup();
+    // Cleanup for callback function CallbackInterfaceCounterCallbackMethod0
+uniffi::ankurah_rn_bindings::cb::callbackinterfacecountercallbackmethod0::cleanup();
 }
 
 // Utility functions for serialization/deserialization of strings.
@@ -2409,9 +2838,95 @@ jsi::Value NativeAnkurahRnBindings::cpp_uniffi_internal_fn_func_ffi__string_to_a
 
 jsi::Value NativeAnkurahRnBindings::cpp_uniffi_internal_fn_func_ffi__arraybuffer_to_string(jsi::Runtime& rt, const jsi::Value& thisVal, const jsi::Value* args, size_t count) {
     return uniffi_jsi::Bridging<std::string>::arraybuffer_to_string(rt, args[0]);
+}jsi::Value NativeAnkurahRnBindings::cpp_uniffi_internal_fn_method_counter_ffi__bless_pointer(jsi::Runtime& rt, const jsi::Value& thisVal, const jsi::Value* args, size_t count) {
+    auto pointer = uniffi_jsi::Bridging<uint64_t>::fromJs(rt, callInvoker, args[0]);
+    auto static destructor = [](uint64_t p) {
+        auto pointer = reinterpret_cast<void *>(static_cast<uintptr_t>(p));
+        RustCallStatus status = {0};
+        uniffi_ankurah_rn_bindings_fn_free_counter(pointer, &status);
+    };
+    auto ptrObj = std::make_shared<uniffi_jsi::DestructibleObject>(pointer, destructor);
+    auto obj = jsi::Object::createFromHostObject(rt, ptrObj);
+    return jsi::Value(rt, obj);
 }
 
 // Methods calling directly into the uniffi generated C API of the Rust crate.
+jsi::Value NativeAnkurahRnBindings::cpp_uniffi_ankurah_rn_bindings_fn_clone_counter(jsi::Runtime& rt, const jsi::Value& thisVal, const jsi::Value* args, size_t count) {
+        RustCallStatus status = uniffi::ankurah_rn_bindings::Bridging<RustCallStatus>::rustSuccess(rt);
+        auto value = uniffi_ankurah_rn_bindings_fn_clone_counter(uniffi_jsi::Bridging<void *>::fromJs(rt, callInvoker, args[0]), 
+            &status
+        );
+        uniffi::ankurah_rn_bindings::Bridging<RustCallStatus>::copyIntoJs(rt, callInvoker, status, args[count - 1]);
+
+        
+        return uniffi_jsi::Bridging<void *>::toJs(rt, callInvoker, value);
+}
+jsi::Value NativeAnkurahRnBindings::cpp_uniffi_ankurah_rn_bindings_fn_free_counter(jsi::Runtime& rt, const jsi::Value& thisVal, const jsi::Value* args, size_t count) {
+        RustCallStatus status = uniffi::ankurah_rn_bindings::Bridging<RustCallStatus>::rustSuccess(rt);
+        uniffi_ankurah_rn_bindings_fn_free_counter(uniffi_jsi::Bridging<void *>::fromJs(rt, callInvoker, args[0]), 
+            &status
+        );
+        uniffi::ankurah_rn_bindings::Bridging<RustCallStatus>::copyIntoJs(rt, callInvoker, status, args[count - 1]);
+
+        
+        return jsi::Value::undefined();
+}
+jsi::Value NativeAnkurahRnBindings::cpp_uniffi_ankurah_rn_bindings_fn_constructor_counter_new(jsi::Runtime& rt, const jsi::Value& thisVal, const jsi::Value* args, size_t count) {
+        RustCallStatus status = uniffi::ankurah_rn_bindings::Bridging<RustCallStatus>::rustSuccess(rt);
+        auto value = uniffi_ankurah_rn_bindings_fn_constructor_counter_new(&status
+        );
+        uniffi::ankurah_rn_bindings::Bridging<RustCallStatus>::copyIntoJs(rt, callInvoker, status, args[count - 1]);
+
+        
+        return uniffi_jsi::Bridging<void *>::toJs(rt, callInvoker, value);
+}
+jsi::Value NativeAnkurahRnBindings::cpp_uniffi_ankurah_rn_bindings_fn_method_counter_get(jsi::Runtime& rt, const jsi::Value& thisVal, const jsi::Value* args, size_t count) {
+        RustCallStatus status = uniffi::ankurah_rn_bindings::Bridging<RustCallStatus>::rustSuccess(rt);
+        auto value = uniffi_ankurah_rn_bindings_fn_method_counter_get(uniffi_jsi::Bridging<void *>::fromJs(rt, callInvoker, args[0]), 
+            &status
+        );
+        uniffi::ankurah_rn_bindings::Bridging<RustCallStatus>::copyIntoJs(rt, callInvoker, status, args[count - 1]);
+
+        
+        return uniffi_jsi::Bridging<uint32_t>::toJs(rt, callInvoker, value);
+}
+jsi::Value NativeAnkurahRnBindings::cpp_uniffi_ankurah_rn_bindings_fn_method_counter_increment(jsi::Runtime& rt, const jsi::Value& thisVal, const jsi::Value* args, size_t count) {
+        RustCallStatus status = uniffi::ankurah_rn_bindings::Bridging<RustCallStatus>::rustSuccess(rt);
+        auto value = uniffi_ankurah_rn_bindings_fn_method_counter_increment(uniffi_jsi::Bridging<void *>::fromJs(rt, callInvoker, args[0]), 
+            &status
+        );
+        uniffi::ankurah_rn_bindings::Bridging<RustCallStatus>::copyIntoJs(rt, callInvoker, status, args[count - 1]);
+
+        
+        return uniffi_jsi::Bridging<uint32_t>::toJs(rt, callInvoker, value);
+}
+jsi::Value NativeAnkurahRnBindings::cpp_uniffi_ankurah_rn_bindings_fn_method_counter_set_callback(jsi::Runtime& rt, const jsi::Value& thisVal, const jsi::Value* args, size_t count) {
+        RustCallStatus status = uniffi::ankurah_rn_bindings::Bridging<RustCallStatus>::rustSuccess(rt);
+        uniffi_ankurah_rn_bindings_fn_method_counter_set_callback(uniffi_jsi::Bridging<void *>::fromJs(rt, callInvoker, args[0]), uniffi_jsi::Bridging<uint64_t>::fromJs(rt, callInvoker, args[1]), 
+            &status
+        );
+        uniffi::ankurah_rn_bindings::Bridging<RustCallStatus>::copyIntoJs(rt, callInvoker, status, args[count - 1]);
+
+        
+        return jsi::Value::undefined();
+}
+jsi::Value NativeAnkurahRnBindings::cpp_uniffi_ankurah_rn_bindings_fn_init_callback_vtable_countercallback(jsi::Runtime& rt, const jsi::Value& thisVal, const jsi::Value* args, size_t count) {
+    auto vtableInstance =
+        uniffi::ankurah_rn_bindings::Bridging<UniffiVTableCallbackInterfaceCounterCallback>::fromJs(
+            rt,
+            callInvoker,
+            args[0]
+        );
+
+    std::lock_guard<std::mutex> lock(uniffi::ankurah_rn_bindings::registry::vtableMutex);
+    uniffi_ankurah_rn_bindings_fn_init_callback_vtable_countercallback(
+        uniffi::ankurah_rn_bindings::registry::putTable(
+            "UniffiVTableCallbackInterfaceCounterCallback",
+            vtableInstance
+        )
+    );
+    return jsi::Value::undefined();
+}
 jsi::Value NativeAnkurahRnBindings::cpp_uniffi_ankurah_rn_bindings_fn_func_greet(jsi::Runtime& rt, const jsi::Value& thisVal, const jsi::Value* args, size_t count) {
         RustCallStatus status = uniffi::ankurah_rn_bindings::Bridging<RustCallStatus>::rustSuccess(rt);
         auto value = uniffi_ankurah_rn_bindings_fn_func_greet(uniffi::ankurah_rn_bindings::Bridging<RustBuffer>::fromJs(rt, callInvoker, args[0]), 
@@ -2841,6 +3356,41 @@ jsi::Value NativeAnkurahRnBindings::cpp_uniffi_ankurah_rn_bindings_checksum_func
 }
 jsi::Value NativeAnkurahRnBindings::cpp_uniffi_ankurah_rn_bindings_checksum_func_greet_async(jsi::Runtime& rt, const jsi::Value& thisVal, const jsi::Value* args, size_t count) {
         auto value = uniffi_ankurah_rn_bindings_checksum_func_greet_async(
+        );
+
+        
+        return uniffi_jsi::Bridging<uint16_t>::toJs(rt, callInvoker, value);
+}
+jsi::Value NativeAnkurahRnBindings::cpp_uniffi_ankurah_rn_bindings_checksum_method_counter_get(jsi::Runtime& rt, const jsi::Value& thisVal, const jsi::Value* args, size_t count) {
+        auto value = uniffi_ankurah_rn_bindings_checksum_method_counter_get(
+        );
+
+        
+        return uniffi_jsi::Bridging<uint16_t>::toJs(rt, callInvoker, value);
+}
+jsi::Value NativeAnkurahRnBindings::cpp_uniffi_ankurah_rn_bindings_checksum_method_counter_increment(jsi::Runtime& rt, const jsi::Value& thisVal, const jsi::Value* args, size_t count) {
+        auto value = uniffi_ankurah_rn_bindings_checksum_method_counter_increment(
+        );
+
+        
+        return uniffi_jsi::Bridging<uint16_t>::toJs(rt, callInvoker, value);
+}
+jsi::Value NativeAnkurahRnBindings::cpp_uniffi_ankurah_rn_bindings_checksum_method_counter_set_callback(jsi::Runtime& rt, const jsi::Value& thisVal, const jsi::Value* args, size_t count) {
+        auto value = uniffi_ankurah_rn_bindings_checksum_method_counter_set_callback(
+        );
+
+        
+        return uniffi_jsi::Bridging<uint16_t>::toJs(rt, callInvoker, value);
+}
+jsi::Value NativeAnkurahRnBindings::cpp_uniffi_ankurah_rn_bindings_checksum_constructor_counter_new(jsi::Runtime& rt, const jsi::Value& thisVal, const jsi::Value* args, size_t count) {
+        auto value = uniffi_ankurah_rn_bindings_checksum_constructor_counter_new(
+        );
+
+        
+        return uniffi_jsi::Bridging<uint16_t>::toJs(rt, callInvoker, value);
+}
+jsi::Value NativeAnkurahRnBindings::cpp_uniffi_ankurah_rn_bindings_checksum_method_countercallback_on_update(jsi::Runtime& rt, const jsi::Value& thisVal, const jsi::Value* args, size_t count) {
+        auto value = uniffi_ankurah_rn_bindings_checksum_method_countercallback_on_update(
         );
 
         

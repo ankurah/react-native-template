@@ -279,3 +279,191 @@ After `xcodebuild clean` or pod changes, the React Native CLI may incorrectly re
 ### App shows white screen
 - Check Metro terminal for JavaScript errors
 - Press Cmd+D in simulator for dev menu → "Open Debugger"
+
+---
+
+## Phase 3: Add Async Function
+
+### Step 1: Update Rust Code
+Add to `rn-bindings/src/lib.rs`:
+```rust
+/// Async function to verify promises work across FFI
+#[uniffi::export]
+pub async fn greet_async(name: String, delay_ms: u64) -> String {
+    // UniFFI runs async functions on a thread pool, so blocking is OK here
+    std::thread::sleep(std::time::Duration::from_millis(delay_ms));
+    format!("Hello Async from Rust, {}! (after {}ms)", name, delay_ms)
+}
+```
+
+**Note**: Use `std::thread::sleep`, not `tokio::time::sleep`. UniFFI has its own async executor.
+
+### Step 2: Rebuild and Test
+Run the rebuild script (see below) or manually:
+```bash
+cd react-app
+npx ubrn build ios --sim-only --and-generate
+# Fix podspec (see Phase 2 Step 7)
+cd ios && pod install && cd ..
+npx react-native run-ios --simulator="iPhone 16"
+```
+
+### Step 3: Update App.tsx
+Add async function test UI with button, loading state, and result display.
+
+---
+
+## Phase 4: Add Callback Interface
+
+### Step 1: Update Rust Code
+Add to `rn-bindings/src/lib.rs`:
+```rust
+use std::sync::Mutex;
+
+/// Callback interface - JS implements this, Rust calls it
+#[uniffi::export(callback_interface)]
+pub trait CounterCallback: Send + Sync {
+    fn on_update(&self, count: u32);
+}
+
+/// Counter object that calls back to JS on each increment
+#[derive(uniffi::Object)]
+pub struct Counter {
+    value: std::sync::atomic::AtomicU32,
+    callback: Mutex<Option<Box<dyn CounterCallback>>>,
+}
+
+#[uniffi::export]
+impl Counter {
+    #[uniffi::constructor]
+    pub fn new() -> Self {
+        Self {
+            value: std::sync::atomic::AtomicU32::new(0),
+            callback: Mutex::new(None),
+        }
+    }
+
+    /// Set the callback after construction
+    pub fn set_callback(&self, callback: Box<dyn CounterCallback>) {
+        *self.callback.lock().unwrap() = Some(callback);
+    }
+
+    pub fn increment(&self) -> u32 {
+        let new_val = self.value.fetch_add(1, std::sync::atomic::Ordering::SeqCst) + 1;
+        if let Some(cb) = self.callback.lock().unwrap().as_ref() {
+            cb.on_update(new_val);
+        }
+        new_val
+    }
+
+    pub fn get(&self) -> u32 {
+        self.value.load(std::sync::atomic::Ordering::SeqCst)
+    }
+}
+```
+
+### Step 2: Clean Build Required
+Structural changes (new objects/traits) require a clean build:
+```bash
+cd react-app
+rm -rf ios/build ios/Pods ~/Library/Developer/Xcode/DerivedData/AnkurahApp-*
+rm -rf node_modules/.cache
+# Kill Metro if running
+lsof -ti:8081 | xargs kill -9 2>/dev/null
+```
+
+### Step 3: Rebuild
+```bash
+./rebuild-ios.sh
+# Then start Metro with fresh cache:
+cd react-app && npx react-native start --reset-cache
+```
+
+### Step 4: Update App.tsx
+Implement the callback interface in TypeScript:
+```typescript
+import { Counter, CounterCallback } from './src';
+
+class MyCounterCallback implements CounterCallback {
+  private updateState: React.Dispatch<React.SetStateAction<string | null>>;
+
+  constructor(updateState: React.Dispatch<React.SetStateAction<string | null>>) {
+    this.updateState = updateState;
+  }
+
+  onUpdate(value: number): void {
+    this.updateState(`Counter is now: ${value}`);
+  }
+}
+
+// In component:
+const [counter, setCounter] = useState<Counter | null>(null);
+const [callbackUpdate, setCallbackUpdate] = useState<string | null>(null);
+
+const initCounter = () => {
+  const newCounter = new Counter();
+  const myCallback = new MyCounterCallback(setCallbackUpdate);
+  newCounter.setCallback(myCallback);
+  setCounter(newCounter);
+};
+
+const incrementCounter = () => {
+  counter?.increment();
+};
+```
+
+---
+
+## Rebuild Script
+
+Create `rebuild-ios.sh` at repo root:
+```bash
+#!/bin/bash
+# Rebuild Rust and reinstall iOS app (assumes Metro is already running)
+set -e
+cd "$(dirname "$0")/react-app"
+
+# Kill app early to prevent thrashing during build
+xcrun simctl terminate booted org.reactjs.native.example.AnkurahApp 2>/dev/null || true
+
+# Build Rust library and generate bindings
+npx ubrn build ios --sim-only --and-generate
+
+# Fix overly broad source_files glob in podspec
+# TODO: Report upstream - ubrn generates ios/**/*.swift which hangs Swift compiler
+sed -i '' 's|s.source_files = "ios/\*\*/\*\.{h,m,mm,swift}".*|s.source_files = "ios/AnkurahApp.h", "ios/AnkurahApp.mm", "cpp/**/*.{hpp,cpp,c,h}"|' AnkurahApp.podspec
+
+# Reinstall pods to pick up new xcframework and podspec changes
+cd ios && pod install --silent && cd ..
+
+# Build and run iOS app
+npx react-native run-ios --simulator="iPhone 16"
+```
+
+Make executable: `chmod +x rebuild-ios.sh`
+
+---
+
+## Additional Notes
+
+### When to Clean Build
+- Adding new UniFFI objects or traits
+- Changing callback interface signatures
+- Major structural changes to Rust code
+
+Simple function additions usually work with incremental builds.
+
+### Metro Cache
+After native rebuilds, if you see checksum mismatch errors:
+```bash
+# Kill Metro and restart with fresh cache
+lsof -ti:8081 | xargs kill -9 2>/dev/null
+cd react-app && npx react-native start --reset-cache
+```
+
+### Relaunching the App
+The rebuild script launches the app, but if you need to manually relaunch:
+```bash
+xcrun simctl terminate booted org.reactjs.native.example.AnkurahApp
+xcrun simctl launch booted org.reactjs.native.example.AnkurahApp
+```
