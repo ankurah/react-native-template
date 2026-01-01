@@ -1,0 +1,9 @@
+[package]
+name = "ankurah-rn-model"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[dependencies]
+# Will add ankurah dependencies in Phase 2
+

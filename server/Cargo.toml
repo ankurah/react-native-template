@@ -1,0 +1,10 @@
+[package]
+name = "ankurah-rn-server"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[dependencies]
+# Will add ankurah dependencies in Phase 2
+tokio = { version = "1", features = ["full"] }
+

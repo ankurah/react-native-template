@@ -1,0 +1,29 @@
+# Rust
+/target/
+Cargo.lock
+
+# macOS
+.DS_Store
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# React Native
+react-app/node_modules/
+react-app/.expo/
+react-app/ios/Pods/
+react-app/ios/build/
+react-app/android/build/
+react-app/android/app/build/
+react-app/android/.gradle/
+*.hprof
+
+# Generated bindings
+react-app/rust-bindings/
+
+# Local cargo config (managed by akdev)
+.cargo/config.toml
+

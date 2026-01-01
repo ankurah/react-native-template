@@ -1,0 +1,55 @@
+#!/bin/bash
+
+# Toggle between local ankurah development and published crates
+
+mkdir -p .cargo
+touch .cargo/config.toml
+
+CONFIG_FILE=".cargo/config.toml"
+PATCH_CONTENT='[patch.crates-io]
+ankurah = { path = "../ankurah/ankurah" }
+ankql = { path = "../ankurah/ankql" }
+ankurah-signals = { path = "../ankurah/signals" }
+ankurah-websocket-server = { path = "../ankurah/connectors/websocket-server" }
+ankurah-websocket-client = { path = "../ankurah/connectors/websocket-client" }
+ankurah-storage-sled = { path = "../ankurah/storage/sled" }'
+
+show_status() {
+    if grep -q "\[patch.crates-io\]" "$CONFIG_FILE"; then
+        echo "Status: ENABLED - Using local ankurah dependencies"
+    else
+        echo "Status: DISABLED - Using published ankurah crates"
+    fi
+}
+
+show_usage() {
+    echo "Usage: $0 [command]"
+    echo ""
+    echo "Commands:"
+    echo "  enable   - Use local ankurah dependencies"
+    echo "  disable  - Use published ankurah crates"
+    echo "  (no arg) - Show current status"
+    echo ""
+}
+
+if [ "$1" = "enable" ]; then
+    if grep -q "\[patch.crates-io\]" "$CONFIG_FILE"; then
+        echo "Patch section already exists in $CONFIG_FILE"
+        exit 0
+    fi
+    
+    echo -e "\n$PATCH_CONTENT" >> "$CONFIG_FILE"
+    echo "Enabled local ankurah dependencies in $CONFIG_FILE"
+
+elif [ "$1" = "disable" ]; then
+    TMP_FILE=$(mktemp)
+    sed '/^\[patch.crates-io\]/,/^[[:space:]]*$/d' "$CONFIG_FILE" | sed -e :a -e '/^\n*$/N;/\n$/ba' -e 'P;D' > "$TMP_FILE"
+    mv "$TMP_FILE" "$CONFIG_FILE"
+    echo "Disabled local ankurah dependencies in $CONFIG_FILE"
+
+else
+    show_status
+    echo ""
+    show_usage
+fi
+
