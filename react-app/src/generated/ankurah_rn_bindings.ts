@@ -30,6 +30,7 @@ import nativeModule, {
   type UniffiForeignFutureStructVoid,
   type UniffiForeignFutureCompleteVoid,
   type UniffiVTableCallbackInterfaceCounterCallback,
+  type UniffiVTableCallbackInterfaceLogCallback,
 } from './ankurah_rn_bindings-ffi';
 import {
   type FfiConverter,
@@ -40,12 +41,17 @@ import {
   type UniffiRustArcPtr,
   type UniffiRustCallStatus,
   type UnsafeMutableRawPointer,
+  AbstractFfiConverterByteArray,
+  FfiConverterBool,
   FfiConverterCallback,
+  FfiConverterInt32,
   FfiConverterObject,
+  FfiConverterOptional,
   FfiConverterUInt32,
   FfiConverterUInt64,
   RustBuffer,
   UniffiAbstractObject,
+  UniffiError,
   UniffiInternalError,
   UniffiResult,
   UniffiRustCaller,
@@ -55,6 +61,7 @@ import {
   uniffiRustCallAsync,
   uniffiTraitInterfaceCall,
   uniffiTypeNameSymbol,
+  variantOrdinalSymbol,
 } from 'uniffi-bindgen-react-native';
 
 // Get converters from the other files, if any.
@@ -68,6 +75,41 @@ const uniffiIsDebug =
   false;
 // Public interface members begin here.
 
+/**
+ * Get the default storage path for the current platform
+ * On iOS/macOS, this uses the user's home directory
+ * On other platforms, falls back to a relative path
+ */
+export function getDefaultStoragePath(): string {
+  return FfiConverterString.lift(
+    uniffiCaller.rustCall(
+      /*caller:*/ callStatus => {
+        return nativeModule().ubrn_uniffi_ankurah_rn_bindings_fn_func_get_default_storage_path(
+          callStatus,
+        );
+      },
+      /*liftString:*/ FfiConverterString.lift,
+    ),
+  );
+}
+/**
+ * Get the node's ID as a string
+ */
+export function getNodeId(): string /*throws*/ {
+  return FfiConverterString.lift(
+    uniffiCaller.rustCallWithError(
+      /*liftError:*/ FfiConverterTypeAnkurahError.lift.bind(
+        FfiConverterTypeAnkurahError,
+      ),
+      /*caller:*/ callStatus => {
+        return nativeModule().ubrn_uniffi_ankurah_rn_bindings_fn_func_get_node_id(
+          callStatus,
+        );
+      },
+      /*liftString:*/ FfiConverterString.lift,
+    ),
+  );
+}
 /**
  * Simple sync function to verify FFI works
  */
@@ -121,6 +163,64 @@ export async function greetAsync(
     throw __error;
   }
 }
+/**
+ * Initialize the Ankurah node with local Sled storage and connect to server
+ *
+ * This spawns initialization in a background tokio task and returns immediately.
+ * Use `is_node_initialized()` to check when initialization is complete.
+ *
+ * Args:
+ * storage_path: Path to store the Sled database (e.g., app's documents directory)
+ * server_url: Optional WebSocket server URL (defaults to ws://localhost:9797)
+ */
+export function initNode(
+  storagePath: string,
+  serverUrl: string | undefined,
+): void /*throws*/ {
+  uniffiCaller.rustCallWithError(
+    /*liftError:*/ FfiConverterTypeAnkurahError.lift.bind(
+      FfiConverterTypeAnkurahError,
+    ),
+    /*caller:*/ callStatus => {
+      nativeModule().ubrn_uniffi_ankurah_rn_bindings_fn_func_init_node(
+        FfiConverterString.lower(storagePath),
+        FfiConverterOptionalString.lower(serverUrl),
+        callStatus,
+      );
+    },
+    /*liftString:*/ FfiConverterString.lift,
+  );
+}
+/**
+ * Check if the node is initialized
+ */
+export function isNodeInitialized(): boolean {
+  return FfiConverterBool.lift(
+    uniffiCaller.rustCall(
+      /*caller:*/ callStatus => {
+        return nativeModule().ubrn_uniffi_ankurah_rn_bindings_fn_func_is_node_initialized(
+          callStatus,
+        );
+      },
+      /*liftString:*/ FfiConverterString.lift,
+    ),
+  );
+}
+/**
+ * Set up logging with a callback to receive log messages in JS
+ * Should be called once at app startup before init_node
+ */
+export function setupLogging(callback: LogCallback): void {
+  uniffiCaller.rustCall(
+    /*caller:*/ callStatus => {
+      nativeModule().ubrn_uniffi_ankurah_rn_bindings_fn_func_setup_logging(
+        FfiConverterTypeLogCallback.lower(callback),
+        callStatus,
+      );
+    },
+    /*liftString:*/ FfiConverterString.lift,
+  );
+}
 
 /**
  * Callback interface - JS implements this, Rust calls it
@@ -171,6 +271,67 @@ const uniffiCallbackInterfaceCounterCallback: {
 const FfiConverterTypeCounterCallback =
   new FfiConverterCallback<CounterCallback>();
 
+/**
+ * Callback interface for receiving log messages in JS
+ */
+export interface LogCallback {
+  /**
+   * Called when a log message is emitted
+   * level: "TRACE", "DEBUG", "INFO", "WARN", "ERROR"
+   */
+  onLog(level: string, target: string, message: string): void;
+}
+
+// Put the implementation in a struct so we don't pollute the top-level namespace
+const uniffiCallbackInterfaceLogCallback: {
+  vtable: UniffiVTableCallbackInterfaceLogCallback;
+  register: () => void;
+} = {
+  // Create the VTable using a series of closures.
+  // ts automatically converts these into C callback functions.
+  vtable: {
+    onLog: (
+      uniffiHandle: bigint,
+      level: Uint8Array,
+      target: Uint8Array,
+      message: Uint8Array,
+    ) => {
+      const uniffiMakeCall = (): void => {
+        const jsCallback = FfiConverterTypeLogCallback.lift(uniffiHandle);
+        return jsCallback.onLog(
+          FfiConverterString.lift(level),
+          FfiConverterString.lift(target),
+          FfiConverterString.lift(message),
+        );
+      };
+      const uniffiResult = UniffiResult.ready<void>();
+      const uniffiHandleSuccess = (obj: any) => {};
+      const uniffiHandleError = (code: number, errBuf: UniffiByteArray) => {
+        UniffiResult.writeError(uniffiResult, code, errBuf);
+      };
+      uniffiTraitInterfaceCall(
+        /*makeCall:*/ uniffiMakeCall,
+        /*handleSuccess:*/ uniffiHandleSuccess,
+        /*handleError:*/ uniffiHandleError,
+        /*lowerString:*/ FfiConverterString.lower,
+      );
+      return uniffiResult;
+    },
+    uniffiFree: (uniffiHandle: UniffiHandle): void => {
+      // LogCallback: this will throw a stale handle error if the handle isn't found.
+      FfiConverterTypeLogCallback.drop(uniffiHandle);
+    },
+  },
+  register: () => {
+    nativeModule().ubrn_uniffi_ankurah_rn_bindings_fn_init_callback_vtable_logcallback(
+      uniffiCallbackInterfaceLogCallback.vtable,
+    );
+  },
+};
+
+// FfiConverter protocol for callback interfaces
+const FfiConverterTypeLogCallback = new FfiConverterCallback<LogCallback>();
+
 const stringConverter = {
   stringToBytes: (s: string) =>
     uniffiCaller.rustCall(status =>
@@ -195,6 +356,303 @@ const stringConverter = {
     ),
 };
 const FfiConverterString = uniffiCreateFfiConverterString(stringConverter);
+
+// Error type: AnkurahError
+
+// Enum: AnkurahError
+export enum AnkurahError_Tags {
+  Storage = 'Storage',
+  Connection = 'Connection',
+  NotInitialized = 'NotInitialized',
+  AlreadyInitialized = 'AlreadyInitialized',
+  Internal = 'Internal',
+}
+/**
+ * Error type for Ankurah operations
+ */
+export const AnkurahError = (() => {
+  type Storage__interface = {
+    tag: AnkurahError_Tags.Storage;
+    inner: Readonly<{ message: string }>;
+  };
+
+  class Storage_ extends UniffiError implements Storage__interface {
+    /**
+     * @private
+     * This field is private and should not be used, use `tag` instead.
+     */
+    readonly [uniffiTypeNameSymbol] = 'AnkurahError';
+    readonly tag = AnkurahError_Tags.Storage;
+    readonly inner: Readonly<{ message: string }>;
+    constructor(inner: { message: string }) {
+      super('AnkurahError', 'Storage');
+      this.inner = Object.freeze(inner);
+    }
+
+    static new(inner: { message: string }): Storage_ {
+      return new Storage_(inner);
+    }
+
+    static instanceOf(obj: any): obj is Storage_ {
+      return obj.tag === AnkurahError_Tags.Storage;
+    }
+
+    static hasInner(obj: any): obj is Storage_ {
+      return Storage_.instanceOf(obj);
+    }
+
+    static getInner(obj: Storage_): Readonly<{ message: string }> {
+      return obj.inner;
+    }
+  }
+
+  type Connection__interface = {
+    tag: AnkurahError_Tags.Connection;
+    inner: Readonly<{ message: string }>;
+  };
+
+  class Connection_ extends UniffiError implements Connection__interface {
+    /**
+     * @private
+     * This field is private and should not be used, use `tag` instead.
+     */
+    readonly [uniffiTypeNameSymbol] = 'AnkurahError';
+    readonly tag = AnkurahError_Tags.Connection;
+    readonly inner: Readonly<{ message: string }>;
+    constructor(inner: { message: string }) {
+      super('AnkurahError', 'Connection');
+      this.inner = Object.freeze(inner);
+    }
+
+    static new(inner: { message: string }): Connection_ {
+      return new Connection_(inner);
+    }
+
+    static instanceOf(obj: any): obj is Connection_ {
+      return obj.tag === AnkurahError_Tags.Connection;
+    }
+
+    static hasInner(obj: any): obj is Connection_ {
+      return Connection_.instanceOf(obj);
+    }
+
+    static getInner(obj: Connection_): Readonly<{ message: string }> {
+      return obj.inner;
+    }
+  }
+
+  type NotInitialized__interface = {
+    tag: AnkurahError_Tags.NotInitialized;
+  };
+
+  class NotInitialized_
+    extends UniffiError
+    implements NotInitialized__interface
+  {
+    /**
+     * @private
+     * This field is private and should not be used, use `tag` instead.
+     */
+    readonly [uniffiTypeNameSymbol] = 'AnkurahError';
+    readonly tag = AnkurahError_Tags.NotInitialized;
+    constructor() {
+      super('AnkurahError', 'NotInitialized');
+    }
+
+    static new(): NotInitialized_ {
+      return new NotInitialized_();
+    }
+
+    static instanceOf(obj: any): obj is NotInitialized_ {
+      return obj.tag === AnkurahError_Tags.NotInitialized;
+    }
+
+    static hasInner(obj: any): obj is NotInitialized_ {
+      return false;
+    }
+  }
+
+  type AlreadyInitialized__interface = {
+    tag: AnkurahError_Tags.AlreadyInitialized;
+  };
+
+  class AlreadyInitialized_
+    extends UniffiError
+    implements AlreadyInitialized__interface
+  {
+    /**
+     * @private
+     * This field is private and should not be used, use `tag` instead.
+     */
+    readonly [uniffiTypeNameSymbol] = 'AnkurahError';
+    readonly tag = AnkurahError_Tags.AlreadyInitialized;
+    constructor() {
+      super('AnkurahError', 'AlreadyInitialized');
+    }
+
+    static new(): AlreadyInitialized_ {
+      return new AlreadyInitialized_();
+    }
+
+    static instanceOf(obj: any): obj is AlreadyInitialized_ {
+      return obj.tag === AnkurahError_Tags.AlreadyInitialized;
+    }
+
+    static hasInner(obj: any): obj is AlreadyInitialized_ {
+      return false;
+    }
+  }
+
+  type Internal__interface = {
+    tag: AnkurahError_Tags.Internal;
+    inner: Readonly<{ message: string }>;
+  };
+
+  class Internal_ extends UniffiError implements Internal__interface {
+    /**
+     * @private
+     * This field is private and should not be used, use `tag` instead.
+     */
+    readonly [uniffiTypeNameSymbol] = 'AnkurahError';
+    readonly tag = AnkurahError_Tags.Internal;
+    readonly inner: Readonly<{ message: string }>;
+    constructor(inner: { message: string }) {
+      super('AnkurahError', 'Internal');
+      this.inner = Object.freeze(inner);
+    }
+
+    static new(inner: { message: string }): Internal_ {
+      return new Internal_(inner);
+    }
+
+    static instanceOf(obj: any): obj is Internal_ {
+      return obj.tag === AnkurahError_Tags.Internal;
+    }
+
+    static hasInner(obj: any): obj is Internal_ {
+      return Internal_.instanceOf(obj);
+    }
+
+    static getInner(obj: Internal_): Readonly<{ message: string }> {
+      return obj.inner;
+    }
+  }
+
+  function instanceOf(obj: any): obj is AnkurahError {
+    return obj[uniffiTypeNameSymbol] === 'AnkurahError';
+  }
+
+  return Object.freeze({
+    instanceOf,
+    Storage: Storage_,
+    Connection: Connection_,
+    NotInitialized: NotInitialized_,
+    AlreadyInitialized: AlreadyInitialized_,
+    Internal: Internal_,
+  });
+})();
+
+/**
+ * Error type for Ankurah operations
+ */
+
+export type AnkurahError = InstanceType<
+  (typeof AnkurahError)[keyof Omit<typeof AnkurahError, 'instanceOf'>]
+>;
+
+// FfiConverter for enum AnkurahError
+const FfiConverterTypeAnkurahError = (() => {
+  const ordinalConverter = FfiConverterInt32;
+  type TypeName = AnkurahError;
+  class FFIConverter extends AbstractFfiConverterByteArray<TypeName> {
+    read(from: RustBuffer): TypeName {
+      switch (ordinalConverter.read(from)) {
+        case 1:
+          return new AnkurahError.Storage({
+            message: FfiConverterString.read(from),
+          });
+        case 2:
+          return new AnkurahError.Connection({
+            message: FfiConverterString.read(from),
+          });
+        case 3:
+          return new AnkurahError.NotInitialized();
+        case 4:
+          return new AnkurahError.AlreadyInitialized();
+        case 5:
+          return new AnkurahError.Internal({
+            message: FfiConverterString.read(from),
+          });
+        default:
+          throw new UniffiInternalError.UnexpectedEnumCase();
+      }
+    }
+    write(value: TypeName, into: RustBuffer): void {
+      switch (value.tag) {
+        case AnkurahError_Tags.Storage: {
+          ordinalConverter.write(1, into);
+          const inner = value.inner;
+          FfiConverterString.write(inner.message, into);
+          return;
+        }
+        case AnkurahError_Tags.Connection: {
+          ordinalConverter.write(2, into);
+          const inner = value.inner;
+          FfiConverterString.write(inner.message, into);
+          return;
+        }
+        case AnkurahError_Tags.NotInitialized: {
+          ordinalConverter.write(3, into);
+          return;
+        }
+        case AnkurahError_Tags.AlreadyInitialized: {
+          ordinalConverter.write(4, into);
+          return;
+        }
+        case AnkurahError_Tags.Internal: {
+          ordinalConverter.write(5, into);
+          const inner = value.inner;
+          FfiConverterString.write(inner.message, into);
+          return;
+        }
+        default:
+          // Throwing from here means that AnkurahError_Tags hasn't matched an ordinal.
+          throw new UniffiInternalError.UnexpectedEnumCase();
+      }
+    }
+    allocationSize(value: TypeName): number {
+      switch (value.tag) {
+        case AnkurahError_Tags.Storage: {
+          const inner = value.inner;
+          let size = ordinalConverter.allocationSize(1);
+          size += FfiConverterString.allocationSize(inner.message);
+          return size;
+        }
+        case AnkurahError_Tags.Connection: {
+          const inner = value.inner;
+          let size = ordinalConverter.allocationSize(2);
+          size += FfiConverterString.allocationSize(inner.message);
+          return size;
+        }
+        case AnkurahError_Tags.NotInitialized: {
+          return ordinalConverter.allocationSize(3);
+        }
+        case AnkurahError_Tags.AlreadyInitialized: {
+          return ordinalConverter.allocationSize(4);
+        }
+        case AnkurahError_Tags.Internal: {
+          const inner = value.inner;
+          let size = ordinalConverter.allocationSize(5);
+          size += FfiConverterString.allocationSize(inner.message);
+          return size;
+        }
+        default:
+          throw new UniffiInternalError.UnexpectedEnumCase();
+      }
+    }
+  }
+  return new FFIConverter();
+})();
 
 /**
  * Counter object that calls back to JS on each increment
@@ -359,6 +817,9 @@ const FfiConverterTypeCounter = new FfiConverterObject(
   uniffiTypeCounterObjectFactory,
 );
 
+// FfiConverter for string | undefined
+const FfiConverterOptionalString = new FfiConverterOptional(FfiConverterString);
+
 /**
  * This should be called before anything else.
  *
@@ -382,6 +843,22 @@ function uniffiEnsureInitialized() {
     );
   }
   if (
+    nativeModule().ubrn_uniffi_ankurah_rn_bindings_checksum_func_get_default_storage_path() !==
+    58295
+  ) {
+    throw new UniffiInternalError.ApiChecksumMismatch(
+      'uniffi_ankurah_rn_bindings_checksum_func_get_default_storage_path',
+    );
+  }
+  if (
+    nativeModule().ubrn_uniffi_ankurah_rn_bindings_checksum_func_get_node_id() !==
+    54456
+  ) {
+    throw new UniffiInternalError.ApiChecksumMismatch(
+      'uniffi_ankurah_rn_bindings_checksum_func_get_node_id',
+    );
+  }
+  if (
     nativeModule().ubrn_uniffi_ankurah_rn_bindings_checksum_func_greet() !==
     37002
   ) {
@@ -395,6 +872,30 @@ function uniffiEnsureInitialized() {
   ) {
     throw new UniffiInternalError.ApiChecksumMismatch(
       'uniffi_ankurah_rn_bindings_checksum_func_greet_async',
+    );
+  }
+  if (
+    nativeModule().ubrn_uniffi_ankurah_rn_bindings_checksum_func_init_node() !==
+    57597
+  ) {
+    throw new UniffiInternalError.ApiChecksumMismatch(
+      'uniffi_ankurah_rn_bindings_checksum_func_init_node',
+    );
+  }
+  if (
+    nativeModule().ubrn_uniffi_ankurah_rn_bindings_checksum_func_is_node_initialized() !==
+    63215
+  ) {
+    throw new UniffiInternalError.ApiChecksumMismatch(
+      'uniffi_ankurah_rn_bindings_checksum_func_is_node_initialized',
+    );
+  }
+  if (
+    nativeModule().ubrn_uniffi_ankurah_rn_bindings_checksum_func_setup_logging() !==
+    62540
+  ) {
+    throw new UniffiInternalError.ApiChecksumMismatch(
+      'uniffi_ankurah_rn_bindings_checksum_func_setup_logging',
     );
   }
   if (
@@ -437,13 +938,23 @@ function uniffiEnsureInitialized() {
       'uniffi_ankurah_rn_bindings_checksum_method_countercallback_on_update',
     );
   }
+  if (
+    nativeModule().ubrn_uniffi_ankurah_rn_bindings_checksum_method_logcallback_on_log() !==
+    30753
+  ) {
+    throw new UniffiInternalError.ApiChecksumMismatch(
+      'uniffi_ankurah_rn_bindings_checksum_method_logcallback_on_log',
+    );
+  }
 
   uniffiCallbackInterfaceCounterCallback.register();
+  uniffiCallbackInterfaceLogCallback.register();
 }
 
 export default Object.freeze({
   initialize: uniffiEnsureInitialized,
   converters: {
+    FfiConverterTypeAnkurahError,
     FfiConverterTypeCounter,
   },
 });

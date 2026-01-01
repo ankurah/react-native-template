@@ -1,9 +1,9 @@
 /**
  * Ankurah React Native UniFFI PoC
- * Step 3: Sync + Async + Callbacks
+ * Phase 2: Ankurah Integration
  */
 
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import {
   SafeAreaView,
   ScrollView,
@@ -18,7 +18,49 @@ import {
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 // Import from src/index.tsx which handles native module initialization
-import { greet, greetAsync, Counter, CounterCallback } from './src';
+import {
+  greet,
+  greetAsync,
+  Counter,
+  CounterCallback,
+  initNode,
+  isNodeInitialized,
+  getNodeId,
+  getDefaultStoragePath,
+  setupLogging,
+  LogCallback,
+} from './src';
+
+// Set up Rust logging to forward to JS console (do this once at module load)
+const rustLogCallback: LogCallback = {
+  onLog: (level: string, target: string, message: string) => {
+    const prefix = `[Rust:${target}]`;
+    switch (level) {
+      case 'ERROR':
+        console.error(prefix, message);
+        break;
+      case 'WARN':
+        console.warn(prefix, message);
+        break;
+      case 'INFO':
+        console.info(prefix, message);
+        break;
+      case 'DEBUG':
+        console.debug(prefix, message);
+        break;
+      default:
+        console.log(prefix, `[${level}]`, message);
+    }
+  },
+};
+
+// Initialize logging before anything else
+try {
+  setupLogging(rustLogCallback);
+  console.log('Rust logging initialized');
+} catch (e) {
+  console.warn('Failed to set up Rust logging:', e);
+}
 
 function App(): React.JSX.Element {
   const isDarkMode = useColorScheme() === 'dark';
@@ -34,6 +76,45 @@ function App(): React.JSX.Element {
   const [callbackCount, setCallbackCount] = useState(0);
   const [callbackLog, setCallbackLog] = useState<string[]>([]);
   const counterRef = useRef<Counter | null>(null);
+
+  // Ankurah node state
+  const [nodeStatus, setNodeStatus] = useState<string>('Initializing...');
+  const [nodeId, setNodeId] = useState<string | null>(null);
+
+  // Initialize Ankurah node on app startup
+  useEffect(() => {
+    // Start initialization (non-blocking - spawns background task)
+    try {
+      const storagePath = getDefaultStoragePath();
+      // For iOS simulator, localhost maps to the host machine
+      const serverUrl = 'ws://localhost:9797';
+      console.log('Initializing node with storage path:', storagePath);
+      console.log('Connecting to server:', serverUrl);
+      initNode(storagePath, serverUrl);
+    } catch (e: any) {
+      console.error('Failed to start node initialization:', e);
+      setNodeStatus(`❌ ${e?.message || 'Failed to start'}`);
+      return;
+    }
+
+    // Poll for initialization completion
+    const pollInterval = setInterval(() => {
+      if (isNodeInitialized()) {
+        clearInterval(pollInterval);
+        try {
+          const id = getNodeId();
+          setNodeId(id);
+          setNodeStatus('✅ Node initialized');
+          console.log('Node initialized with ID:', id);
+        } catch (e: any) {
+          setNodeStatus(`❌ ${e?.message || 'Failed to get node ID'}`);
+        }
+      }
+    }, 100);
+
+    // Cleanup on unmount
+    return () => clearInterval(pollInterval);
+  }, []);
 
   const callAsyncGreet = async () => {
     setIsLoading(true);
@@ -133,6 +214,24 @@ function App(): React.JSX.Element {
               ))}
             </View>
           </View>
+
+          {/* Ankurah Node status (auto-initialized on startup) */}
+          <View style={styles.section}>
+            <Text style={[styles.sectionTitle, isDarkMode && styles.textLight]}>
+              4. Ankurah Node
+            </Text>
+            <Text style={[styles.result, isDarkMode && styles.textLight]}>
+              {nodeStatus}
+            </Text>
+            {nodeId && (
+              <Text style={[styles.nodeId, isDarkMode && styles.textLight]}>
+                ID: {nodeId}
+              </Text>
+            )}
+            {nodeStatus === 'Initializing...' && (
+              <ActivityIndicator size="small" style={{ marginTop: 8 }} />
+            )}
+          </View>
         </ScrollView>
       </SafeAreaView>
     </SafeAreaProvider>
@@ -197,6 +296,12 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: '#666',
     fontFamily: 'Courier',
+  },
+  nodeId: {
+    fontSize: 12,
+    color: '#666',
+    fontFamily: 'Courier',
+    marginTop: 4,
   },
   textLight: {
     color: '#fff',

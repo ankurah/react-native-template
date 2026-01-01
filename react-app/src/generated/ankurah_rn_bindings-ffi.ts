@@ -50,6 +50,15 @@ interface NativeModuleInterface {
   ubrn_uniffi_ankurah_rn_bindings_fn_init_callback_vtable_countercallback(
     vtable: UniffiVTableCallbackInterfaceCounterCallback,
   ): void;
+  ubrn_uniffi_ankurah_rn_bindings_fn_init_callback_vtable_logcallback(
+    vtable: UniffiVTableCallbackInterfaceLogCallback,
+  ): void;
+  ubrn_uniffi_ankurah_rn_bindings_fn_func_get_default_storage_path(
+    uniffi_out_err: UniffiRustCallStatus,
+  ): Uint8Array;
+  ubrn_uniffi_ankurah_rn_bindings_fn_func_get_node_id(
+    uniffi_out_err: UniffiRustCallStatus,
+  ): Uint8Array;
   ubrn_uniffi_ankurah_rn_bindings_fn_func_greet(
     name: Uint8Array,
     uniffi_out_err: UniffiRustCallStatus,
@@ -58,6 +67,18 @@ interface NativeModuleInterface {
     name: Uint8Array,
     delayMs: bigint,
   ): bigint;
+  ubrn_uniffi_ankurah_rn_bindings_fn_func_init_node(
+    storagePath: Uint8Array,
+    serverUrl: Uint8Array,
+    uniffi_out_err: UniffiRustCallStatus,
+  ): void;
+  ubrn_uniffi_ankurah_rn_bindings_fn_func_is_node_initialized(
+    uniffi_out_err: UniffiRustCallStatus,
+  ): number;
+  ubrn_uniffi_ankurah_rn_bindings_fn_func_setup_logging(
+    callback: bigint,
+    uniffi_out_err: UniffiRustCallStatus,
+  ): void;
   ubrn_ffi_ankurah_rn_bindings_rust_future_poll_u8(
     handle: bigint,
     callback: UniffiRustFutureContinuationCallback,
@@ -205,13 +226,19 @@ interface NativeModuleInterface {
     handle: bigint,
     uniffi_out_err: UniffiRustCallStatus,
   ): void;
+  ubrn_uniffi_ankurah_rn_bindings_checksum_func_get_default_storage_path(): number;
+  ubrn_uniffi_ankurah_rn_bindings_checksum_func_get_node_id(): number;
   ubrn_uniffi_ankurah_rn_bindings_checksum_func_greet(): number;
   ubrn_uniffi_ankurah_rn_bindings_checksum_func_greet_async(): number;
+  ubrn_uniffi_ankurah_rn_bindings_checksum_func_init_node(): number;
+  ubrn_uniffi_ankurah_rn_bindings_checksum_func_is_node_initialized(): number;
+  ubrn_uniffi_ankurah_rn_bindings_checksum_func_setup_logging(): number;
   ubrn_uniffi_ankurah_rn_bindings_checksum_method_counter_get(): number;
   ubrn_uniffi_ankurah_rn_bindings_checksum_method_counter_increment(): number;
   ubrn_uniffi_ankurah_rn_bindings_checksum_method_counter_set_callback(): number;
   ubrn_uniffi_ankurah_rn_bindings_checksum_constructor_counter_new(): number;
   ubrn_uniffi_ankurah_rn_bindings_checksum_method_countercallback_on_update(): number;
+  ubrn_uniffi_ankurah_rn_bindings_checksum_method_logcallback_on_log(): number;
   ubrn_ffi_ankurah_rn_bindings_uniffi_contract_version(): number;
   ubrn_uniffi_internal_fn_method_counter_ffi__bless_pointer(
     pointer: bigint,
@@ -346,8 +373,18 @@ type UniffiCallbackInterfaceCounterCallbackMethod0 = (
   uniffiHandle: bigint,
   count: number,
 ) => UniffiResult<void>;
+type UniffiCallbackInterfaceLogCallbackMethod0 = (
+  uniffiHandle: bigint,
+  level: Uint8Array,
+  target: Uint8Array,
+  message: Uint8Array,
+) => UniffiResult<void>;
 export type UniffiVTableCallbackInterfaceCounterCallback = {
   onUpdate: UniffiCallbackInterfaceCounterCallbackMethod0;
+  uniffiFree: UniffiCallbackInterfaceFree;
+};
+export type UniffiVTableCallbackInterfaceLogCallback = {
+  onLog: UniffiCallbackInterfaceLogCallbackMethod0;
   uniffiFree: UniffiCallbackInterfaceFree;
 };
 
