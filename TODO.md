@@ -38,13 +38,18 @@
 - [x] Document cross-crate UniFFI learnings in `specs/react-native-uniffi/`
 - [x] Add `QueryValue` enum for substitution values (replaces variadic strings)
 - [x] Add `uniffi_mutable_field_methods` to generate wrapper type getters on Mutable
-- **🚧 WIP: Active type wrapper generation for UniFFI (LWWString, YrsStringString, etc.)**
+- [x] **Active type wrapper generation for UniFFI (LWWString, YrsStringString, etc.)** ✅ Tentative
+  - Added `uniffi: false` to `get_value` method in `lww.ron`
+  - Added filtering by `method.uniffi` in `uniffi_methods()`
+  - Used `uniffi::custom_type!` macro for `Json` type (converts to/from String at FFI boundary)
+  - Fixed derive macro to not emit `#[cfg(feature = "...")]` into generated code
+  - Separated `wasm_wrapper()` and `uniffi_wrapper()` with feature-gated implementations
 
 ## Phase 4: Reactive UI & Full App Port (Current)
 
 ### 4a: Build and Test Current Bindings
-- [ ] Regenerate TypeScript bindings with `ubrn`
-- [ ] Verify generated types look correct (MessageOps, MessageView, etc.)
+- [x] Regenerate TypeScript bindings with `ubrn`
+- [x] Verify generated types look correct (MessageOps, MessageView, etc.)
 - [ ] Test basic operations in the app:
   - [ ] Create a Room
   - [ ] Query rooms with `RoomOps.query()`
@@ -114,67 +119,6 @@ Bindings features (`wasm`, `uniffi`) are mutually exclusive with `compile_error!
 - UniFFI async functions need a tokio runtime (handled via global `RUNTIME` in `rn-bindings`)
 - Cross-crate UniFFI: borrowed args (`&T`) work, owned args (`T`) don't
 - Use `::uniffi::Object` not `::ankurah::derive_deps::uniffi::Object` in generated code
-
----
-
-## Current WIP State (Active Type Wrappers)
-
-### What we're doing
-Generating UniFFI wrapper types for active properties (like `LWW<String>` → `LWWString`, `YrsString<String>` → `YrsStringString`).
-These wrappers are needed because UniFFI doesn't support generics, similar to WASM.
-
-### Where we are
-1. **Updated `impl_provided_wrapper_types!` macro** to generate both WASM and UniFFI wrappers
-   - `derive/src/wrapper_macros.rs`: Added `impl_provided_wrapper_types_uniffi_impl()`
-   - `derive/src/lib.rs`: Updated macro to call both WASM and UniFFI generators
-   - Fixed: proc-macro `cfg!()` checks don't work - now generates code with `#[cfg(feature = "...")]` wrapping
-
-2. **Updated `ffi_wrapper()` in `backend.rs`** to generate unified struct with conditional impl blocks
-   - Single struct with `#[cfg_attr(feature = "wasm", ...)]` and `#[cfg_attr(feature = "uniffi", ...)]`
-   - Separate `wasm_methods()` and `uniffi_methods()` for FFI-specific implementations
-
-3. **Current error**: Types like `Json`, `Option<Value>` are not UniFFI-compatible
-   - The RON config's `provided_wrapper_types` includes `Json` which wraps `serde_json::Value`
-   - UniFFI can't handle these types natively
-
-### Next steps to resume
-1. **Add `uniffi: bool` field to Method struct** (already added, needs filtering)
-   - Filter methods in `uniffi_methods()` similar to how `wasm_methods()` filters by `method.wasm`
-   
-2. **Add `uniffi_provided_wrapper_types` to BackendConfig** (or exclude problematic types)
-   - Option A: Add separate list in RON config for UniFFI-compatible types
-   - Option B: Add `uniffi: false` to individual methods that return incompatible types
-   - Option C: Skip types that UniFFI can't handle (Json, Option<Value>)
-
-3. **Update RON configs** (`lww.ron`, `yrs.ron`) to mark UniFFI-incompatible methods
-   - `get_value` already has `wasm: false`, might need `uniffi: false` too
-   - Methods returning `Json` or `Option<Value>` need exclusion
-
-4. **Test compilation**:
-   ```bash
-   cd /Users/daniel/code/ankurah && cargo check -p ankurah-core --features uniffi
-   cd /Users/daniel/code/ankurah-react-native-template && cargo check -p ankurah-rn-model --features uniffi
-   ```
-
-### Key files modified
-- `ankurah/derive/src/wrapper_macros.rs` - Added UniFFI wrapper generation
-- `ankurah/derive/src/lib.rs` - Updated macros to generate both WASM and UniFFI
-- `ankurah/derive/src/model/backend.rs` - Added `uniffi: bool` to Method, unified `ffi_wrapper()`
-- `ankurah/derive/src/model/uniffi.rs` - Added `uniffi_mutable_field_methods()`
-- `ankurah/core/src/property/value/lww.rs` - Changed `wasm` module to `ffi` module
-- `ankurah/core/src/property/value/yrs.rs` - Changed `wasm` module to `ffi` module
-- `ankurah/core/src/query_value.rs` - New file for QueryValue enum
-
-### The fundamental issue
-The `wasm` bool in Method config filters methods for WASM. We added `uniffi` bool but haven't:
-1. Added filtering in `uniffi_methods()` 
-2. Updated RON configs to exclude problematic methods/types
-
-The error `Json: Lift<UniFfiTag> is not satisfied` occurs because:
-- `provided_wrapper_types` in RON includes `Json`
-- We generate `LWWJson` wrapper
-- `LWWJson.get()` returns `Result<Json, ...>` 
-- `Json` (wrapping `serde_json::Value`) isn't a UniFFI-compatible type
 
 ---
 

@@ -11,19 +11,28 @@ if (!rustInstalled) {
 }
 
 // Export the generated bindings to the app.
+export * from './generated/ankurah_core';
+export * from './generated/ankurah_proto';
 export * from './generated/ankurah_rn_bindings';
+export * from './generated/ankurah_rn_model';
 
 // Now import the bindings so we can:
 // - intialize them
 // - export them as namespaced objects as the default export.
+import * as ankurah_core from './generated/ankurah_core';
+import * as ankurah_proto from './generated/ankurah_proto';
 import * as ankurah_rn_bindings from './generated/ankurah_rn_bindings';
+import * as ankurah_rn_model from './generated/ankurah_rn_model';
 
 // Initialize the generated bindings: mostly checksums, but also callbacks.
 // - the boolean flag ensures this loads exactly once, even if the JS code
 //   is reloaded (e.g. during development with metro).
 let initialized = false;
 if (!initialized) {
+  ankurah_core.default.initialize();
+  ankurah_proto.default.initialize();
   ankurah_rn_bindings.default.initialize();
+  ankurah_rn_model.default.initialize();
   initialized = true;
 }
 
@@ -36,6 +45,9 @@ export async function uniffiInitAsync() {
 
 // Export the crates as individually namespaced objects.
 export default {
+  ankurah_core,
+  ankurah_proto,
   ankurah_rn_bindings,
+  ankurah_rn_model,
 };
 
