@@ -333,6 +333,10 @@ extern "C" {
         void * ptr, 
         RustCallStatus *uniffi_out_err
     );
+    int8_t uniffi_ankurah_rn_model_fn_method_messageview_deleted(
+        void * ptr, 
+        RustCallStatus *uniffi_out_err
+    );
     void * uniffi_ankurah_rn_model_fn_method_messageview_edit(
         void * ptr, 
         void * trx, 
@@ -342,7 +346,23 @@ extern "C" {
         void * ptr, 
         RustCallStatus *uniffi_out_err
     );
+    RustBuffer uniffi_ankurah_rn_model_fn_method_messageview_room(
+        void * ptr, 
+        RustCallStatus *uniffi_out_err
+    );
+    RustBuffer uniffi_ankurah_rn_model_fn_method_messageview_text(
+        void * ptr, 
+        RustCallStatus *uniffi_out_err
+    );
+    int64_t uniffi_ankurah_rn_model_fn_method_messageview_timestamp(
+        void * ptr, 
+        RustCallStatus *uniffi_out_err
+    );
     void uniffi_ankurah_rn_model_fn_method_messageview_track(
+        void * ptr, 
+        RustCallStatus *uniffi_out_err
+    );
+    RustBuffer uniffi_ankurah_rn_model_fn_method_messageview_user(
         void * ptr, 
         RustCallStatus *uniffi_out_err
     );
@@ -573,6 +593,10 @@ extern "C" {
         void * ptr, 
         RustCallStatus *uniffi_out_err
     );
+    RustBuffer uniffi_ankurah_rn_model_fn_method_roomview_name(
+        void * ptr, 
+        RustCallStatus *uniffi_out_err
+    );
     void uniffi_ankurah_rn_model_fn_method_roomview_track(
         void * ptr, 
         RustCallStatus *uniffi_out_err
@@ -758,6 +782,10 @@ extern "C" {
         RustCallStatus *uniffi_out_err
     );
     void uniffi_ankurah_rn_model_fn_free_userview(
+        void * ptr, 
+        RustCallStatus *uniffi_out_err
+    );
+    RustBuffer uniffi_ankurah_rn_model_fn_method_userview_display_name(
         void * ptr, 
         RustCallStatus *uniffi_out_err
     );
@@ -1048,11 +1076,21 @@ extern "C" {
     );
     uint16_t uniffi_ankurah_rn_model_checksum_method_messageresultset_len(
     );
+    uint16_t uniffi_ankurah_rn_model_checksum_method_messageview_deleted(
+    );
     uint16_t uniffi_ankurah_rn_model_checksum_method_messageview_edit(
     );
     uint16_t uniffi_ankurah_rn_model_checksum_method_messageview_id(
     );
+    uint16_t uniffi_ankurah_rn_model_checksum_method_messageview_room(
+    );
+    uint16_t uniffi_ankurah_rn_model_checksum_method_messageview_text(
+    );
+    uint16_t uniffi_ankurah_rn_model_checksum_method_messageview_timestamp(
+    );
     uint16_t uniffi_ankurah_rn_model_checksum_method_messageview_track(
+    );
+    uint16_t uniffi_ankurah_rn_model_checksum_method_messageview_user(
     );
     uint16_t uniffi_ankurah_rn_model_checksum_method_message_lwwrefroom_get(
     );
@@ -1120,6 +1158,8 @@ extern "C" {
     );
     uint16_t uniffi_ankurah_rn_model_checksum_method_roomview_id(
     );
+    uint16_t uniffi_ankurah_rn_model_checksum_method_roomview_name(
+    );
     uint16_t uniffi_ankurah_rn_model_checksum_method_roomview_track(
     );
     uint16_t uniffi_ankurah_rn_model_checksum_method_userchangeset_added(
@@ -1175,6 +1215,8 @@ extern "C" {
     uint16_t uniffi_ankurah_rn_model_checksum_method_userresultset_items(
     );
     uint16_t uniffi_ankurah_rn_model_checksum_method_userresultset_len(
+    );
+    uint16_t uniffi_ankurah_rn_model_checksum_method_userview_display_name(
     );
     uint16_t uniffi_ankurah_rn_model_checksum_method_userview_edit(
     );
@@ -3114,6 +3156,14 @@ NativeAnkurahRnModel::NativeAnkurahRnModel(
             return this->cpp_uniffi_ankurah_rn_model_fn_free_messageview(rt, thisVal, args, count);
         }
     );
+    props["ubrn_uniffi_ankurah_rn_model_fn_method_messageview_deleted"] = jsi::Function::createFromHostFunction(
+        rt,
+        jsi::PropNameID::forAscii(rt, "ubrn_uniffi_ankurah_rn_model_fn_method_messageview_deleted"),
+        1,
+        [this](jsi::Runtime &rt, const jsi::Value &thisVal, const jsi::Value *args, size_t count) -> jsi::Value {
+            return this->cpp_uniffi_ankurah_rn_model_fn_method_messageview_deleted(rt, thisVal, args, count);
+        }
+    );
     props["ubrn_uniffi_ankurah_rn_model_fn_method_messageview_edit"] = jsi::Function::createFromHostFunction(
         rt,
         jsi::PropNameID::forAscii(rt, "ubrn_uniffi_ankurah_rn_model_fn_method_messageview_edit"),
@@ -3130,12 +3180,44 @@ NativeAnkurahRnModel::NativeAnkurahRnModel(
             return this->cpp_uniffi_ankurah_rn_model_fn_method_messageview_id(rt, thisVal, args, count);
         }
     );
+    props["ubrn_uniffi_ankurah_rn_model_fn_method_messageview_room"] = jsi::Function::createFromHostFunction(
+        rt,
+        jsi::PropNameID::forAscii(rt, "ubrn_uniffi_ankurah_rn_model_fn_method_messageview_room"),
+        1,
+        [this](jsi::Runtime &rt, const jsi::Value &thisVal, const jsi::Value *args, size_t count) -> jsi::Value {
+            return this->cpp_uniffi_ankurah_rn_model_fn_method_messageview_room(rt, thisVal, args, count);
+        }
+    );
+    props["ubrn_uniffi_ankurah_rn_model_fn_method_messageview_text"] = jsi::Function::createFromHostFunction(
+        rt,
+        jsi::PropNameID::forAscii(rt, "ubrn_uniffi_ankurah_rn_model_fn_method_messageview_text"),
+        1,
+        [this](jsi::Runtime &rt, const jsi::Value &thisVal, const jsi::Value *args, size_t count) -> jsi::Value {
+            return this->cpp_uniffi_ankurah_rn_model_fn_method_messageview_text(rt, thisVal, args, count);
+        }
+    );
+    props["ubrn_uniffi_ankurah_rn_model_fn_method_messageview_timestamp"] = jsi::Function::createFromHostFunction(
+        rt,
+        jsi::PropNameID::forAscii(rt, "ubrn_uniffi_ankurah_rn_model_fn_method_messageview_timestamp"),
+        1,
+        [this](jsi::Runtime &rt, const jsi::Value &thisVal, const jsi::Value *args, size_t count) -> jsi::Value {
+            return this->cpp_uniffi_ankurah_rn_model_fn_method_messageview_timestamp(rt, thisVal, args, count);
+        }
+    );
     props["ubrn_uniffi_ankurah_rn_model_fn_method_messageview_track"] = jsi::Function::createFromHostFunction(
         rt,
         jsi::PropNameID::forAscii(rt, "ubrn_uniffi_ankurah_rn_model_fn_method_messageview_track"),
         1,
         [this](jsi::Runtime &rt, const jsi::Value &thisVal, const jsi::Value *args, size_t count) -> jsi::Value {
             return this->cpp_uniffi_ankurah_rn_model_fn_method_messageview_track(rt, thisVal, args, count);
+        }
+    );
+    props["ubrn_uniffi_ankurah_rn_model_fn_method_messageview_user"] = jsi::Function::createFromHostFunction(
+        rt,
+        jsi::PropNameID::forAscii(rt, "ubrn_uniffi_ankurah_rn_model_fn_method_messageview_user"),
+        1,
+        [this](jsi::Runtime &rt, const jsi::Value &thisVal, const jsi::Value *args, size_t count) -> jsi::Value {
+            return this->cpp_uniffi_ankurah_rn_model_fn_method_messageview_user(rt, thisVal, args, count);
         }
     );
     props["ubrn_uniffi_ankurah_rn_model_fn_clone_message_lwwrefroom"] = jsi::Function::createFromHostFunction(
@@ -3562,6 +3644,14 @@ NativeAnkurahRnModel::NativeAnkurahRnModel(
             return this->cpp_uniffi_ankurah_rn_model_fn_method_roomview_id(rt, thisVal, args, count);
         }
     );
+    props["ubrn_uniffi_ankurah_rn_model_fn_method_roomview_name"] = jsi::Function::createFromHostFunction(
+        rt,
+        jsi::PropNameID::forAscii(rt, "ubrn_uniffi_ankurah_rn_model_fn_method_roomview_name"),
+        1,
+        [this](jsi::Runtime &rt, const jsi::Value &thisVal, const jsi::Value *args, size_t count) -> jsi::Value {
+            return this->cpp_uniffi_ankurah_rn_model_fn_method_roomview_name(rt, thisVal, args, count);
+        }
+    );
     props["ubrn_uniffi_ankurah_rn_model_fn_method_roomview_track"] = jsi::Function::createFromHostFunction(
         rt,
         jsi::PropNameID::forAscii(rt, "ubrn_uniffi_ankurah_rn_model_fn_method_roomview_track"),
@@ -3912,6 +4002,14 @@ NativeAnkurahRnModel::NativeAnkurahRnModel(
         1,
         [this](jsi::Runtime &rt, const jsi::Value &thisVal, const jsi::Value *args, size_t count) -> jsi::Value {
             return this->cpp_uniffi_ankurah_rn_model_fn_free_userview(rt, thisVal, args, count);
+        }
+    );
+    props["ubrn_uniffi_ankurah_rn_model_fn_method_userview_display_name"] = jsi::Function::createFromHostFunction(
+        rt,
+        jsi::PropNameID::forAscii(rt, "ubrn_uniffi_ankurah_rn_model_fn_method_userview_display_name"),
+        1,
+        [this](jsi::Runtime &rt, const jsi::Value &thisVal, const jsi::Value *args, size_t count) -> jsi::Value {
+            return this->cpp_uniffi_ankurah_rn_model_fn_method_userview_display_name(rt, thisVal, args, count);
         }
     );
     props["ubrn_uniffi_ankurah_rn_model_fn_method_userview_edit"] = jsi::Function::createFromHostFunction(
@@ -4602,6 +4700,14 @@ NativeAnkurahRnModel::NativeAnkurahRnModel(
             return this->cpp_uniffi_ankurah_rn_model_checksum_method_messageresultset_len(rt, thisVal, args, count);
         }
     );
+    props["ubrn_uniffi_ankurah_rn_model_checksum_method_messageview_deleted"] = jsi::Function::createFromHostFunction(
+        rt,
+        jsi::PropNameID::forAscii(rt, "ubrn_uniffi_ankurah_rn_model_checksum_method_messageview_deleted"),
+        0,
+        [this](jsi::Runtime &rt, const jsi::Value &thisVal, const jsi::Value *args, size_t count) -> jsi::Value {
+            return this->cpp_uniffi_ankurah_rn_model_checksum_method_messageview_deleted(rt, thisVal, args, count);
+        }
+    );
     props["ubrn_uniffi_ankurah_rn_model_checksum_method_messageview_edit"] = jsi::Function::createFromHostFunction(
         rt,
         jsi::PropNameID::forAscii(rt, "ubrn_uniffi_ankurah_rn_model_checksum_method_messageview_edit"),
@@ -4618,12 +4724,44 @@ NativeAnkurahRnModel::NativeAnkurahRnModel(
             return this->cpp_uniffi_ankurah_rn_model_checksum_method_messageview_id(rt, thisVal, args, count);
         }
     );
+    props["ubrn_uniffi_ankurah_rn_model_checksum_method_messageview_room"] = jsi::Function::createFromHostFunction(
+        rt,
+        jsi::PropNameID::forAscii(rt, "ubrn_uniffi_ankurah_rn_model_checksum_method_messageview_room"),
+        0,
+        [this](jsi::Runtime &rt, const jsi::Value &thisVal, const jsi::Value *args, size_t count) -> jsi::Value {
+            return this->cpp_uniffi_ankurah_rn_model_checksum_method_messageview_room(rt, thisVal, args, count);
+        }
+    );
+    props["ubrn_uniffi_ankurah_rn_model_checksum_method_messageview_text"] = jsi::Function::createFromHostFunction(
+        rt,
+        jsi::PropNameID::forAscii(rt, "ubrn_uniffi_ankurah_rn_model_checksum_method_messageview_text"),
+        0,
+        [this](jsi::Runtime &rt, const jsi::Value &thisVal, const jsi::Value *args, size_t count) -> jsi::Value {
+            return this->cpp_uniffi_ankurah_rn_model_checksum_method_messageview_text(rt, thisVal, args, count);
+        }
+    );
+    props["ubrn_uniffi_ankurah_rn_model_checksum_method_messageview_timestamp"] = jsi::Function::createFromHostFunction(
+        rt,
+        jsi::PropNameID::forAscii(rt, "ubrn_uniffi_ankurah_rn_model_checksum_method_messageview_timestamp"),
+        0,
+        [this](jsi::Runtime &rt, const jsi::Value &thisVal, const jsi::Value *args, size_t count) -> jsi::Value {
+            return this->cpp_uniffi_ankurah_rn_model_checksum_method_messageview_timestamp(rt, thisVal, args, count);
+        }
+    );
     props["ubrn_uniffi_ankurah_rn_model_checksum_method_messageview_track"] = jsi::Function::createFromHostFunction(
         rt,
         jsi::PropNameID::forAscii(rt, "ubrn_uniffi_ankurah_rn_model_checksum_method_messageview_track"),
         0,
         [this](jsi::Runtime &rt, const jsi::Value &thisVal, const jsi::Value *args, size_t count) -> jsi::Value {
             return this->cpp_uniffi_ankurah_rn_model_checksum_method_messageview_track(rt, thisVal, args, count);
+        }
+    );
+    props["ubrn_uniffi_ankurah_rn_model_checksum_method_messageview_user"] = jsi::Function::createFromHostFunction(
+        rt,
+        jsi::PropNameID::forAscii(rt, "ubrn_uniffi_ankurah_rn_model_checksum_method_messageview_user"),
+        0,
+        [this](jsi::Runtime &rt, const jsi::Value &thisVal, const jsi::Value *args, size_t count) -> jsi::Value {
+            return this->cpp_uniffi_ankurah_rn_model_checksum_method_messageview_user(rt, thisVal, args, count);
         }
     );
     props["ubrn_uniffi_ankurah_rn_model_checksum_method_message_lwwrefroom_get"] = jsi::Function::createFromHostFunction(
@@ -4890,6 +5028,14 @@ NativeAnkurahRnModel::NativeAnkurahRnModel(
             return this->cpp_uniffi_ankurah_rn_model_checksum_method_roomview_id(rt, thisVal, args, count);
         }
     );
+    props["ubrn_uniffi_ankurah_rn_model_checksum_method_roomview_name"] = jsi::Function::createFromHostFunction(
+        rt,
+        jsi::PropNameID::forAscii(rt, "ubrn_uniffi_ankurah_rn_model_checksum_method_roomview_name"),
+        0,
+        [this](jsi::Runtime &rt, const jsi::Value &thisVal, const jsi::Value *args, size_t count) -> jsi::Value {
+            return this->cpp_uniffi_ankurah_rn_model_checksum_method_roomview_name(rt, thisVal, args, count);
+        }
+    );
     props["ubrn_uniffi_ankurah_rn_model_checksum_method_roomview_track"] = jsi::Function::createFromHostFunction(
         rt,
         jsi::PropNameID::forAscii(rt, "ubrn_uniffi_ankurah_rn_model_checksum_method_roomview_track"),
@@ -5112,6 +5258,14 @@ NativeAnkurahRnModel::NativeAnkurahRnModel(
         0,
         [this](jsi::Runtime &rt, const jsi::Value &thisVal, const jsi::Value *args, size_t count) -> jsi::Value {
             return this->cpp_uniffi_ankurah_rn_model_checksum_method_userresultset_len(rt, thisVal, args, count);
+        }
+    );
+    props["ubrn_uniffi_ankurah_rn_model_checksum_method_userview_display_name"] = jsi::Function::createFromHostFunction(
+        rt,
+        jsi::PropNameID::forAscii(rt, "ubrn_uniffi_ankurah_rn_model_checksum_method_userview_display_name"),
+        0,
+        [this](jsi::Runtime &rt, const jsi::Value &thisVal, const jsi::Value *args, size_t count) -> jsi::Value {
+            return this->cpp_uniffi_ankurah_rn_model_checksum_method_userview_display_name(rt, thisVal, args, count);
         }
     );
     props["ubrn_uniffi_ankurah_rn_model_checksum_method_userview_edit"] = jsi::Function::createFromHostFunction(
@@ -6114,6 +6268,16 @@ jsi::Value NativeAnkurahRnModel::cpp_uniffi_ankurah_rn_model_fn_free_messageview
         
         return jsi::Value::undefined();
 }
+jsi::Value NativeAnkurahRnModel::cpp_uniffi_ankurah_rn_model_fn_method_messageview_deleted(jsi::Runtime& rt, const jsi::Value& thisVal, const jsi::Value* args, size_t count) {
+        RustCallStatus status = uniffi::ankurah_rn_model::Bridging<RustCallStatus>::rustSuccess(rt);
+        auto value = uniffi_ankurah_rn_model_fn_method_messageview_deleted(uniffi_jsi::Bridging<void *>::fromJs(rt, callInvoker, args[0]), 
+            &status
+        );
+        uniffi::ankurah_rn_model::Bridging<RustCallStatus>::copyIntoJs(rt, callInvoker, status, args[count - 1]);
+
+        
+        return uniffi_jsi::Bridging<int8_t>::toJs(rt, callInvoker, value);
+}
 jsi::Value NativeAnkurahRnModel::cpp_uniffi_ankurah_rn_model_fn_method_messageview_edit(jsi::Runtime& rt, const jsi::Value& thisVal, const jsi::Value* args, size_t count) {
         RustCallStatus status = uniffi::ankurah_rn_model::Bridging<RustCallStatus>::rustSuccess(rt);
         auto value = uniffi_ankurah_rn_model_fn_method_messageview_edit(uniffi_jsi::Bridging<void *>::fromJs(rt, callInvoker, args[0]), uniffi_jsi::Bridging<void *>::fromJs(rt, callInvoker, args[1]), 
@@ -6134,6 +6298,36 @@ jsi::Value NativeAnkurahRnModel::cpp_uniffi_ankurah_rn_model_fn_method_messagevi
         
         return uniffi_jsi::Bridging<void *>::toJs(rt, callInvoker, value);
 }
+jsi::Value NativeAnkurahRnModel::cpp_uniffi_ankurah_rn_model_fn_method_messageview_room(jsi::Runtime& rt, const jsi::Value& thisVal, const jsi::Value* args, size_t count) {
+        RustCallStatus status = uniffi::ankurah_rn_model::Bridging<RustCallStatus>::rustSuccess(rt);
+        auto value = uniffi_ankurah_rn_model_fn_method_messageview_room(uniffi_jsi::Bridging<void *>::fromJs(rt, callInvoker, args[0]), 
+            &status
+        );
+        uniffi::ankurah_rn_model::Bridging<RustCallStatus>::copyIntoJs(rt, callInvoker, status, args[count - 1]);
+
+        
+        return uniffi::ankurah_rn_model::Bridging<RustBuffer>::toJs(rt, callInvoker, value);
+}
+jsi::Value NativeAnkurahRnModel::cpp_uniffi_ankurah_rn_model_fn_method_messageview_text(jsi::Runtime& rt, const jsi::Value& thisVal, const jsi::Value* args, size_t count) {
+        RustCallStatus status = uniffi::ankurah_rn_model::Bridging<RustCallStatus>::rustSuccess(rt);
+        auto value = uniffi_ankurah_rn_model_fn_method_messageview_text(uniffi_jsi::Bridging<void *>::fromJs(rt, callInvoker, args[0]), 
+            &status
+        );
+        uniffi::ankurah_rn_model::Bridging<RustCallStatus>::copyIntoJs(rt, callInvoker, status, args[count - 1]);
+
+        
+        return uniffi::ankurah_rn_model::Bridging<RustBuffer>::toJs(rt, callInvoker, value);
+}
+jsi::Value NativeAnkurahRnModel::cpp_uniffi_ankurah_rn_model_fn_method_messageview_timestamp(jsi::Runtime& rt, const jsi::Value& thisVal, const jsi::Value* args, size_t count) {
+        RustCallStatus status = uniffi::ankurah_rn_model::Bridging<RustCallStatus>::rustSuccess(rt);
+        auto value = uniffi_ankurah_rn_model_fn_method_messageview_timestamp(uniffi_jsi::Bridging<void *>::fromJs(rt, callInvoker, args[0]), 
+            &status
+        );
+        uniffi::ankurah_rn_model::Bridging<RustCallStatus>::copyIntoJs(rt, callInvoker, status, args[count - 1]);
+
+        
+        return uniffi_jsi::Bridging<int64_t>::toJs(rt, callInvoker, value);
+}
 jsi::Value NativeAnkurahRnModel::cpp_uniffi_ankurah_rn_model_fn_method_messageview_track(jsi::Runtime& rt, const jsi::Value& thisVal, const jsi::Value* args, size_t count) {
         RustCallStatus status = uniffi::ankurah_rn_model::Bridging<RustCallStatus>::rustSuccess(rt);
         uniffi_ankurah_rn_model_fn_method_messageview_track(uniffi_jsi::Bridging<void *>::fromJs(rt, callInvoker, args[0]), 
@@ -6143,6 +6337,16 @@ jsi::Value NativeAnkurahRnModel::cpp_uniffi_ankurah_rn_model_fn_method_messagevi
 
         
         return jsi::Value::undefined();
+}
+jsi::Value NativeAnkurahRnModel::cpp_uniffi_ankurah_rn_model_fn_method_messageview_user(jsi::Runtime& rt, const jsi::Value& thisVal, const jsi::Value* args, size_t count) {
+        RustCallStatus status = uniffi::ankurah_rn_model::Bridging<RustCallStatus>::rustSuccess(rt);
+        auto value = uniffi_ankurah_rn_model_fn_method_messageview_user(uniffi_jsi::Bridging<void *>::fromJs(rt, callInvoker, args[0]), 
+            &status
+        );
+        uniffi::ankurah_rn_model::Bridging<RustCallStatus>::copyIntoJs(rt, callInvoker, status, args[count - 1]);
+
+        
+        return uniffi::ankurah_rn_model::Bridging<RustBuffer>::toJs(rt, callInvoker, value);
 }
 jsi::Value NativeAnkurahRnModel::cpp_uniffi_ankurah_rn_model_fn_clone_message_lwwrefroom(jsi::Runtime& rt, const jsi::Value& thisVal, const jsi::Value* args, size_t count) {
         RustCallStatus status = uniffi::ankurah_rn_model::Bridging<RustCallStatus>::rustSuccess(rt);
@@ -6655,6 +6859,16 @@ jsi::Value NativeAnkurahRnModel::cpp_uniffi_ankurah_rn_model_fn_method_roomview_
         
         return uniffi_jsi::Bridging<void *>::toJs(rt, callInvoker, value);
 }
+jsi::Value NativeAnkurahRnModel::cpp_uniffi_ankurah_rn_model_fn_method_roomview_name(jsi::Runtime& rt, const jsi::Value& thisVal, const jsi::Value* args, size_t count) {
+        RustCallStatus status = uniffi::ankurah_rn_model::Bridging<RustCallStatus>::rustSuccess(rt);
+        auto value = uniffi_ankurah_rn_model_fn_method_roomview_name(uniffi_jsi::Bridging<void *>::fromJs(rt, callInvoker, args[0]), 
+            &status
+        );
+        uniffi::ankurah_rn_model::Bridging<RustCallStatus>::copyIntoJs(rt, callInvoker, status, args[count - 1]);
+
+        
+        return uniffi::ankurah_rn_model::Bridging<RustBuffer>::toJs(rt, callInvoker, value);
+}
 jsi::Value NativeAnkurahRnModel::cpp_uniffi_ankurah_rn_model_fn_method_roomview_track(jsi::Runtime& rt, const jsi::Value& thisVal, const jsi::Value* args, size_t count) {
         RustCallStatus status = uniffi::ankurah_rn_model::Bridging<RustCallStatus>::rustSuccess(rt);
         uniffi_ankurah_rn_model_fn_method_roomview_track(uniffi_jsi::Bridging<void *>::fromJs(rt, callInvoker, args[0]), 
@@ -7075,6 +7289,16 @@ jsi::Value NativeAnkurahRnModel::cpp_uniffi_ankurah_rn_model_fn_free_userview(js
 
         
         return jsi::Value::undefined();
+}
+jsi::Value NativeAnkurahRnModel::cpp_uniffi_ankurah_rn_model_fn_method_userview_display_name(jsi::Runtime& rt, const jsi::Value& thisVal, const jsi::Value* args, size_t count) {
+        RustCallStatus status = uniffi::ankurah_rn_model::Bridging<RustCallStatus>::rustSuccess(rt);
+        auto value = uniffi_ankurah_rn_model_fn_method_userview_display_name(uniffi_jsi::Bridging<void *>::fromJs(rt, callInvoker, args[0]), 
+            &status
+        );
+        uniffi::ankurah_rn_model::Bridging<RustCallStatus>::copyIntoJs(rt, callInvoker, status, args[count - 1]);
+
+        
+        return uniffi::ankurah_rn_model::Bridging<RustBuffer>::toJs(rt, callInvoker, value);
 }
 jsi::Value NativeAnkurahRnModel::cpp_uniffi_ankurah_rn_model_fn_method_userview_edit(jsi::Runtime& rt, const jsi::Value& thisVal, const jsi::Value* args, size_t count) {
         RustCallStatus status = uniffi::ankurah_rn_model::Bridging<RustCallStatus>::rustSuccess(rt);
@@ -7726,6 +7950,13 @@ jsi::Value NativeAnkurahRnModel::cpp_uniffi_ankurah_rn_model_checksum_method_mes
         
         return uniffi_jsi::Bridging<uint16_t>::toJs(rt, callInvoker, value);
 }
+jsi::Value NativeAnkurahRnModel::cpp_uniffi_ankurah_rn_model_checksum_method_messageview_deleted(jsi::Runtime& rt, const jsi::Value& thisVal, const jsi::Value* args, size_t count) {
+        auto value = uniffi_ankurah_rn_model_checksum_method_messageview_deleted(
+        );
+
+        
+        return uniffi_jsi::Bridging<uint16_t>::toJs(rt, callInvoker, value);
+}
 jsi::Value NativeAnkurahRnModel::cpp_uniffi_ankurah_rn_model_checksum_method_messageview_edit(jsi::Runtime& rt, const jsi::Value& thisVal, const jsi::Value* args, size_t count) {
         auto value = uniffi_ankurah_rn_model_checksum_method_messageview_edit(
         );
@@ -7740,8 +7971,36 @@ jsi::Value NativeAnkurahRnModel::cpp_uniffi_ankurah_rn_model_checksum_method_mes
         
         return uniffi_jsi::Bridging<uint16_t>::toJs(rt, callInvoker, value);
 }
+jsi::Value NativeAnkurahRnModel::cpp_uniffi_ankurah_rn_model_checksum_method_messageview_room(jsi::Runtime& rt, const jsi::Value& thisVal, const jsi::Value* args, size_t count) {
+        auto value = uniffi_ankurah_rn_model_checksum_method_messageview_room(
+        );
+
+        
+        return uniffi_jsi::Bridging<uint16_t>::toJs(rt, callInvoker, value);
+}
+jsi::Value NativeAnkurahRnModel::cpp_uniffi_ankurah_rn_model_checksum_method_messageview_text(jsi::Runtime& rt, const jsi::Value& thisVal, const jsi::Value* args, size_t count) {
+        auto value = uniffi_ankurah_rn_model_checksum_method_messageview_text(
+        );
+
+        
+        return uniffi_jsi::Bridging<uint16_t>::toJs(rt, callInvoker, value);
+}
+jsi::Value NativeAnkurahRnModel::cpp_uniffi_ankurah_rn_model_checksum_method_messageview_timestamp(jsi::Runtime& rt, const jsi::Value& thisVal, const jsi::Value* args, size_t count) {
+        auto value = uniffi_ankurah_rn_model_checksum_method_messageview_timestamp(
+        );
+
+        
+        return uniffi_jsi::Bridging<uint16_t>::toJs(rt, callInvoker, value);
+}
 jsi::Value NativeAnkurahRnModel::cpp_uniffi_ankurah_rn_model_checksum_method_messageview_track(jsi::Runtime& rt, const jsi::Value& thisVal, const jsi::Value* args, size_t count) {
         auto value = uniffi_ankurah_rn_model_checksum_method_messageview_track(
+        );
+
+        
+        return uniffi_jsi::Bridging<uint16_t>::toJs(rt, callInvoker, value);
+}
+jsi::Value NativeAnkurahRnModel::cpp_uniffi_ankurah_rn_model_checksum_method_messageview_user(jsi::Runtime& rt, const jsi::Value& thisVal, const jsi::Value* args, size_t count) {
+        auto value = uniffi_ankurah_rn_model_checksum_method_messageview_user(
         );
 
         
@@ -7978,6 +8237,13 @@ jsi::Value NativeAnkurahRnModel::cpp_uniffi_ankurah_rn_model_checksum_method_roo
         
         return uniffi_jsi::Bridging<uint16_t>::toJs(rt, callInvoker, value);
 }
+jsi::Value NativeAnkurahRnModel::cpp_uniffi_ankurah_rn_model_checksum_method_roomview_name(jsi::Runtime& rt, const jsi::Value& thisVal, const jsi::Value* args, size_t count) {
+        auto value = uniffi_ankurah_rn_model_checksum_method_roomview_name(
+        );
+
+        
+        return uniffi_jsi::Bridging<uint16_t>::toJs(rt, callInvoker, value);
+}
 jsi::Value NativeAnkurahRnModel::cpp_uniffi_ankurah_rn_model_checksum_method_roomview_track(jsi::Runtime& rt, const jsi::Value& thisVal, const jsi::Value* args, size_t count) {
         auto value = uniffi_ankurah_rn_model_checksum_method_roomview_track(
         );
@@ -8169,6 +8435,13 @@ jsi::Value NativeAnkurahRnModel::cpp_uniffi_ankurah_rn_model_checksum_method_use
 }
 jsi::Value NativeAnkurahRnModel::cpp_uniffi_ankurah_rn_model_checksum_method_userresultset_len(jsi::Runtime& rt, const jsi::Value& thisVal, const jsi::Value* args, size_t count) {
         auto value = uniffi_ankurah_rn_model_checksum_method_userresultset_len(
+        );
+
+        
+        return uniffi_jsi::Bridging<uint16_t>::toJs(rt, callInvoker, value);
+}
+jsi::Value NativeAnkurahRnModel::cpp_uniffi_ankurah_rn_model_checksum_method_userview_display_name(jsi::Runtime& rt, const jsi::Value& thisVal, const jsi::Value* args, size_t count) {
+        auto value = uniffi_ankurah_rn_model_checksum_method_userview_display_name(
         );
 
         

@@ -32,6 +32,7 @@ import nativeModule, {
   type UniffiVTableCallbackInterfaceCounterCallback,
   type UniffiVTableCallbackInterfaceLogCallback,
 } from './ankurah_rn_bindings-ffi';
+import { type ContextInterface } from './ankurah_core';
 import {
   type FfiConverter,
   type UniffiByteArray,
@@ -65,6 +66,8 @@ import {
 } from 'uniffi-bindgen-react-native';
 
 // Get converters from the other files, if any.
+import uniffiAnkurahCoreModule from './ankurah_core';
+const { FfiConverterTypeContext } = uniffiAnkurahCoreModule.converters;
 const uniffiCaller = new UniffiRustCaller(() => ({ code: 0 }));
 
 const uniffiIsDebug =
@@ -75,6 +78,25 @@ const uniffiIsDebug =
   false;
 // Public interface members begin here.
 
+/**
+ * Get a Context for performing operations on the node
+ * This is the main entry point for using Ankurah models
+ */
+export function getContext(): ContextInterface /*throws*/ {
+  return FfiConverterTypeContext.lift(
+    uniffiCaller.rustCallWithError(
+      /*liftError:*/ FfiConverterTypeAnkurahError.lift.bind(
+        FfiConverterTypeAnkurahError,
+      ),
+      /*caller:*/ callStatus => {
+        return nativeModule().ubrn_uniffi_ankurah_rn_bindings_fn_func_get_context(
+          callStatus,
+        );
+      },
+      /*liftString:*/ FfiConverterString.lift,
+    ),
+  );
+}
 /**
  * Get the default storage path for the current platform
  * On iOS/macOS, this uses the user's home directory
@@ -840,6 +862,14 @@ function uniffiEnsureInitialized() {
     throw new UniffiInternalError.ContractVersionMismatch(
       scaffoldingContractVersion,
       bindingsContractVersion,
+    );
+  }
+  if (
+    nativeModule().ubrn_uniffi_ankurah_rn_bindings_checksum_func_get_context() !==
+    49597
+  ) {
+    throw new UniffiInternalError.ApiChecksumMismatch(
+      'uniffi_ankurah_rn_bindings_checksum_func_get_context',
     );
   }
   if (

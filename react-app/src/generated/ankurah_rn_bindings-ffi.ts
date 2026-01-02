@@ -53,6 +53,9 @@ interface NativeModuleInterface {
   ubrn_uniffi_ankurah_rn_bindings_fn_init_callback_vtable_logcallback(
     vtable: UniffiVTableCallbackInterfaceLogCallback,
   ): void;
+  ubrn_uniffi_ankurah_rn_bindings_fn_func_get_context(
+    uniffi_out_err: UniffiRustCallStatus,
+  ): bigint;
   ubrn_uniffi_ankurah_rn_bindings_fn_func_get_default_storage_path(
     uniffi_out_err: UniffiRustCallStatus,
   ): Uint8Array;
@@ -226,6 +229,7 @@ interface NativeModuleInterface {
     handle: bigint,
     uniffi_out_err: UniffiRustCallStatus,
   ): void;
+  ubrn_uniffi_ankurah_rn_bindings_checksum_func_get_context(): number;
   ubrn_uniffi_ankurah_rn_bindings_checksum_func_get_default_storage_path(): number;
   ubrn_uniffi_ankurah_rn_bindings_checksum_func_get_node_id(): number;
   ubrn_uniffi_ankurah_rn_bindings_checksum_func_greet(): number;

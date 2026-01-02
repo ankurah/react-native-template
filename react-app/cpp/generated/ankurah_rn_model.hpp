@@ -68,9 +68,14 @@ class NativeAnkurahRnModel : public jsi::HostObject {
     jsi::Value cpp_uniffi_ankurah_rn_model_fn_method_messageresultset_len(jsi::Runtime& rt, const jsi::Value& thisVal, const jsi::Value* args, size_t count);
     jsi::Value cpp_uniffi_ankurah_rn_model_fn_clone_messageview(jsi::Runtime& rt, const jsi::Value& thisVal, const jsi::Value* args, size_t count);
     jsi::Value cpp_uniffi_ankurah_rn_model_fn_free_messageview(jsi::Runtime& rt, const jsi::Value& thisVal, const jsi::Value* args, size_t count);
+    jsi::Value cpp_uniffi_ankurah_rn_model_fn_method_messageview_deleted(jsi::Runtime& rt, const jsi::Value& thisVal, const jsi::Value* args, size_t count);
     jsi::Value cpp_uniffi_ankurah_rn_model_fn_method_messageview_edit(jsi::Runtime& rt, const jsi::Value& thisVal, const jsi::Value* args, size_t count);
     jsi::Value cpp_uniffi_ankurah_rn_model_fn_method_messageview_id(jsi::Runtime& rt, const jsi::Value& thisVal, const jsi::Value* args, size_t count);
+    jsi::Value cpp_uniffi_ankurah_rn_model_fn_method_messageview_room(jsi::Runtime& rt, const jsi::Value& thisVal, const jsi::Value* args, size_t count);
+    jsi::Value cpp_uniffi_ankurah_rn_model_fn_method_messageview_text(jsi::Runtime& rt, const jsi::Value& thisVal, const jsi::Value* args, size_t count);
+    jsi::Value cpp_uniffi_ankurah_rn_model_fn_method_messageview_timestamp(jsi::Runtime& rt, const jsi::Value& thisVal, const jsi::Value* args, size_t count);
     jsi::Value cpp_uniffi_ankurah_rn_model_fn_method_messageview_track(jsi::Runtime& rt, const jsi::Value& thisVal, const jsi::Value* args, size_t count);
+    jsi::Value cpp_uniffi_ankurah_rn_model_fn_method_messageview_user(jsi::Runtime& rt, const jsi::Value& thisVal, const jsi::Value* args, size_t count);
     jsi::Value cpp_uniffi_ankurah_rn_model_fn_clone_message_lwwrefroom(jsi::Runtime& rt, const jsi::Value& thisVal, const jsi::Value* args, size_t count);
     jsi::Value cpp_uniffi_ankurah_rn_model_fn_free_message_lwwrefroom(jsi::Runtime& rt, const jsi::Value& thisVal, const jsi::Value* args, size_t count);
     jsi::Value cpp_uniffi_ankurah_rn_model_fn_method_message_lwwrefroom_get(jsi::Runtime& rt, const jsi::Value& thisVal, const jsi::Value* args, size_t count);
@@ -124,6 +129,7 @@ class NativeAnkurahRnModel : public jsi::HostObject {
     jsi::Value cpp_uniffi_ankurah_rn_model_fn_free_roomview(jsi::Runtime& rt, const jsi::Value& thisVal, const jsi::Value* args, size_t count);
     jsi::Value cpp_uniffi_ankurah_rn_model_fn_method_roomview_edit(jsi::Runtime& rt, const jsi::Value& thisVal, const jsi::Value* args, size_t count);
     jsi::Value cpp_uniffi_ankurah_rn_model_fn_method_roomview_id(jsi::Runtime& rt, const jsi::Value& thisVal, const jsi::Value* args, size_t count);
+    jsi::Value cpp_uniffi_ankurah_rn_model_fn_method_roomview_name(jsi::Runtime& rt, const jsi::Value& thisVal, const jsi::Value* args, size_t count);
     jsi::Value cpp_uniffi_ankurah_rn_model_fn_method_roomview_track(jsi::Runtime& rt, const jsi::Value& thisVal, const jsi::Value* args, size_t count);
     jsi::Value cpp_uniffi_ankurah_rn_model_fn_clone_userchangeset(jsi::Runtime& rt, const jsi::Value& thisVal, const jsi::Value* args, size_t count);
     jsi::Value cpp_uniffi_ankurah_rn_model_fn_free_userchangeset(jsi::Runtime& rt, const jsi::Value& thisVal, const jsi::Value* args, size_t count);
@@ -168,6 +174,7 @@ class NativeAnkurahRnModel : public jsi::HostObject {
     jsi::Value cpp_uniffi_ankurah_rn_model_fn_method_userresultset_len(jsi::Runtime& rt, const jsi::Value& thisVal, const jsi::Value* args, size_t count);
     jsi::Value cpp_uniffi_ankurah_rn_model_fn_clone_userview(jsi::Runtime& rt, const jsi::Value& thisVal, const jsi::Value* args, size_t count);
     jsi::Value cpp_uniffi_ankurah_rn_model_fn_free_userview(jsi::Runtime& rt, const jsi::Value& thisVal, const jsi::Value* args, size_t count);
+    jsi::Value cpp_uniffi_ankurah_rn_model_fn_method_userview_display_name(jsi::Runtime& rt, const jsi::Value& thisVal, const jsi::Value* args, size_t count);
     jsi::Value cpp_uniffi_ankurah_rn_model_fn_method_userview_edit(jsi::Runtime& rt, const jsi::Value& thisVal, const jsi::Value* args, size_t count);
     jsi::Value cpp_uniffi_ankurah_rn_model_fn_method_userview_id(jsi::Runtime& rt, const jsi::Value& thisVal, const jsi::Value* args, size_t count);
     jsi::Value cpp_uniffi_ankurah_rn_model_fn_method_userview_track(jsi::Runtime& rt, const jsi::Value& thisVal, const jsi::Value* args, size_t count);
@@ -254,9 +261,14 @@ class NativeAnkurahRnModel : public jsi::HostObject {
     jsi::Value cpp_uniffi_ankurah_rn_model_checksum_method_messageresultset_is_loaded(jsi::Runtime& rt, const jsi::Value& thisVal, const jsi::Value* args, size_t count);
     jsi::Value cpp_uniffi_ankurah_rn_model_checksum_method_messageresultset_items(jsi::Runtime& rt, const jsi::Value& thisVal, const jsi::Value* args, size_t count);
     jsi::Value cpp_uniffi_ankurah_rn_model_checksum_method_messageresultset_len(jsi::Runtime& rt, const jsi::Value& thisVal, const jsi::Value* args, size_t count);
+    jsi::Value cpp_uniffi_ankurah_rn_model_checksum_method_messageview_deleted(jsi::Runtime& rt, const jsi::Value& thisVal, const jsi::Value* args, size_t count);
     jsi::Value cpp_uniffi_ankurah_rn_model_checksum_method_messageview_edit(jsi::Runtime& rt, const jsi::Value& thisVal, const jsi::Value* args, size_t count);
     jsi::Value cpp_uniffi_ankurah_rn_model_checksum_method_messageview_id(jsi::Runtime& rt, const jsi::Value& thisVal, const jsi::Value* args, size_t count);
+    jsi::Value cpp_uniffi_ankurah_rn_model_checksum_method_messageview_room(jsi::Runtime& rt, const jsi::Value& thisVal, const jsi::Value* args, size_t count);
+    jsi::Value cpp_uniffi_ankurah_rn_model_checksum_method_messageview_text(jsi::Runtime& rt, const jsi::Value& thisVal, const jsi::Value* args, size_t count);
+    jsi::Value cpp_uniffi_ankurah_rn_model_checksum_method_messageview_timestamp(jsi::Runtime& rt, const jsi::Value& thisVal, const jsi::Value* args, size_t count);
     jsi::Value cpp_uniffi_ankurah_rn_model_checksum_method_messageview_track(jsi::Runtime& rt, const jsi::Value& thisVal, const jsi::Value* args, size_t count);
+    jsi::Value cpp_uniffi_ankurah_rn_model_checksum_method_messageview_user(jsi::Runtime& rt, const jsi::Value& thisVal, const jsi::Value* args, size_t count);
     jsi::Value cpp_uniffi_ankurah_rn_model_checksum_method_message_lwwrefroom_get(jsi::Runtime& rt, const jsi::Value& thisVal, const jsi::Value* args, size_t count);
     jsi::Value cpp_uniffi_ankurah_rn_model_checksum_method_message_lwwrefroom_set(jsi::Runtime& rt, const jsi::Value& thisVal, const jsi::Value* args, size_t count);
     jsi::Value cpp_uniffi_ankurah_rn_model_checksum_method_message_lwwrefuser_get(jsi::Runtime& rt, const jsi::Value& thisVal, const jsi::Value* args, size_t count);
@@ -290,6 +302,7 @@ class NativeAnkurahRnModel : public jsi::HostObject {
     jsi::Value cpp_uniffi_ankurah_rn_model_checksum_method_roomresultset_len(jsi::Runtime& rt, const jsi::Value& thisVal, const jsi::Value* args, size_t count);
     jsi::Value cpp_uniffi_ankurah_rn_model_checksum_method_roomview_edit(jsi::Runtime& rt, const jsi::Value& thisVal, const jsi::Value* args, size_t count);
     jsi::Value cpp_uniffi_ankurah_rn_model_checksum_method_roomview_id(jsi::Runtime& rt, const jsi::Value& thisVal, const jsi::Value* args, size_t count);
+    jsi::Value cpp_uniffi_ankurah_rn_model_checksum_method_roomview_name(jsi::Runtime& rt, const jsi::Value& thisVal, const jsi::Value* args, size_t count);
     jsi::Value cpp_uniffi_ankurah_rn_model_checksum_method_roomview_track(jsi::Runtime& rt, const jsi::Value& thisVal, const jsi::Value* args, size_t count);
     jsi::Value cpp_uniffi_ankurah_rn_model_checksum_method_userchangeset_added(jsi::Runtime& rt, const jsi::Value& thisVal, const jsi::Value* args, size_t count);
     jsi::Value cpp_uniffi_ankurah_rn_model_checksum_method_userchangeset_appeared(jsi::Runtime& rt, const jsi::Value& thisVal, const jsi::Value* args, size_t count);
@@ -318,6 +331,7 @@ class NativeAnkurahRnModel : public jsi::HostObject {
     jsi::Value cpp_uniffi_ankurah_rn_model_checksum_method_userresultset_is_loaded(jsi::Runtime& rt, const jsi::Value& thisVal, const jsi::Value* args, size_t count);
     jsi::Value cpp_uniffi_ankurah_rn_model_checksum_method_userresultset_items(jsi::Runtime& rt, const jsi::Value& thisVal, const jsi::Value* args, size_t count);
     jsi::Value cpp_uniffi_ankurah_rn_model_checksum_method_userresultset_len(jsi::Runtime& rt, const jsi::Value& thisVal, const jsi::Value* args, size_t count);
+    jsi::Value cpp_uniffi_ankurah_rn_model_checksum_method_userview_display_name(jsi::Runtime& rt, const jsi::Value& thisVal, const jsi::Value* args, size_t count);
     jsi::Value cpp_uniffi_ankurah_rn_model_checksum_method_userview_edit(jsi::Runtime& rt, const jsi::Value& thisVal, const jsi::Value* args, size_t count);
     jsi::Value cpp_uniffi_ankurah_rn_model_checksum_method_userview_id(jsi::Runtime& rt, const jsi::Value& thisVal, const jsi::Value* args, size_t count);
     jsi::Value cpp_uniffi_ankurah_rn_model_checksum_method_userview_track(jsi::Runtime& rt, const jsi::Value& thisVal, const jsi::Value* args, size_t count);

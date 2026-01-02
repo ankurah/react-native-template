@@ -182,6 +182,8 @@ extern "C" {
     void uniffi_ankurah_rn_bindings_fn_init_callback_vtable_logcallback(
         UniffiVTableCallbackInterfaceLogCallback * vtable
     );
+    void * uniffi_ankurah_rn_bindings_fn_func_get_context(RustCallStatus *uniffi_out_err
+    );
     RustBuffer uniffi_ankurah_rn_bindings_fn_func_get_default_storage_path(RustCallStatus *uniffi_out_err
     );
     RustBuffer uniffi_ankurah_rn_bindings_fn_func_get_node_id(RustCallStatus *uniffi_out_err
@@ -416,6 +418,8 @@ extern "C" {
     void ffi_ankurah_rn_bindings_rust_future_complete_void(
         /*handle*/ uint64_t handle, 
         RustCallStatus *uniffi_out_err
+    );
+    uint16_t uniffi_ankurah_rn_bindings_checksum_func_get_context(
     );
     uint16_t uniffi_ankurah_rn_bindings_checksum_func_get_default_storage_path(
     );
@@ -2617,6 +2621,14 @@ NativeAnkurahRnBindings::NativeAnkurahRnBindings(
             return this->cpp_uniffi_ankurah_rn_bindings_fn_init_callback_vtable_logcallback(rt, thisVal, args, count);
         }
     );
+    props["ubrn_uniffi_ankurah_rn_bindings_fn_func_get_context"] = jsi::Function::createFromHostFunction(
+        rt,
+        jsi::PropNameID::forAscii(rt, "ubrn_uniffi_ankurah_rn_bindings_fn_func_get_context"),
+        0,
+        [this](jsi::Runtime &rt, const jsi::Value &thisVal, const jsi::Value *args, size_t count) -> jsi::Value {
+            return this->cpp_uniffi_ankurah_rn_bindings_fn_func_get_context(rt, thisVal, args, count);
+        }
+    );
     props["ubrn_uniffi_ankurah_rn_bindings_fn_func_get_default_storage_path"] = jsi::Function::createFromHostFunction(
         rt,
         jsi::PropNameID::forAscii(rt, "ubrn_uniffi_ankurah_rn_bindings_fn_func_get_default_storage_path"),
@@ -3089,6 +3101,14 @@ NativeAnkurahRnBindings::NativeAnkurahRnBindings(
             return this->cpp_ffi_ankurah_rn_bindings_rust_future_complete_void(rt, thisVal, args, count);
         }
     );
+    props["ubrn_uniffi_ankurah_rn_bindings_checksum_func_get_context"] = jsi::Function::createFromHostFunction(
+        rt,
+        jsi::PropNameID::forAscii(rt, "ubrn_uniffi_ankurah_rn_bindings_checksum_func_get_context"),
+        0,
+        [this](jsi::Runtime &rt, const jsi::Value &thisVal, const jsi::Value *args, size_t count) -> jsi::Value {
+            return this->cpp_uniffi_ankurah_rn_bindings_checksum_func_get_context(rt, thisVal, args, count);
+        }
+    );
     props["ubrn_uniffi_ankurah_rn_bindings_checksum_func_get_default_storage_path"] = jsi::Function::createFromHostFunction(
         rt,
         jsi::PropNameID::forAscii(rt, "ubrn_uniffi_ankurah_rn_bindings_checksum_func_get_default_storage_path"),
@@ -3370,6 +3390,15 @@ jsi::Value NativeAnkurahRnBindings::cpp_uniffi_ankurah_rn_bindings_fn_init_callb
         )
     );
     return jsi::Value::undefined();
+}
+jsi::Value NativeAnkurahRnBindings::cpp_uniffi_ankurah_rn_bindings_fn_func_get_context(jsi::Runtime& rt, const jsi::Value& thisVal, const jsi::Value* args, size_t count) {
+        RustCallStatus status = uniffi::ankurah_rn_bindings::Bridging<RustCallStatus>::rustSuccess(rt);
+        auto value = uniffi_ankurah_rn_bindings_fn_func_get_context(&status
+        );
+        uniffi::ankurah_rn_bindings::Bridging<RustCallStatus>::copyIntoJs(rt, callInvoker, status, args[count - 1]);
+
+        
+        return uniffi_jsi::Bridging<void *>::toJs(rt, callInvoker, value);
 }
 jsi::Value NativeAnkurahRnBindings::cpp_uniffi_ankurah_rn_bindings_fn_func_get_default_storage_path(jsi::Runtime& rt, const jsi::Value& thisVal, const jsi::Value* args, size_t count) {
         RustCallStatus status = uniffi::ankurah_rn_bindings::Bridging<RustCallStatus>::rustSuccess(rt);
@@ -3837,6 +3866,13 @@ jsi::Value NativeAnkurahRnBindings::cpp_ffi_ankurah_rn_bindings_rust_future_comp
 
         
         return jsi::Value::undefined();
+}
+jsi::Value NativeAnkurahRnBindings::cpp_uniffi_ankurah_rn_bindings_checksum_func_get_context(jsi::Runtime& rt, const jsi::Value& thisVal, const jsi::Value* args, size_t count) {
+        auto value = uniffi_ankurah_rn_bindings_checksum_func_get_context(
+        );
+
+        
+        return uniffi_jsi::Bridging<uint16_t>::toJs(rt, callInvoker, value);
 }
 jsi::Value NativeAnkurahRnBindings::cpp_uniffi_ankurah_rn_bindings_checksum_func_get_default_storage_path(jsi::Runtime& rt, const jsi::Value& thisVal, const jsi::Value* args, size_t count) {
         auto value = uniffi_ankurah_rn_bindings_checksum_func_get_default_storage_path(

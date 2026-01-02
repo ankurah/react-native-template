@@ -224,6 +224,10 @@ interface NativeModuleInterface {
     ptr: bigint,
     uniffi_out_err: UniffiRustCallStatus,
   ): void;
+  ubrn_uniffi_ankurah_rn_model_fn_method_messageview_deleted(
+    ptr: bigint,
+    uniffi_out_err: UniffiRustCallStatus,
+  ): number;
   ubrn_uniffi_ankurah_rn_model_fn_method_messageview_edit(
     ptr: bigint,
     trx: bigint,
@@ -233,10 +237,26 @@ interface NativeModuleInterface {
     ptr: bigint,
     uniffi_out_err: UniffiRustCallStatus,
   ): bigint;
+  ubrn_uniffi_ankurah_rn_model_fn_method_messageview_room(
+    ptr: bigint,
+    uniffi_out_err: UniffiRustCallStatus,
+  ): Uint8Array;
+  ubrn_uniffi_ankurah_rn_model_fn_method_messageview_text(
+    ptr: bigint,
+    uniffi_out_err: UniffiRustCallStatus,
+  ): Uint8Array;
+  ubrn_uniffi_ankurah_rn_model_fn_method_messageview_timestamp(
+    ptr: bigint,
+    uniffi_out_err: UniffiRustCallStatus,
+  ): bigint;
   ubrn_uniffi_ankurah_rn_model_fn_method_messageview_track(
     ptr: bigint,
     uniffi_out_err: UniffiRustCallStatus,
   ): void;
+  ubrn_uniffi_ankurah_rn_model_fn_method_messageview_user(
+    ptr: bigint,
+    uniffi_out_err: UniffiRustCallStatus,
+  ): Uint8Array;
   ubrn_uniffi_ankurah_rn_model_fn_clone_message_lwwrefroom(
     ptr: bigint,
     uniffi_out_err: UniffiRustCallStatus,
@@ -465,6 +485,10 @@ interface NativeModuleInterface {
     ptr: bigint,
     uniffi_out_err: UniffiRustCallStatus,
   ): bigint;
+  ubrn_uniffi_ankurah_rn_model_fn_method_roomview_name(
+    ptr: bigint,
+    uniffi_out_err: UniffiRustCallStatus,
+  ): Uint8Array;
   ubrn_uniffi_ankurah_rn_model_fn_method_roomview_track(
     ptr: bigint,
     uniffi_out_err: UniffiRustCallStatus,
@@ -654,6 +678,10 @@ interface NativeModuleInterface {
     ptr: bigint,
     uniffi_out_err: UniffiRustCallStatus,
   ): void;
+  ubrn_uniffi_ankurah_rn_model_fn_method_userview_display_name(
+    ptr: bigint,
+    uniffi_out_err: UniffiRustCallStatus,
+  ): Uint8Array;
   ubrn_uniffi_ankurah_rn_model_fn_method_userview_edit(
     ptr: bigint,
     trx: bigint,
@@ -843,9 +871,14 @@ interface NativeModuleInterface {
   ubrn_uniffi_ankurah_rn_model_checksum_method_messageresultset_is_loaded(): number;
   ubrn_uniffi_ankurah_rn_model_checksum_method_messageresultset_items(): number;
   ubrn_uniffi_ankurah_rn_model_checksum_method_messageresultset_len(): number;
+  ubrn_uniffi_ankurah_rn_model_checksum_method_messageview_deleted(): number;
   ubrn_uniffi_ankurah_rn_model_checksum_method_messageview_edit(): number;
   ubrn_uniffi_ankurah_rn_model_checksum_method_messageview_id(): number;
+  ubrn_uniffi_ankurah_rn_model_checksum_method_messageview_room(): number;
+  ubrn_uniffi_ankurah_rn_model_checksum_method_messageview_text(): number;
+  ubrn_uniffi_ankurah_rn_model_checksum_method_messageview_timestamp(): number;
   ubrn_uniffi_ankurah_rn_model_checksum_method_messageview_track(): number;
+  ubrn_uniffi_ankurah_rn_model_checksum_method_messageview_user(): number;
   ubrn_uniffi_ankurah_rn_model_checksum_method_message_lwwrefroom_get(): number;
   ubrn_uniffi_ankurah_rn_model_checksum_method_message_lwwrefroom_set(): number;
   ubrn_uniffi_ankurah_rn_model_checksum_method_message_lwwrefuser_get(): number;
@@ -879,6 +912,7 @@ interface NativeModuleInterface {
   ubrn_uniffi_ankurah_rn_model_checksum_method_roomresultset_len(): number;
   ubrn_uniffi_ankurah_rn_model_checksum_method_roomview_edit(): number;
   ubrn_uniffi_ankurah_rn_model_checksum_method_roomview_id(): number;
+  ubrn_uniffi_ankurah_rn_model_checksum_method_roomview_name(): number;
   ubrn_uniffi_ankurah_rn_model_checksum_method_roomview_track(): number;
   ubrn_uniffi_ankurah_rn_model_checksum_method_userchangeset_added(): number;
   ubrn_uniffi_ankurah_rn_model_checksum_method_userchangeset_appeared(): number;
@@ -907,6 +941,7 @@ interface NativeModuleInterface {
   ubrn_uniffi_ankurah_rn_model_checksum_method_userresultset_is_loaded(): number;
   ubrn_uniffi_ankurah_rn_model_checksum_method_userresultset_items(): number;
   ubrn_uniffi_ankurah_rn_model_checksum_method_userresultset_len(): number;
+  ubrn_uniffi_ankurah_rn_model_checksum_method_userview_display_name(): number;
   ubrn_uniffi_ankurah_rn_model_checksum_method_userview_edit(): number;
   ubrn_uniffi_ankurah_rn_model_checksum_method_userview_id(): number;
   ubrn_uniffi_ankurah_rn_model_checksum_method_userview_track(): number;

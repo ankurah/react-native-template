@@ -1858,6 +1858,7 @@ const FfiConverterTypeMessageResultSet = new FfiConverterObject(
 );
 
 export interface MessageViewInterface {
+  deleted(): /*throws*/ boolean;
   /**
    * Edit this entity in a transaction (UniFFI version - returns owned Mutable)
    * Note: The returned Mutable is not lifetime-bound to the transaction,
@@ -1865,10 +1866,14 @@ export interface MessageViewInterface {
    */
   edit(trx: TransactionInterface): /*throws*/ MessageMutInterface;
   id(): EntityIdInterface;
+  room(): /*throws*/ string;
+  text(): /*throws*/ string;
+  timestamp(): /*throws*/ /*i64*/ bigint;
   /**
    * Manually track this View in the current observer
    */
   track(): void;
+  user(): /*throws*/ string;
 }
 
 export class MessageView
@@ -1884,6 +1889,23 @@ export class MessageView
     this[pointerLiteralSymbol] = pointer;
     this[destructorGuardSymbol] =
       uniffiTypeMessageViewObjectFactory.bless(pointer);
+  }
+
+  public deleted(): boolean /*throws*/ {
+    return FfiConverterBool.lift(
+      uniffiCaller.rustCallWithError(
+        /*liftError:*/ FfiConverterTypePropertyError.lift.bind(
+          FfiConverterTypePropertyError,
+        ),
+        /*caller:*/ callStatus => {
+          return nativeModule().ubrn_uniffi_ankurah_rn_model_fn_method_messageview_deleted(
+            uniffiTypeMessageViewObjectFactory.clonePointer(this),
+            callStatus,
+          );
+        },
+        /*liftString:*/ FfiConverterString.lift,
+      ),
+    );
   }
 
   /**
@@ -1923,6 +1945,57 @@ export class MessageView
     );
   }
 
+  public room(): string /*throws*/ {
+    return FfiConverterString.lift(
+      uniffiCaller.rustCallWithError(
+        /*liftError:*/ FfiConverterTypePropertyError.lift.bind(
+          FfiConverterTypePropertyError,
+        ),
+        /*caller:*/ callStatus => {
+          return nativeModule().ubrn_uniffi_ankurah_rn_model_fn_method_messageview_room(
+            uniffiTypeMessageViewObjectFactory.clonePointer(this),
+            callStatus,
+          );
+        },
+        /*liftString:*/ FfiConverterString.lift,
+      ),
+    );
+  }
+
+  public text(): string /*throws*/ {
+    return FfiConverterString.lift(
+      uniffiCaller.rustCallWithError(
+        /*liftError:*/ FfiConverterTypePropertyError.lift.bind(
+          FfiConverterTypePropertyError,
+        ),
+        /*caller:*/ callStatus => {
+          return nativeModule().ubrn_uniffi_ankurah_rn_model_fn_method_messageview_text(
+            uniffiTypeMessageViewObjectFactory.clonePointer(this),
+            callStatus,
+          );
+        },
+        /*liftString:*/ FfiConverterString.lift,
+      ),
+    );
+  }
+
+  public timestamp(): /*i64*/ bigint /*throws*/ {
+    return FfiConverterInt64.lift(
+      uniffiCaller.rustCallWithError(
+        /*liftError:*/ FfiConverterTypePropertyError.lift.bind(
+          FfiConverterTypePropertyError,
+        ),
+        /*caller:*/ callStatus => {
+          return nativeModule().ubrn_uniffi_ankurah_rn_model_fn_method_messageview_timestamp(
+            uniffiTypeMessageViewObjectFactory.clonePointer(this),
+            callStatus,
+          );
+        },
+        /*liftString:*/ FfiConverterString.lift,
+      ),
+    );
+  }
+
   /**
    * Manually track this View in the current observer
    */
@@ -1935,6 +2008,23 @@ export class MessageView
         );
       },
       /*liftString:*/ FfiConverterString.lift,
+    );
+  }
+
+  public user(): string /*throws*/ {
+    return FfiConverterString.lift(
+      uniffiCaller.rustCallWithError(
+        /*liftError:*/ FfiConverterTypePropertyError.lift.bind(
+          FfiConverterTypePropertyError,
+        ),
+        /*caller:*/ callStatus => {
+          return nativeModule().ubrn_uniffi_ankurah_rn_model_fn_method_messageview_user(
+            uniffiTypeMessageViewObjectFactory.clonePointer(this),
+            callStatus,
+          );
+        },
+        /*liftString:*/ FfiConverterString.lift,
+      ),
     );
   }
 
@@ -3764,6 +3854,7 @@ export interface RoomViewInterface {
    */
   edit(trx: TransactionInterface): /*throws*/ RoomMutInterface;
   id(): EntityIdInterface;
+  name(): /*throws*/ string;
   /**
    * Manually track this View in the current observer
    */
@@ -3813,6 +3904,23 @@ export class RoomView
       uniffiCaller.rustCall(
         /*caller:*/ callStatus => {
           return nativeModule().ubrn_uniffi_ankurah_rn_model_fn_method_roomview_id(
+            uniffiTypeRoomViewObjectFactory.clonePointer(this),
+            callStatus,
+          );
+        },
+        /*liftString:*/ FfiConverterString.lift,
+      ),
+    );
+  }
+
+  public name(): string /*throws*/ {
+    return FfiConverterString.lift(
+      uniffiCaller.rustCallWithError(
+        /*liftError:*/ FfiConverterTypePropertyError.lift.bind(
+          FfiConverterTypePropertyError,
+        ),
+        /*caller:*/ callStatus => {
+          return nativeModule().ubrn_uniffi_ankurah_rn_model_fn_method_roomview_name(
             uniffiTypeRoomViewObjectFactory.clonePointer(this),
             callStatus,
           );
@@ -5375,6 +5483,7 @@ const FfiConverterTypeUserResultSet = new FfiConverterObject(
 );
 
 export interface UserViewInterface {
+  displayName(): /*throws*/ string;
   /**
    * Edit this entity in a transaction (UniFFI version - returns owned Mutable)
    * Note: The returned Mutable is not lifetime-bound to the transaction,
@@ -5401,6 +5510,23 @@ export class UserView
     this[pointerLiteralSymbol] = pointer;
     this[destructorGuardSymbol] =
       uniffiTypeUserViewObjectFactory.bless(pointer);
+  }
+
+  public displayName(): string /*throws*/ {
+    return FfiConverterString.lift(
+      uniffiCaller.rustCallWithError(
+        /*liftError:*/ FfiConverterTypePropertyError.lift.bind(
+          FfiConverterTypePropertyError,
+        ),
+        /*caller:*/ callStatus => {
+          return nativeModule().ubrn_uniffi_ankurah_rn_model_fn_method_userview_display_name(
+            uniffiTypeUserViewObjectFactory.clonePointer(this),
+            callStatus,
+          );
+        },
+        /*liftString:*/ FfiConverterString.lift,
+      ),
+    );
   }
 
   /**
@@ -5850,6 +5976,14 @@ function uniffiEnsureInitialized() {
     );
   }
   if (
+    nativeModule().ubrn_uniffi_ankurah_rn_model_checksum_method_messageview_deleted() !==
+    33213
+  ) {
+    throw new UniffiInternalError.ApiChecksumMismatch(
+      'uniffi_ankurah_rn_model_checksum_method_messageview_deleted',
+    );
+  }
+  if (
     nativeModule().ubrn_uniffi_ankurah_rn_model_checksum_method_messageview_edit() !==
     23839
   ) {
@@ -5866,11 +6000,43 @@ function uniffiEnsureInitialized() {
     );
   }
   if (
+    nativeModule().ubrn_uniffi_ankurah_rn_model_checksum_method_messageview_room() !==
+    40236
+  ) {
+    throw new UniffiInternalError.ApiChecksumMismatch(
+      'uniffi_ankurah_rn_model_checksum_method_messageview_room',
+    );
+  }
+  if (
+    nativeModule().ubrn_uniffi_ankurah_rn_model_checksum_method_messageview_text() !==
+    35828
+  ) {
+    throw new UniffiInternalError.ApiChecksumMismatch(
+      'uniffi_ankurah_rn_model_checksum_method_messageview_text',
+    );
+  }
+  if (
+    nativeModule().ubrn_uniffi_ankurah_rn_model_checksum_method_messageview_timestamp() !==
+    20711
+  ) {
+    throw new UniffiInternalError.ApiChecksumMismatch(
+      'uniffi_ankurah_rn_model_checksum_method_messageview_timestamp',
+    );
+  }
+  if (
     nativeModule().ubrn_uniffi_ankurah_rn_model_checksum_method_messageview_track() !==
     27840
   ) {
     throw new UniffiInternalError.ApiChecksumMismatch(
       'uniffi_ankurah_rn_model_checksum_method_messageview_track',
+    );
+  }
+  if (
+    nativeModule().ubrn_uniffi_ankurah_rn_model_checksum_method_messageview_user() !==
+    62746
+  ) {
+    throw new UniffiInternalError.ApiChecksumMismatch(
+      'uniffi_ankurah_rn_model_checksum_method_messageview_user',
     );
   }
   if (
@@ -6138,6 +6304,14 @@ function uniffiEnsureInitialized() {
     );
   }
   if (
+    nativeModule().ubrn_uniffi_ankurah_rn_model_checksum_method_roomview_name() !==
+    4598
+  ) {
+    throw new UniffiInternalError.ApiChecksumMismatch(
+      'uniffi_ankurah_rn_model_checksum_method_roomview_name',
+    );
+  }
+  if (
     nativeModule().ubrn_uniffi_ankurah_rn_model_checksum_method_roomview_track() !==
     59525
   ) {
@@ -6359,6 +6533,14 @@ function uniffiEnsureInitialized() {
   ) {
     throw new UniffiInternalError.ApiChecksumMismatch(
       'uniffi_ankurah_rn_model_checksum_method_userresultset_len',
+    );
+  }
+  if (
+    nativeModule().ubrn_uniffi_ankurah_rn_model_checksum_method_userview_display_name() !==
+    15964
+  ) {
+    throw new UniffiInternalError.ApiChecksumMismatch(
+      'uniffi_ankurah_rn_model_checksum_method_userview_display_name',
     );
   }
   if (

@@ -108,6 +108,32 @@ pub fn setup_logging(callback: Box<dyn LogCallback>) {
         return;
     }
 
+    // Set up panic hook to log panics via tracing
+    std::panic::set_hook(Box::new(|panic_info| {
+        let payload = if let Some(s) = panic_info.payload().downcast_ref::<&str>() {
+            s.to_string()
+        } else if let Some(s) = panic_info.payload().downcast_ref::<String>() {
+            s.clone()
+        } else {
+            "Unknown panic payload".to_string()
+        };
+
+        let location = panic_info
+            .location()
+            .map(|loc| format!("{}:{}:{}", loc.file(), loc.line(), loc.column()))
+            .unwrap_or_else(|| "unknown location".to_string());
+
+        let backtrace = std::backtrace::Backtrace::capture();
+
+        // Log via tracing so it goes to JS
+        tracing::error!(
+            "RUST PANIC at {}: {}\nBacktrace:\n{}",
+            location,
+            payload,
+            backtrace
+        );
+    }));
+
     // Set up the tracing subscriber with our custom layer
     tracing_subscriber::registry()
         .with(JsLogLayer)
@@ -304,6 +330,17 @@ pub fn is_node_initialized() -> bool {
 pub fn get_node_id() -> Result<String, AnkurahError> {
     let node = NODE.get().ok_or(AnkurahError::NotInitialized)?;
     Ok(node.id.to_string())
+}
+
+/// Get a Context for performing operations on the node
+/// This is the main entry point for using Ankurah models
+#[uniffi::export]
+pub fn get_context() -> Result<ankurah::Context, AnkurahError> {
+    let node = NODE.get().ok_or(AnkurahError::NotInitialized)?;
+    node.context(ankurah::policy::DEFAULT_CONTEXT)
+        .map_err(|e| AnkurahError::Internal {
+            message: e.to_string(),
+        })
 }
 
 // Cross-crate UniFFI usage notes (see ankurah/specs/react-native-uniffi/):

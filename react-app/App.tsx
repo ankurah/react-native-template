@@ -1,11 +1,10 @@
 /**
  * Ankurah React Native UniFFI PoC
- * Phase 2: Ankurah Integration
+ * Room list with auto-fetch
  */
 
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
-  SafeAreaView,
   ScrollView,
   StatusBar,
   StyleSheet,
@@ -15,20 +14,20 @@ import {
   Button,
   ActivityIndicator,
 } from 'react-native';
-import { SafeAreaProvider } from 'react-native-safe-area-context';
+import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 
 // Import from src/index.tsx which handles native module initialization
 import {
-  greet,
-  greetAsync,
-  Counter,
-  CounterCallback,
   initNode,
   isNodeInitialized,
   getNodeId,
   getDefaultStoragePath,
   setupLogging,
   LogCallback,
+  getContext,
+  RoomOps,
+  RoomInput,
+  type RoomViewInterface,
 } from './src';
 
 // Set up Rust logging to forward to JS console (do this once at module load)
@@ -65,28 +64,70 @@ try {
 function App(): React.JSX.Element {
   const isDarkMode = useColorScheme() === 'dark';
 
-  // Sync function result
-  const syncGreeting = greet('React Native');
-
-  // Async function state
-  const [asyncGreeting, setAsyncGreeting] = useState<string | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
-
-  // Callback test state
-  const [callbackCount, setCallbackCount] = useState(0);
-  const [callbackLog, setCallbackLog] = useState<string[]>([]);
-  const counterRef = useRef<Counter | null>(null);
-
   // Ankurah node state
   const [nodeStatus, setNodeStatus] = useState<string>('Initializing...');
   const [nodeId, setNodeId] = useState<string | null>(null);
 
+  // Room operations state
+  const [rooms, setRooms] = useState<RoomViewInterface[]>([]);
+  const [roomLog, setRoomLog] = useState<string[]>([]);
+  const [isRoomLoading, setIsRoomLoading] = useState(false);
+
+  // Fetch rooms - defined before useEffect so it can be called
+  const fetchRooms = async () => {
+    setIsRoomLoading(true);
+    try {
+      console.log('fetchRooms: getting context...');
+      const ctx = getContext();
+      console.log('fetchRooms: got context', ctx);
+
+      const roomOps = new RoomOps();
+      setRoomLog(prev => [...prev, 'Fetching rooms...']);
+
+      console.log('fetchRooms: calling fetch...');
+      const fetchedRooms = await roomOps.fetch(ctx, 'true ORDER BY name ASC', []);
+      console.log('fetchRooms: got rooms', fetchedRooms);
+
+      setRooms(fetchedRooms);
+      setRoomLog(prev => [...prev, `✅ Found ${fetchedRooms.length} rooms`]);
+    } catch (e: any) {
+      const errStr = e?.message || e?.toString?.() || JSON.stringify(e) || String(e);
+      setRoomLog(prev => [...prev, `❌ Fetch error: ${errStr}`]);
+      console.error('Fetch rooms error:', e);
+      console.error('Error constructor:', e?.constructor?.name);
+      console.error('Error prototype:', Object.getPrototypeOf(e));
+      console.error('Error JSON:', JSON.stringify(e, Object.getOwnPropertyNames(e)));
+      if (e?.stack) console.error('Stack:', e.stack);
+    } finally {
+      setIsRoomLoading(false);
+    }
+  };
+
   // Initialize Ankurah node on app startup
   useEffect(() => {
+    const onNodeReady = (id: string) => {
+      setNodeId(id);
+      setNodeStatus('✅ Node initialized');
+      console.log('Node ready, fetching rooms...');
+      // Auto-fetch rooms once node is ready
+      fetchRooms();
+    };
+
+    // Check if already initialized (e.g., after hot reload)
+    if (isNodeInitialized()) {
+      try {
+        const id = getNodeId();
+        console.log('Node already initialized with ID:', id);
+        onNodeReady(id);
+      } catch (e: any) {
+        setNodeStatus(`❌ ${e?.message || 'Failed to get node ID'}`);
+      }
+      return;
+    }
+
     // Start initialization (non-blocking - spawns background task)
     try {
       const storagePath = getDefaultStoragePath();
-      // For iOS simulator, localhost maps to the host machine
       const serverUrl = 'ws://localhost:9797';
       console.log('Initializing node with storage path:', storagePath);
       console.log('Connecting to server:', serverUrl);
@@ -103,9 +144,7 @@ function App(): React.JSX.Element {
         clearInterval(pollInterval);
         try {
           const id = getNodeId();
-          setNodeId(id);
-          setNodeStatus('✅ Node initialized');
-          console.log('Node initialized with ID:', id);
+          onNodeReady(id);
         } catch (e: any) {
           setNodeStatus(`❌ ${e?.message || 'Failed to get node ID'}`);
         }
@@ -116,37 +155,36 @@ function App(): React.JSX.Element {
     return () => clearInterval(pollInterval);
   }, []);
 
-  const callAsyncGreet = async () => {
-    setIsLoading(true);
-    setAsyncGreeting(null);
+  // Room operations
+  const createRoom = async () => {
+    setIsRoomLoading(true);
     try {
-      const result = await greetAsync('React Native', BigInt(500));
-      setAsyncGreeting(result);
+      console.log('createRoom: getting context...');
+      const ctx = getContext();
+      console.log('createRoom: got context', ctx);
+
+      const roomOps = new RoomOps();
+      const roomName = `Room ${Date.now() % 10000}`;
+      setRoomLog(prev => [...prev, `Creating room: ${roomName}`]);
+
+      console.log('createRoom: creating input...');
+      const input = RoomInput.create({ name: roomName });
+      console.log('createRoom: got input', input);
+
+      console.log('createRoom: calling createOne...');
+      const room = await roomOps.createOne(ctx, input);
+      console.log('createRoom: got room', room);
+
+      setRoomLog(prev => [...prev, `✅ Created: ${room.name()} (${room.id().toString().slice(0, 8)}...)`]);
+      // Refresh the room list
+      await fetchRooms();
     } catch (e: any) {
-      setAsyncGreeting(`Error: ${e.message}`);
+      const errMsg = e?.message || e?.toString?.() || JSON.stringify(e) || String(e);
+      setRoomLog(prev => [...prev, `❌ Create error: ${errMsg}`]);
+      console.error('Create room error:', e);
+      if (e?.stack) console.error('Stack:', e.stack);
     } finally {
-      setIsLoading(false);
-    }
-  };
-
-  // Initialize counter with callback
-  const initCounter = () => {
-    const callback: CounterCallback = {
-      onUpdate: (count: number) => {
-        setCallbackCount(count);
-        setCallbackLog(prev => [...prev, `Callback: count=${count}`]);
-      },
-    };
-    const counter = new Counter();
-    counter.setCallback(callback);
-    counterRef.current = counter;
-    setCallbackLog(['Counter initialized with callback']);
-    setCallbackCount(0);
-  };
-
-  const incrementCounter = () => {
-    if (counterRef.current) {
-      counterRef.current.increment();
+      setIsRoomLoading(false);
     }
   };
 
@@ -156,80 +194,71 @@ function App(): React.JSX.Element {
       <SafeAreaView style={[styles.container, isDarkMode && styles.containerDark]}>
         <ScrollView contentContainerStyle={styles.content}>
           <Text style={[styles.title, isDarkMode && styles.textLight]}>
-            🦀 UniFFI + React Native
+            🦀 Ankurah Rooms
           </Text>
 
-          {/* Sync test */}
-          <View style={styles.section}>
-            <Text style={[styles.sectionTitle, isDarkMode && styles.textLight]}>
-              1. Sync Function
-            </Text>
-            <Text style={[styles.result, isDarkMode && styles.textLight]}>
-              {syncGreeting}
-            </Text>
-          </View>
-
-          {/* Async test */}
-          <View style={styles.section}>
-            <Text style={[styles.sectionTitle, isDarkMode && styles.textLight]}>
-              2. Async Function (500ms delay)
-            </Text>
-            {isLoading ? (
-              <ActivityIndicator size="small" color={isDarkMode ? '#fff' : '#000'} />
-            ) : asyncGreeting ? (
-              <Text style={[styles.result, isDarkMode && styles.textLight]}>
-                {asyncGreeting}
-              </Text>
-            ) : (
-              <Text style={[styles.placeholder, isDarkMode && styles.textLight]}>
-                Not called yet
-              </Text>
-            )}
-            <View style={styles.buttonContainer}>
-              <Button title="Call Async" onPress={callAsyncGreet} disabled={isLoading} />
-            </View>
-          </View>
-
-          {/* Callback test */}
-          <View style={styles.section}>
-            <Text style={[styles.sectionTitle, isDarkMode && styles.textLight]}>
-              3. Callback Interface
-            </Text>
-            <Text style={[styles.result, isDarkMode && styles.textLight]}>
-              Count: {callbackCount}
-            </Text>
-            <View style={styles.buttonRow}>
-              <Button title="Init Counter" onPress={initCounter} />
-              <Button
-                title="Increment"
-                onPress={incrementCounter}
-                disabled={!counterRef.current}
-              />
-            </View>
-            <View style={styles.logContainer}>
-              {callbackLog.slice(-5).map((log, i) => (
-                <Text key={i} style={[styles.logText, isDarkMode && styles.textLight]}>
-                  {log}
-                </Text>
-              ))}
-            </View>
-          </View>
-
-          {/* Ankurah Node status (auto-initialized on startup) */}
-          <View style={styles.section}>
-            <Text style={[styles.sectionTitle, isDarkMode && styles.textLight]}>
-              4. Ankurah Node
-            </Text>
-            <Text style={[styles.result, isDarkMode && styles.textLight]}>
+          {/* Node status */}
+          <View style={styles.statusBar}>
+            <Text style={[styles.statusText, isDarkMode && styles.textLight]}>
               {nodeStatus}
             </Text>
             {nodeId && (
               <Text style={[styles.nodeId, isDarkMode && styles.textLight]}>
-                ID: {nodeId}
+                {nodeId.slice(0, 12)}...
               </Text>
             )}
-            {nodeStatus === 'Initializing...' && (
-              <ActivityIndicator size="small" style={{ marginTop: 8 }} />
+          </View>
+
+          {/* Room list */}
+          <View style={styles.section}>
+            <View style={styles.sectionHeader}>
+              <Text style={[styles.sectionTitle, isDarkMode && styles.textLight]}>
+                Rooms ({rooms.length})
+              </Text>
+              <View style={styles.buttonRow}>
+                <Button
+                  title="Refresh"
+                  onPress={fetchRooms}
+                  disabled={!nodeId || isRoomLoading}
+                />
+                <Button
+                  title="Create"
+                  onPress={createRoom}
+                  disabled={!nodeId || isRoomLoading}
+                />
+              </View>
+            </View>
+
+            {isRoomLoading && <ActivityIndicator size="small" style={{ marginVertical: 8 }} />}
+
+            {rooms.length > 0 ? (
+              <View style={styles.roomList}>
+                {rooms.map((room, i) => (
+                  <View key={i} style={styles.roomItem}>
+                    <Text style={[styles.roomName, isDarkMode && styles.textLight]}>
+                      {room.name()}
+                    </Text>
+                    <Text style={[styles.roomId, isDarkMode && styles.textLight]}>
+                      {room.id().toString().slice(0, 8)}...
+                    </Text>
+                  </View>
+                ))}
+              </View>
+            ) : !isRoomLoading && nodeId ? (
+              <Text style={[styles.emptyText, isDarkMode && styles.textLight]}>
+                No rooms yet
+              </Text>
+            ) : null}
+
+            {/* Log */}
+            {roomLog.length > 0 && (
+              <View style={styles.logContainer}>
+                {roomLog.slice(-5).map((log, i) => (
+                  <Text key={i} style={[styles.logText, isDarkMode && styles.textLight]}>
+                    {log}
+                  </Text>
+                ))}
+              </View>
             )}
           </View>
         </ScrollView>
@@ -247,61 +276,93 @@ const styles = StyleSheet.create({
     backgroundColor: '#1a1a1a',
   },
   content: {
-    padding: 24,
-    paddingTop: 60,
+    padding: 16,
+    paddingTop: 20,
   },
   title: {
-    fontSize: 28,
+    fontSize: 24,
     fontWeight: 'bold',
-    marginBottom: 32,
+    marginBottom: 12,
     textAlign: 'center',
     color: '#000',
   },
-  section: {
-    marginBottom: 24,
-    padding: 16,
-    backgroundColor: 'rgba(128, 128, 128, 0.1)',
-    borderRadius: 12,
+  statusBar: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
     alignItems: 'center',
+    paddingVertical: 8,
+    paddingHorizontal: 12,
+    backgroundColor: 'rgba(128, 128, 128, 0.1)',
+    borderRadius: 8,
+    marginBottom: 16,
+  },
+  statusText: {
+    fontSize: 14,
+    color: '#333',
+  },
+  nodeId: {
+    fontSize: 11,
+    color: '#666',
+    fontFamily: 'Courier',
+  },
+  section: {
+    padding: 12,
+    backgroundColor: 'rgba(128, 128, 128, 0.1)',
+    borderRadius: 8,
+  },
+  sectionHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 8,
   },
   sectionTitle: {
     fontSize: 16,
     fontWeight: '600',
-    marginBottom: 8,
-    color: '#666',
-  },
-  result: {
-    fontSize: 18,
-    color: '#000',
-    textAlign: 'center',
-  },
-  placeholder: {
-    fontSize: 16,
-    color: '#999',
-    fontStyle: 'italic',
-  },
-  buttonContainer: {
-    marginTop: 12,
+    color: '#333',
   },
   buttonRow: {
     flexDirection: 'row',
-    gap: 12,
-    marginTop: 12,
+    gap: 8,
+  },
+  roomList: {
+    marginTop: 8,
+  },
+  roomItem: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingVertical: 8,
+    paddingHorizontal: 8,
+    backgroundColor: 'rgba(255, 255, 255, 0.5)',
+    borderRadius: 4,
+    marginBottom: 4,
+  },
+  roomName: {
+    fontSize: 14,
+    color: '#333',
+  },
+  roomId: {
+    fontSize: 11,
+    color: '#888',
+    fontFamily: 'Courier',
+  },
+  emptyText: {
+    textAlign: 'center',
+    color: '#888',
+    fontStyle: 'italic',
+    paddingVertical: 16,
   },
   logContainer: {
     marginTop: 12,
-    width: '100%',
+    paddingTop: 8,
+    borderTopWidth: 1,
+    borderTopColor: 'rgba(128, 128, 128, 0.2)',
   },
   logText: {
-    fontSize: 12,
+    fontSize: 11,
     color: '#666',
     fontFamily: 'Courier',
-  },
-  nodeId: {
-    fontSize: 12,
-    color: '#666',
-    fontFamily: 'Courier',
-    marginTop: 4,
   },
   textLight: {
     color: '#fff',

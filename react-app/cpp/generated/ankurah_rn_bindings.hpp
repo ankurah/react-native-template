@@ -29,6 +29,7 @@ class NativeAnkurahRnBindings : public jsi::HostObject {
     jsi::Value cpp_uniffi_ankurah_rn_bindings_fn_method_counter_set_callback(jsi::Runtime& rt, const jsi::Value& thisVal, const jsi::Value* args, size_t count);
     jsi::Value cpp_uniffi_ankurah_rn_bindings_fn_init_callback_vtable_countercallback(jsi::Runtime& rt, const jsi::Value& thisVal, const jsi::Value* args, size_t count);
     jsi::Value cpp_uniffi_ankurah_rn_bindings_fn_init_callback_vtable_logcallback(jsi::Runtime& rt, const jsi::Value& thisVal, const jsi::Value* args, size_t count);
+    jsi::Value cpp_uniffi_ankurah_rn_bindings_fn_func_get_context(jsi::Runtime& rt, const jsi::Value& thisVal, const jsi::Value* args, size_t count);
     jsi::Value cpp_uniffi_ankurah_rn_bindings_fn_func_get_default_storage_path(jsi::Runtime& rt, const jsi::Value& thisVal, const jsi::Value* args, size_t count);
     jsi::Value cpp_uniffi_ankurah_rn_bindings_fn_func_get_node_id(jsi::Runtime& rt, const jsi::Value& thisVal, const jsi::Value* args, size_t count);
     jsi::Value cpp_uniffi_ankurah_rn_bindings_fn_func_greet(jsi::Runtime& rt, const jsi::Value& thisVal, const jsi::Value* args, size_t count);
@@ -88,6 +89,7 @@ class NativeAnkurahRnBindings : public jsi::HostObject {
     jsi::Value cpp_ffi_ankurah_rn_bindings_rust_future_cancel_void(jsi::Runtime& rt, const jsi::Value& thisVal, const jsi::Value* args, size_t count);
     jsi::Value cpp_ffi_ankurah_rn_bindings_rust_future_free_void(jsi::Runtime& rt, const jsi::Value& thisVal, const jsi::Value* args, size_t count);
     jsi::Value cpp_ffi_ankurah_rn_bindings_rust_future_complete_void(jsi::Runtime& rt, const jsi::Value& thisVal, const jsi::Value* args, size_t count);
+    jsi::Value cpp_uniffi_ankurah_rn_bindings_checksum_func_get_context(jsi::Runtime& rt, const jsi::Value& thisVal, const jsi::Value* args, size_t count);
     jsi::Value cpp_uniffi_ankurah_rn_bindings_checksum_func_get_default_storage_path(jsi::Runtime& rt, const jsi::Value& thisVal, const jsi::Value* args, size_t count);
     jsi::Value cpp_uniffi_ankurah_rn_bindings_checksum_func_get_node_id(jsi::Runtime& rt, const jsi::Value& thisVal, const jsi::Value* args, size_t count);
     jsi::Value cpp_uniffi_ankurah_rn_bindings_checksum_func_greet(jsi::Runtime& rt, const jsi::Value& thisVal, const jsi::Value* args, size_t count);
