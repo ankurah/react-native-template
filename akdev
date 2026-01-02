@@ -8,6 +8,9 @@ touch .cargo/config.toml
 CONFIG_FILE=".cargo/config.toml"
 PATCH_CONTENT='[patch.crates-io]
 ankurah = { path = "../ankurah/ankurah" }
+ankurah-proto = { path = "../ankurah/proto" }
+ankurah-core = { path = "../ankurah/core" }
+ankurah-derive = { path = "../ankurah/derive" }
 ankql = { path = "../ankurah/ankql" }
 ankurah-signals = { path = "../ankurah/signals" }
 ankurah-websocket-server = { path = "../ankurah/connectors/websocket-server" }

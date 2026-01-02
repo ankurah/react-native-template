@@ -1,6 +1,9 @@
 use ankurah::{Model, Ref};
 use serde::{Deserialize, Serialize};
 
+#[cfg(feature = "uniffi")]
+uniffi::setup_scaffolding!();
+
 #[derive(Model, Debug, Serialize, Deserialize)]
 pub struct User {
     pub display_name: String,

@@ -306,4 +306,14 @@ pub fn get_node_id() -> Result<String, AnkurahError> {
     Ok(node.id.to_string())
 }
 
+// Cross-crate UniFFI usage notes (see ankurah/specs/react-native-uniffi/):
+// - External types from other UniFFI crates work automatically with proc-macros
+// - Borrowed args (&T) work cross-crate
+// - Owned returns (T) work cross-crate
+// - Owned args (T) do NOT work cross-crate - use &T instead
+// - Vec<Object>/Option<Object> require Arc wrapping - general UniFFI Objects rule
+
 uniffi::setup_scaffolding!();
+
+// Re-export model crate's scaffolding symbols for linking
+ankurah_rn_model::uniffi_reexport_scaffolding!();

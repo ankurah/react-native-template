@@ -13,9 +13,12 @@ uniffi = "0.29"
 tokio = { version = "1", features = ["rt-multi-thread", "sync"] }
 
 # Ankurah
-ankurah = { version = "0.7.12", features = ["derive"] }
+ankurah = { version = "0.7.12", features = ["derive", "uniffi"] }
 ankurah-storage-sled = "0.7.12"
 ankurah-websocket-client = "0.7.12"
+
+# Local model crate
+ankurah-rn-model = { path = "../model", features = ["uniffi"] }
 
 # Utilities
 tracing = "0.1"
