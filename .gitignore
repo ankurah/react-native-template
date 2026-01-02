@@ -25,6 +25,9 @@ react-app/android/.gradle/
 # Generated bindings
 react-app/rust-bindings/
 
+# Generated native frameworks (too large for git)
+react-app/AnkurahAppFramework.xcframework/
+
 # Local cargo config (managed by akdev)
 .cargo/config.toml
 
