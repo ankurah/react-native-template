@@ -281,41 +281,39 @@ pub fn init_node(storage_path: String, server_url: Option<String>) -> Result<(),
     let storage_arc = Arc::new(storage);
 
     rt.spawn(async move {
-        eprintln!("RN-BINDINGS: Creating ephemeral node...");
+        tracing::info!("[init_node] Creating ephemeral node...");
         // Use ephemeral node that connects to a durable server
         let node = Node::new(storage_arc, PermissiveAgent::new());
-        eprintln!(
-            "RN-BINDINGS: Node created, connecting to server at {}...",
-            url
-        );
+        tracing::info!("[init_node] Node created with ID: {}", node.id);
+        tracing::info!("[init_node] Connecting to server at {}...", url);
 
         // Connect to the server via WebSocket
         let client = match WebsocketClient::new(node.clone(), &url).await {
             Ok(c) => c,
             Err(e) => {
-                eprintln!("RN-BINDINGS: Failed to connect to server: {}", e);
+                tracing::error!("[init_node] Failed to connect to server: {}", e);
                 return;
             }
         };
-        eprintln!("RN-BINDINGS: Connected to server, waiting for system ready...");
+        tracing::info!("[init_node] Connected to server, waiting for system ready...");
 
         // Wait for the system to be ready (receives root from server)
         node.system.wait_system_ready().await;
-        eprintln!("RN-BINDINGS: System ready, setting NODE...");
+        tracing::info!("[init_node] System ready!");
 
         // Store the client to keep the connection alive
         if WS_CLIENT.set(client).is_err() {
-            eprintln!("RN-BINDINGS: Warning: WebSocket client was already set");
+            tracing::warn!("[init_node] WebSocket client was already set");
         }
 
         if NODE.set(node).is_err() {
-            eprintln!("RN-BINDINGS: Warning: Node was already initialized");
+            tracing::warn!("[init_node] Node was already initialized");
         } else {
-            eprintln!("RN-BINDINGS: Node initialization complete!");
+            tracing::info!("[init_node] Node initialization complete!");
         }
     });
 
-    eprintln!("RN-BINDINGS: Spawned init task, returning...");
+    tracing::info!("[init_node] Spawned init task, returning...");
     Ok(())
 }
 

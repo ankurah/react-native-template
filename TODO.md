@@ -19,7 +19,7 @@
 - [x] Set up `tracing` subscriber to forward Rust logs to RN console
 - [x] Test node creation and server connection in the app
 
-## Phase 3: Model Derive Macros 🚧 WIP
+## Phase 3: Model Derive Macros ✅
 
 - [x] Add `uniffi` feature to `ankurah-derive`, `ankurah-proto`, `ankurah-core`, `ankurah`
 - [x] Add mutual exclusivity `compile_error!` for wasm/uniffi features
@@ -38,28 +38,29 @@
 - [x] Document cross-crate UniFFI learnings in `specs/react-native-uniffi/`
 - [x] Add `QueryValue` enum for substitution values (replaces variadic strings)
 - [x] Add `uniffi_mutable_field_methods` to generate wrapper type getters on Mutable
-- [x] **Active type wrapper generation for UniFFI (LWWString, YrsStringString, etc.)** ✅ Tentative
+- [x] Active type wrapper generation for UniFFI (LWWString, YrsStringString, etc.)
   - Added `uniffi: false` to `get_value` method in `lww.ron`
   - Added filtering by `method.uniffi` in `uniffi_methods()`
   - Used `uniffi::custom_type!` macro for `Json` type (converts to/from String at FFI boundary)
   - Fixed derive macro to not emit `#[cfg(feature = "...")]` into generated code
   - Separated `wasm_wrapper()` and `uniffi_wrapper()` with feature-gated implementations
 
-## Phase 4: Reactive UI & Full App Port (Current)
+## Phase 4: Reactive UI & Full App Port 🚧 WIP
 
-### 4a: Build and Test Current Bindings
+### 4a: Build and Test Current Bindings ✅
 - [x] Regenerate TypeScript bindings with `ubrn`
-- [x] Verify generated types look correct (MessageOps, MessageView, etc.)
-- [ ] Test basic operations in the app:
-  - [ ] Create a Room
-  - [ ] Query rooms with `RoomOps.query()`
-  - [ ] Create a Message
-  - [ ] Query messages
+- [x] Verify generated types look correct (RoomOps, RoomView, etc.)
+- [x] Test basic operations in the app:
+  - [x] Create a Room
+  - [x] Fetch rooms with `RoomOps.fetch()`
+  - [x] Query rooms with `RoomOps.query()` (LiveQuery)
 
-### 4b: React Native Hooks
-- [ ] Research RN reactive patterns for UniFFI (polling vs callbacks)
-- [ ] Implement `useAnkurahQuery` hook (RN equivalent of `useObserve`)
-- [ ] Handle LiveQuery lifecycle (cleanup on unmount)
+### 4b: React Native Hooks ✅
+- [x] Research RN reactive patterns for UniFFI (polling vs callbacks)
+- [x] Implement `useObserve` hook (RN equivalent of WASM `useObserve`)
+- [x] Add `ReactObserver` to `ankurah-signals` with UniFFI exports
+- [x] Implement `StoreChangeCallback` callback interface
+- [x] Handle LiveQuery lifecycle (cleanup on unmount)
 
 ### 4c: Port Components
 - [ ] Port components from `ankurah-react-sled-template`:
@@ -84,15 +85,15 @@
 ## Decisions Made
 
 ### 1. Static Methods → Singleton Ops Object ✅
-UniFFI doesn't support static methods. Use `MessageOps` singleton pattern:
+UniFFI doesn't support static methods. Use `RoomOps` singleton pattern:
 ```typescript
-const messageOps = MessageOps.new();
-const msg = await messageOps.get(ctx, id);
+const roomOps = new RoomOps();
+const rooms = await roomOps.fetch(ctx, 'true ORDER BY name ASC', []);
 ```
 
-### 2. Callback Interfaces → Deferred (Polling for Now) ⚠️
-Callback-based LiveQuery subscriptions had issues with UniFFI hygiene modules.
-Using polling-based access for now. Can revisit later.
+### 2. Reactive Updates → useSyncExternalStore + Callback Interface ✅
+Using React's `useSyncExternalStore` with a UniFFI callback interface for reactive updates.
+The `ReactObserver` in Rust manages signal subscriptions and notifies React via `StoreChangeCallback`.
 
 ### 3. Error Handling → Flat Errors ✅
 Using `#[uniffi(flat_error)]` to serialize complex error enums via `ToString`.
@@ -108,6 +109,10 @@ Bindings features (`wasm`, `uniffi`) are mutually exclusive with `compile_error!
 ### 6. Collections → Arc Wrapping ✅
 `Vec<T>` and `Option<T>` with Objects require `Arc<T>` wrapping.
 
+### 7. Async Runtime → Tokio via UniFFI Attribute ✅
+UniFFI async functions use `#[uniffi::export(async_runtime = "tokio")]` to ensure
+they run within a tokio runtime context, which Ankurah requires internally.
+
 ---
 
 ## Known Issues / Notes
@@ -116,9 +121,9 @@ Bindings features (`wasm`, `uniffi`) are mutually exclusive with `compile_error!
   - Workaround: `sed` command in `rebuild-ios.sh` narrows it
 - Structural Rust changes (new objects/traits) may require clean build
 - Metro cache should be reset after native rebuilds (`--reset-cache`)
-- UniFFI async functions need a tokio runtime (handled via global `RUNTIME` in `rn-bindings`)
 - Cross-crate UniFFI: borrowed args (`&T`) work, owned args (`T`) don't
 - Use `::uniffi::Object` not `::ankurah::derive_deps::uniffi::Object` in generated code
+- Generated code should NOT include `#[cfg(feature = "...")]` - the derive macro conditionally generates code based on its own features
 
 ---
 
@@ -127,14 +132,15 @@ Bindings features (`wasm`, `uniffi`) are mutually exclusive with `compile_error!
 | Feature | Status | Notes |
 |---------|--------|-------|
 | Free functions | ✅ | `greet()`, `init_node()` |
-| Async functions | ✅ | `greet_async()`, `Ops.get()` |
-| Objects | ✅ | `Counter`, `MessageView`, `MessageOps` |
-| Object methods | ✅ | `counter.get()`, `view.id()` |
-| Constructors | ✅ | `MessageOps.new()` |
-| Records | ✅ | `MessageInput` |
-| Callback interfaces | ✅ | `CounterCallback`, `LogCallback` |
+| Async functions | ✅ | `greet_async()`, `Ops.get()`, `Ops.query()` |
+| Objects | ✅ | `Counter`, `RoomView`, `RoomOps`, `ReactObserver` |
+| Object methods | ✅ | `counter.get()`, `view.id()`, `observer.beginTracking()` |
+| Constructors | ✅ | `RoomOps.new()`, `ReactObserver.new()` |
+| Records | ✅ | `RoomInput` |
+| Callback interfaces | ✅ | `CounterCallback`, `LogCallback`, `StoreChangeCallback` |
 | Error enums | ✅ | `AnkurahError`, `RetrievalError` |
 | Option<T> | ✅ | Works with Arc<Object> |
 | Vec<T> | ✅ | Works with Arc<Object> |
 | Cross-crate types | ✅ | `EntityId`, `Context` from other crates |
 | Method renaming | ✅ | `#[uniffi::method(name = "edit")]` |
+| LiveQuery | ✅ | Reactive queries with signal-based updates |

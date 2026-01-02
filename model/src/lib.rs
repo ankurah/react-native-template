@@ -4,6 +4,10 @@ use serde::{Deserialize, Serialize};
 #[cfg(feature = "uniffi")]
 uniffi::setup_scaffolding!();
 
+// Re-export signals types for UniFFI binding generation
+#[cfg(feature = "uniffi")]
+pub use ankurah::signals::{ReactObserver, StoreChangeCallback};
+
 #[derive(Model, Debug, Serialize, Deserialize)]
 pub struct User {
     pub display_name: String,

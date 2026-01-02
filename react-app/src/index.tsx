@@ -15,6 +15,7 @@ export * from './generated/ankurah_core';
 export * from './generated/ankurah_proto';
 export * from './generated/ankurah_rn_bindings';
 export * from './generated/ankurah_rn_model';
+export * from './generated/ankurah_signals';
 
 // Now import the bindings so we can:
 // - intialize them
@@ -23,6 +24,7 @@ import * as ankurah_core from './generated/ankurah_core';
 import * as ankurah_proto from './generated/ankurah_proto';
 import * as ankurah_rn_bindings from './generated/ankurah_rn_bindings';
 import * as ankurah_rn_model from './generated/ankurah_rn_model';
+import * as ankurah_signals from './generated/ankurah_signals';
 
 // Initialize the generated bindings: mostly checksums, but also callbacks.
 // - the boolean flag ensures this loads exactly once, even if the JS code
@@ -33,6 +35,7 @@ if (!initialized) {
   ankurah_proto.default.initialize();
   ankurah_rn_bindings.default.initialize();
   ankurah_rn_model.default.initialize();
+  ankurah_signals.default.initialize();
   initialized = true;
 }
 
@@ -49,5 +52,6 @@ export default {
   ankurah_proto,
   ankurah_rn_bindings,
   ankurah_rn_model,
+  ankurah_signals,
 };
 

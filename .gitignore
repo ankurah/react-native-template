@@ -22,8 +22,10 @@ react-app/android/app/build/
 react-app/android/.gradle/
 *.hprof
 
-# Generated bindings
+# Generated bindings (ubrn output)
 react-app/rust-bindings/
+react-app/src/generated/
+react-app/cpp/generated/
 
 # Generated native frameworks (too large for git)
 react-app/AnkurahAppFramework.xcframework/

@@ -4,6 +4,7 @@
 #include "generated/ankurah_proto.hpp"
 #include "generated/ankurah_rn_bindings.hpp"
 #include "generated/ankurah_rn_model.hpp"
+#include "generated/ankurah_signals.hpp"
 
 namespace ankurahapp {
 	using namespace facebook;
@@ -13,6 +14,7 @@ namespace ankurahapp {
 		NativeAnkurahProto::registerModule(runtime, callInvoker);
 		NativeAnkurahRnBindings::registerModule(runtime, callInvoker);
 		NativeAnkurahRnModel::registerModule(runtime, callInvoker);
+		NativeAnkurahSignals::registerModule(runtime, callInvoker);
 		return true;
 	}
 

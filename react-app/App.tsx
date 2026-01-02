@@ -1,9 +1,9 @@
 /**
  * Ankurah React Native UniFFI PoC
- * Room list with auto-fetch
+ * Room list with LiveQuery
  */
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
   ScrollView,
   StatusBar,
@@ -28,7 +28,9 @@ import {
   RoomOps,
   RoomInput,
   type RoomViewInterface,
+  type RoomLiveQueryInterface,
 } from './src';
+import { useObserve } from './src/hooks';
 
 // Set up Rust logging to forward to JS console (do this once at module load)
 const rustLogCallback: LogCallback = {
@@ -68,38 +70,36 @@ function App(): React.JSX.Element {
   const [nodeStatus, setNodeStatus] = useState<string>('Initializing...');
   const [nodeId, setNodeId] = useState<string | null>(null);
 
-  // Room operations state
-  const [rooms, setRooms] = useState<RoomViewInterface[]>([]);
+  // LiveQuery for rooms
+  const liveQueryRef = useRef<RoomLiveQueryInterface | null>(null);
   const [roomLog, setRoomLog] = useState<string[]>([]);
   const [isRoomLoading, setIsRoomLoading] = useState(false);
 
-  // Fetch rooms - defined before useEffect so it can be called
-  const fetchRooms = async () => {
-    setIsRoomLoading(true);
+  // Use observer for reactive updates
+  const observer = useObserve();
+
+  // Initialize LiveQuery once node is ready
+  const initLiveQuery = async () => {
+    if (liveQueryRef.current) return; // Already initialized
+
     try {
-      console.log('fetchRooms: getting context...');
+      console.log('initLiveQuery: getting context...');
       const ctx = getContext();
-      console.log('fetchRooms: got context', ctx);
+      console.log('initLiveQuery: got context', ctx);
 
       const roomOps = new RoomOps();
-      setRoomLog(prev => [...prev, 'Fetching rooms...']);
+      setRoomLog(prev => [...prev, 'Creating LiveQuery...']);
 
-      console.log('fetchRooms: calling fetch...');
-      const fetchedRooms = await roomOps.fetch(ctx, 'true ORDER BY name ASC', []);
-      console.log('fetchRooms: got rooms', fetchedRooms);
+      console.log('initLiveQuery: creating query...');
+      liveQueryRef.current = await roomOps.query(ctx, 'true ORDER BY name ASC', []);
+      console.log('initLiveQuery: created query', liveQueryRef.current);
 
-      setRooms(fetchedRooms);
-      setRoomLog(prev => [...prev, `✅ Found ${fetchedRooms.length} rooms`]);
+      setRoomLog(prev => [...prev, '✅ LiveQuery created']);
     } catch (e: any) {
       const errStr = e?.message || e?.toString?.() || JSON.stringify(e) || String(e);
-      setRoomLog(prev => [...prev, `❌ Fetch error: ${errStr}`]);
-      console.error('Fetch rooms error:', e);
-      console.error('Error constructor:', e?.constructor?.name);
-      console.error('Error prototype:', Object.getPrototypeOf(e));
-      console.error('Error JSON:', JSON.stringify(e, Object.getOwnPropertyNames(e)));
+      setRoomLog(prev => [...prev, `❌ LiveQuery error: ${errStr}`]);
+      console.error('LiveQuery error:', e);
       if (e?.stack) console.error('Stack:', e.stack);
-    } finally {
-      setIsRoomLoading(false);
     }
   };
 
@@ -108,9 +108,9 @@ function App(): React.JSX.Element {
     const onNodeReady = (id: string) => {
       setNodeId(id);
       setNodeStatus('✅ Node initialized');
-      console.log('Node ready, fetching rooms...');
-      // Auto-fetch rooms once node is ready
-      fetchRooms();
+      console.log('Node ready, creating LiveQuery...');
+      // Initialize LiveQuery once node is ready
+      initLiveQuery();
     };
 
     // Check if already initialized (e.g., after hot reload)
@@ -176,8 +176,7 @@ function App(): React.JSX.Element {
       console.log('createRoom: got room', room);
 
       setRoomLog(prev => [...prev, `✅ Created: ${room.name()} (${room.id().toString().slice(0, 8)}...)`]);
-      // Refresh the room list
-      await fetchRooms();
+      // LiveQuery will automatically update when the room is synced
     } catch (e: any) {
       const errMsg = e?.message || e?.toString?.() || JSON.stringify(e) || String(e);
       setRoomLog(prev => [...prev, `❌ Create error: ${errMsg}`]);
@@ -187,6 +186,29 @@ function App(): React.JSX.Element {
       setIsRoomLoading(false);
     }
   };
+
+  // Begin tracking signal access for this render
+  observer.beginTracking();
+
+  // Get rooms from LiveQuery (this access is tracked by the observer)
+  let rooms: RoomViewInterface[] = [];
+  let isLoaded = false;
+  let queryError: string | undefined;
+
+  if (liveQueryRef.current) {
+    try {
+      rooms = liveQueryRef.current.items();
+      isLoaded = liveQueryRef.current.isLoaded();
+      queryError = liveQueryRef.current.error();
+      console.log(`[Render] LiveQuery: ${rooms.length} rooms, loaded=${isLoaded}, signals=${observer.signalCount()}`);
+    } catch (e: any) {
+      console.error('Error reading LiveQuery:', e);
+      queryError = e?.message || 'Unknown error';
+    }
+  }
+
+  // Finish tracking (must happen after all signal access)
+  observer.finish();
 
   return (
     <SafeAreaProvider>
@@ -213,14 +235,9 @@ function App(): React.JSX.Element {
           <View style={styles.section}>
             <View style={styles.sectionHeader}>
               <Text style={[styles.sectionTitle, isDarkMode && styles.textLight]}>
-                Rooms ({rooms.length})
+                Rooms ({rooms.length}) {!isLoaded && liveQueryRef.current && '⏳'}
               </Text>
               <View style={styles.buttonRow}>
-                <Button
-                  title="Refresh"
-                  onPress={fetchRooms}
-                  disabled={!nodeId || isRoomLoading}
-                />
                 <Button
                   title="Create"
                   onPress={createRoom}
@@ -230,6 +247,12 @@ function App(): React.JSX.Element {
             </View>
 
             {isRoomLoading && <ActivityIndicator size="small" style={{ marginVertical: 8 }} />}
+
+            {queryError && (
+              <Text style={[styles.errorText, isDarkMode && styles.textLight]}>
+                ❌ {queryError}
+              </Text>
+            )}
 
             {rooms.length > 0 ? (
               <View style={styles.roomList}>
@@ -244,7 +267,7 @@ function App(): React.JSX.Element {
                   </View>
                 ))}
               </View>
-            ) : !isRoomLoading && nodeId ? (
+            ) : isLoaded && !queryError ? (
               <Text style={[styles.emptyText, isDarkMode && styles.textLight]}>
                 No rooms yet
               </Text>
@@ -352,6 +375,11 @@ const styles = StyleSheet.create({
     color: '#888',
     fontStyle: 'italic',
     paddingVertical: 16,
+  },
+  errorText: {
+    color: '#ff4444',
+    fontSize: 12,
+    paddingVertical: 8,
   },
   logContainer: {
     marginTop: 12,
