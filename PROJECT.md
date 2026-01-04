@@ -19,11 +19,17 @@ Port the `ankurah-react-sled-template` browser chat app to React Native, using U
 - LiveQuery with reactive updates via `useObserve` hook
 - Room CRUD operations (create, fetch, query)
 - Signal-based re-rendering when data changes
+- Full chat UI: Header, RoomList, Chat, MessageRow, MessageInput, EditableTextField
+- User creation and persistence (auto-creates user on first launch)
+- Message creation and display with ChatScrollManager
+- Mobile navigation pattern (room list ↔ chat view)
 
-**Not Yet Ported:**
-- Full chat UI components (see checklist below)
-- User management and persistence
-- Message operations
+**Remaining Work:**
+- Message editing (requires ctx.begin() transaction support in edit flow)
+- Scroll-based pagination in ChatScrollManager (infrastructure in place)
+- Debug overlay components (ChatDebugHeader, DebugOverlay)
+- Integration with ankurah_signals ReactObserver for true reactive updates (currently polling)
+- Consider extracting reusable hooks/utils to an npm package
 
 ## Architecture
 
@@ -120,13 +126,14 @@ This checklist tracks TypeScript API parity between WASM (browser) and UniFFI (R
   rooms.isLoaded();
   ```
 
-- [ ] **LiveQuery error handling**
+- [x] **LiveQuery error handling**
 
   ```typescript
   // WASM
-  // TODO: document WASM error pattern
+  const error = rooms.error; // property access
 
   // UniFFI
+  // Acceptable difference: method instead of property
   const error = rooms.error(); // returns string | undefined
   ```
 
@@ -173,7 +180,7 @@ This checklist tracks TypeScript API parity between WASM (browser) and UniFFI (R
   // For explicit transaction control, use create() with ctx.begin()
   ```
 
-- [ ] **Create with transaction (explicit)**
+- [x] **Create with transaction (explicit)**
 
   ```typescript
   // WASM
@@ -181,7 +188,13 @@ This checklist tracks TypeScript API parity between WASM (browser) and UniFFI (R
   const room = await Room.create(transaction, { name: "General" });
   await transaction.commit();
 
-  // UniFFI - pending implementation
+  // UniFFI
+  const ctx = getContext();
+  const trx = ctx.begin();
+  const roomOps = new RoomOps();
+  const input = RoomInput.create({ name: "General" });
+  const room = await roomOps.create(trx, input);
+  await trx.commit();
   ```
 
 ---
@@ -213,21 +226,28 @@ This checklist tracks TypeScript API parity between WASM (browser) and UniFFI (R
   // Note: toString() returns base64 representation
   ```
 
-- [ ] **Access Ref fields**
+- [x] **Access Ref fields**
 
   ```typescript
   // WASM
   const authorId = message.user.id;
   const author = users.resultset.by_id(message.user.id);
 
-  // UniFFI - pending verification
+  // UniFFI
+  // Acceptable difference: Returns base64 EntityId string, not EntityId object
+  // On View: message.user() returns string (base64 EntityId)
+  // On Mutable: message.user().get() returns string, message.user().set(value) takes string
+  const authorIdBase64 = message.user();
+  const entityId = EntityId.fromBase64(authorIdBase64);  // Constructor available
+  const author = users.resultSet().byId(entityId);
+  // Also available: entityId.equals(otherId) for comparison
   ```
 
 ---
 
 ### Mutation
 
-- [ ] **Edit entity via Mutable**
+- [x] **Edit entity via Mutable**
 
   ```typescript
   // WASM
@@ -236,10 +256,16 @@ This checklist tracks TypeScript API parity between WASM (browser) and UniFFI (R
   mutable.text.replace("new value");
   await trx.commit();
 
-  // UniFFI - pending implementation
+  // UniFFI
+  const ctx = getContext();
+  const trx = ctx.begin();
+  const mutable = view.edit(trx);
+  mutable.text().replace("new value");
+  await trx.commit();
+  // Acceptable difference: mutable fields are methods, not properties
   ```
 
-- [ ] **YrsString operations (insert/delete)**
+- [x] **YrsString operations (insert/delete)**
 
   ```typescript
   // WASM
@@ -247,14 +273,18 @@ This checklist tracks TypeScript API parity between WASM (browser) and UniFFI (R
   mutable.display_name.insert(0, "prefix ");
   mutable.display_name.delete(5, 3);
 
-  // UniFFI - pending implementation
+  // UniFFI
+  const mutable = view.edit(trx);
+  mutable.displayName().insert(0, "prefix ");
+  mutable.displayName().delete_(5, 3);  // Note: delete_ with underscore (JS reserved word)
+  // Also available: replace(value), overwrite(start, length, value), value()
   ```
 
 ---
 
 ### JsValueMut / State Management
 
-- [ ] **Shared mutable state**
+- [x] **Shared mutable state**
 
   ```typescript
   // WASM - JsValueMut for shared reactive state
@@ -262,8 +292,21 @@ This checklist tracks TypeScript API parity between WASM (browser) and UniFFI (R
   selectedRoom.set(room);
   const current = selectedRoomRead.get();
 
-  // UniFFI - need RN equivalent
-  // Options: React state, Zustand, or port JsValueMut concept
+  // UniFFI - useSharedValue hook
+  import { useSharedValue, useSharedValueRead, createSharedValue } from './hooks';
+
+  // Option 1: Within a component
+  const [selectedRoom, selectedRoomRead] = useSharedValue<RoomViewInterface | null>(null);
+  selectedRoom.set(room);
+
+  // Option 2: Module-level (outside components)
+  const [selectedRoom, selectedRoomRead] = createSharedValue<RoomViewInterface | null>(null);
+
+  // In any component, subscribe to updates:
+  function MyComponent({ selectedRoomRead }) {
+    const room = useSharedValueRead(selectedRoomRead);
+    return <Text>{room?.name()}</Text>;
+  }
   ```
 
 ---
@@ -272,16 +315,16 @@ This checklist tracks TypeScript API parity between WASM (browser) and UniFFI (R
 
 | Component | Status | Notes |
 |-----------|--------|-------|
-| Header | [ ] | User display name editing |
-| RoomList | [ ] | Room selection, creation |
-| MessageRow | [ ] | Message display, context menu |
-| MessageInput | [ ] | Send/edit messages |
-| Chat | [ ] | Message list with scroll management |
-| EditableTextField | [ ] | Inline YrsString editing |
-| MessageContextMenu | [ ] | Edit/delete actions |
-| ChatDebugHeader | [ ] | Debug info |
-| DebugOverlay | [ ] | Global debug toggle |
-| QRCodeModal | [ ] | Share room via QR |
+| Header | [x] | User display name editing |
+| RoomList | [x] | Room selection, creation |
+| MessageRow | [x] | Message display, long-press to edit |
+| MessageInput | [x] | Send/edit messages |
+| Chat | [x] | Message list with FlatList |
+| EditableTextField | [x] | Inline YrsString editing |
+| MessageContextMenu | [ ] | Edit/delete actions (long-press used instead) |
+| ChatDebugHeader | [ ] | Debug info (deferred) |
+| DebugOverlay | [ ] | Global debug toggle (deferred) |
+| QRCodeModal | [ ] | Share room via QR (not applicable for RN) |
 
 ---
 
@@ -349,8 +392,17 @@ Use `./akdev` to toggle between published and local ankurah:
 
 | File | Purpose |
 |------|---------|
-| `react-app/App.tsx` | Current test app (rooms only) |
+| `react-app/App.tsx` | Main app entry point |
 | `react-app/src/hooks/useObserve.ts` | Signal observer hook |
+| `react-app/src/hooks/useSharedValue.ts` | Shared state hook (JsValueMut equivalent) |
+| `react-app/src/utils.ts` | signalObserver HOC, ensureUser utility |
+| `react-app/src/ChatScrollManager.ts` | Message pagination and scroll management |
+| `react-app/src/components/Header.tsx` | App header with user editing |
+| `react-app/src/components/RoomList.tsx` | Room selection sidebar |
+| `react-app/src/components/Chat.tsx` | Message list with FlatList |
+| `react-app/src/components/MessageRow.tsx` | Individual message display |
+| `react-app/src/components/MessageInput.tsx` | Send/edit messages |
+| `react-app/src/components/EditableTextField.tsx` | Inline YrsString editing |
 | `react-app/src/index.tsx` | Generated bindings re-export |
 | `rn-bindings/src/lib.rs` | Rust FFI layer |
 | `model/src/lib.rs` | Data models (Room, User, Message) |

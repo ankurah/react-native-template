@@ -1,22 +1,13 @@
 /**
- * Ankurah React Native UniFFI PoC
- * Room list with LiveQuery
+ * Ankurah React Native Chat App
+ * Matches the structure of the web (WASM) version
  */
 
-import React, { useState, useEffect, useRef } from 'react';
-import {
-  ScrollView,
-  StatusBar,
-  StyleSheet,
-  Text,
-  useColorScheme,
-  View,
-  Button,
-  ActivityIndicator,
-} from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, StyleSheet, useColorScheme, Text, StatusBar } from 'react-native';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 
-// Import from src/index.tsx which handles native module initialization
+// Generated bindings
 import {
   initNode,
   isNodeInitialized,
@@ -25,14 +16,19 @@ import {
   setupLogging,
   LogCallback,
   getContext,
-  RoomOps,
-  RoomInput,
-  type RoomViewInterface,
-  type RoomLiveQueryInterface,
 } from './src';
-import { useObserve } from './src/hooks';
+import { RoomOps, type RoomLiveQueryInterface } from './src/generated/ankurah_rn_model';
 
-// Set up Rust logging to forward to JS console (do this once at module load)
+// Hooks and utilities
+import { signalObserver, ensureUser, type UserReadHandle } from './src/utils';
+
+// Components
+import { Header, RoomList, Chat } from './src/components';
+
+// Import types
+import type { RoomViewInterface } from './src/generated/ankurah_rn_model';
+
+// Set up Rust logging to forward to JS console
 const rustLogCallback: LogCallback = {
   onLog: (level: string, target: string, message: string) => {
     const prefix = `[Rust:${target}]`;
@@ -63,232 +59,131 @@ try {
   console.warn('Failed to set up Rust logging:', e);
 }
 
-function App(): React.JSX.Element {
+function AppContent(): React.JSX.Element {
   const isDarkMode = useColorScheme() === 'dark';
 
-  // Ankurah node state
-  const [nodeStatus, setNodeStatus] = useState<string>('Initializing...');
-  const [nodeId, setNodeId] = useState<string | null>(null);
+  // Connection/node state
+  const [nodeReady, setNodeReady] = useState(false);
+  const [connectionStatus, setConnectionStatus] = useState('Connecting...');
 
-  // LiveQuery for rooms
-  const liveQueryRef = useRef<RoomLiveQueryInterface | null>(null);
-  const [roomLog, setRoomLog] = useState<string[]>([]);
-  const [isRoomLoading, setIsRoomLoading] = useState(false);
+  // Rooms LiveQuery
+  const [rooms, setRooms] = useState<RoomLiveQueryInterface | null>(null);
 
-  // Use observer for reactive updates
-  const observer = useObserve();
+  // Selected room state (simple React state)
+  const [selectedRoom, setSelectedRoom] = useState<RoomViewInterface | null>(null);
 
-  // Initialize LiveQuery once node is ready
-  const initLiveQuery = async () => {
-    if (liveQueryRef.current) return; // Already initialized
+  // Current user (initialized after node is ready)
+  const [currentUser, setCurrentUser] = useState<UserReadHandle | null>(null);
 
-    try {
-      console.log('initLiveQuery: getting context...');
-      const ctx = getContext();
-      console.log('initLiveQuery: got context', ctx);
-
-      const roomOps = new RoomOps();
-      setRoomLog(prev => [...prev, 'Creating LiveQuery...']);
-
-      console.log('initLiveQuery: creating query...');
-      liveQueryRef.current = await roomOps.query(ctx, 'true ORDER BY name ASC', []);
-      console.log('initLiveQuery: created query', liveQueryRef.current);
-
-      setRoomLog(prev => [...prev, '✅ LiveQuery created']);
-    } catch (e: any) {
-      const errStr = e?.message || e?.toString?.() || JSON.stringify(e) || String(e);
-      setRoomLog(prev => [...prev, `❌ LiveQuery error: ${errStr}`]);
-      console.error('LiveQuery error:', e);
-      if (e?.stack) console.error('Stack:', e.stack);
-    }
-  };
-
-  // Initialize Ankurah node on app startup
+  // Initialize Ankurah node
   useEffect(() => {
-    const onNodeReady = (id: string) => {
-      setNodeId(id);
-      setNodeStatus('✅ Node initialized');
-      console.log('Node ready, creating LiveQuery...');
-      // Initialize LiveQuery once node is ready
-      initLiveQuery();
+    const initializeNode = async () => {
+      // Check if already initialized (e.g., after hot reload)
+      if (isNodeInitialized()) {
+        console.log('Node already initialized');
+        setNodeReady(true);
+        setConnectionStatus('Connected');
+        return;
+      }
+
+      try {
+        const storagePath = getDefaultStoragePath();
+        const serverUrl = 'ws://localhost:9797';
+        console.log('Initializing node with storage path:', storagePath);
+        console.log('Connecting to server:', serverUrl);
+        initNode(storagePath, serverUrl);
+
+        // Poll for initialization completion
+        const pollInterval = setInterval(() => {
+          if (isNodeInitialized()) {
+            clearInterval(pollInterval);
+            console.log('Node initialized with ID:', getNodeId());
+            setNodeReady(true);
+            setConnectionStatus('Connected');
+          }
+        }, 100);
+
+        return () => clearInterval(pollInterval);
+      } catch (e: any) {
+        console.error('Failed to initialize node:', e);
+        setConnectionStatus('Error');
+      }
     };
 
-    // Check if already initialized (e.g., after hot reload)
-    if (isNodeInitialized()) {
-      try {
-        const id = getNodeId();
-        console.log('Node already initialized with ID:', id);
-        onNodeReady(id);
-      } catch (e: any) {
-        setNodeStatus(`❌ ${e?.message || 'Failed to get node ID'}`);
-      }
-      return;
-    }
-
-    // Start initialization (non-blocking - spawns background task)
-    try {
-      const storagePath = getDefaultStoragePath();
-      const serverUrl = 'ws://localhost:9797';
-      console.log('Initializing node with storage path:', storagePath);
-      console.log('Connecting to server:', serverUrl);
-      initNode(storagePath, serverUrl);
-    } catch (e: any) {
-      console.error('Failed to start node initialization:', e);
-      setNodeStatus(`❌ ${e?.message || 'Failed to start'}`);
-      return;
-    }
-
-    // Poll for initialization completion
-    const pollInterval = setInterval(() => {
-      if (isNodeInitialized()) {
-        clearInterval(pollInterval);
-        try {
-          const id = getNodeId();
-          onNodeReady(id);
-        } catch (e: any) {
-          setNodeStatus(`❌ ${e?.message || 'Failed to get node ID'}`);
-        }
-      }
-    }, 100);
-
-    // Cleanup on unmount
-    return () => clearInterval(pollInterval);
+    initializeNode();
   }, []);
 
-  // Room operations
-  const createRoom = async () => {
-    setIsRoomLoading(true);
-    try {
-      console.log('createRoom: getting context...');
-      const ctx = getContext();
-      console.log('createRoom: got context', ctx);
+  // Initialize user and rooms query once node is ready
+  useEffect(() => {
+    if (!nodeReady) return;
 
-      const roomOps = new RoomOps();
-      const roomName = `Room ${Date.now() % 10000}`;
-      setRoomLog(prev => [...prev, `Creating room: ${roomName}`]);
+    const initialize = async () => {
+      try {
+        // Initialize current user
+        const userRead = ensureUser();
+        setCurrentUser(userRead);
 
-      console.log('createRoom: creating input...');
-      const input = RoomInput.create({ name: roomName });
-      console.log('createRoom: got input', input);
+        // Create rooms LiveQuery
+        const ctx = getContext();
+        const roomOps = new RoomOps();
+        const roomsQuery = await roomOps.query(ctx, 'true ORDER BY name ASC', []);
+        setRooms(roomsQuery);
+      } catch (e) {
+        console.error('Failed to initialize:', e);
+      }
+    };
 
-      console.log('createRoom: calling createOne...');
-      const room = await roomOps.createOne(ctx, input);
-      console.log('createRoom: got room', room);
+    initialize();
+  }, [nodeReady]);
 
-      setRoomLog(prev => [...prev, `✅ Created: ${room.name()} (${room.id().toString().slice(0, 8)}...)`]);
-      // LiveQuery will automatically update when the room is synced
-    } catch (e: any) {
-      const errMsg = e?.message || e?.toString?.() || JSON.stringify(e) || String(e);
-      setRoomLog(prev => [...prev, `❌ Create error: ${errMsg}`]);
-      console.error('Create room error:', e);
-      if (e?.stack) console.error('Stack:', e.stack);
-    } finally {
-      setIsRoomLoading(false);
-    }
+  // Mobile navigation: show room list or chat, not both
+  const showChat = selectedRoom !== null;
+
+  const handleBack = () => {
+    setSelectedRoom(null);
   };
 
-  // Begin tracking signal access for this render
-  observer.beginTracking();
-
-  // Get rooms from LiveQuery (this access is tracked by the observer)
-  let rooms: RoomViewInterface[] = [];
-  let isLoaded = false;
-  let queryError: string | undefined;
-
-  if (liveQueryRef.current) {
-    try {
-      rooms = liveQueryRef.current.items();
-      isLoaded = liveQueryRef.current.isLoaded();
-      queryError = liveQueryRef.current.error();
-      console.log(`[Render] LiveQuery: ${rooms.length} rooms, loaded=${isLoaded}, signals=${observer.signalCount()}`);
-    } catch (e: any) {
-      console.error('Error reading LiveQuery:', e);
-      queryError = e?.message || 'Unknown error';
-    }
+  // Show loading state while node initializes
+  if (!nodeReady || !rooms || !currentUser) {
+    return (
+      <SafeAreaProvider>
+        <StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'} />
+        <SafeAreaView style={[styles.container, isDarkMode && styles.containerDark]}>
+          <View style={styles.loadingContainer}>
+            <Text style={[styles.loadingText, isDarkMode && styles.textLight]}>
+              {connectionStatus === 'Connecting...' ? 'Connecting to Ankurah...' : connectionStatus}
+            </Text>
+          </View>
+        </SafeAreaView>
+      </SafeAreaProvider>
+    );
   }
-
-  // Finish tracking (must happen after all signal access)
-  observer.finish();
 
   return (
     <SafeAreaProvider>
       <StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'} />
       <SafeAreaView style={[styles.container, isDarkMode && styles.containerDark]}>
-        <ScrollView contentContainerStyle={styles.content}>
-          <Text style={[styles.title, isDarkMode && styles.textLight]}>
-            🦀 Ankurah Rooms
-          </Text>
+        <Header currentUser={currentUser} connectionStatus={connectionStatus} />
 
-          {/* Node status */}
-          <View style={styles.statusBar}>
-            <Text style={[styles.statusText, isDarkMode && styles.textLight]}>
-              {nodeStatus}
-            </Text>
-            {nodeId && (
-              <Text style={[styles.nodeId, isDarkMode && styles.textLight]}>
-                {nodeId.slice(0, 12)}...
-              </Text>
-            )}
-          </View>
-
-          {/* Room list */}
-          <View style={styles.section}>
-            <View style={styles.sectionHeader}>
-              <Text style={[styles.sectionTitle, isDarkMode && styles.textLight]}>
-                Rooms ({rooms.length}) {!isLoaded && liveQueryRef.current && '⏳'}
-              </Text>
-              <View style={styles.buttonRow}>
-                <Button
-                  title="Create"
-                  onPress={createRoom}
-                  disabled={!nodeId || isRoomLoading}
-                />
-              </View>
-            </View>
-
-            {isRoomLoading && <ActivityIndicator size="small" style={{ marginVertical: 8 }} />}
-
-            {queryError && (
-              <Text style={[styles.errorText, isDarkMode && styles.textLight]}>
-                ❌ {queryError}
-              </Text>
-            )}
-
-            {rooms.length > 0 ? (
-              <View style={styles.roomList}>
-                {rooms.map((room, i) => (
-                  <View key={i} style={styles.roomItem}>
-                    <Text style={[styles.roomName, isDarkMode && styles.textLight]}>
-                      {room.name()}
-                    </Text>
-                    <Text style={[styles.roomId, isDarkMode && styles.textLight]}>
-                      {room.id().toString().slice(0, 8)}...
-                    </Text>
-                  </View>
-                ))}
-              </View>
-            ) : isLoaded && !queryError ? (
-              <Text style={[styles.emptyText, isDarkMode && styles.textLight]}>
-                No rooms yet
-              </Text>
-            ) : null}
-
-            {/* Log */}
-            {roomLog.length > 0 && (
-              <View style={styles.logContainer}>
-                {roomLog.slice(-5).map((log, i) => (
-                  <Text key={i} style={[styles.logText, isDarkMode && styles.textLight]}>
-                    {log}
-                  </Text>
-                ))}
-              </View>
-            )}
-          </View>
-        </ScrollView>
+        <View style={styles.mainContent}>
+          {showChat ? (
+            <Chat
+              room={selectedRoom}
+              currentUser={currentUser}
+              connectionStatus={connectionStatus}
+              onBack={handleBack}
+            />
+          ) : (
+            <RoomList onSelectRoom={setSelectedRoom} rooms={rooms} />
+          )}
+        </View>
       </SafeAreaView>
     </SafeAreaProvider>
   );
 }
+
+// Wrap with signalObserver for reactive updates
+const App = signalObserver(AppContent);
 
 const styles = StyleSheet.create({
   container: {
@@ -298,102 +193,20 @@ const styles = StyleSheet.create({
   containerDark: {
     backgroundColor: '#1a1a1a',
   },
-  content: {
-    padding: 16,
-    paddingTop: 20,
+  mainContent: {
+    flex: 1,
   },
-  title: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    marginBottom: 12,
-    textAlign: 'center',
-    color: '#000',
-  },
-  statusBar: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
     alignItems: 'center',
-    paddingVertical: 8,
-    paddingHorizontal: 12,
-    backgroundColor: 'rgba(128, 128, 128, 0.1)',
-    borderRadius: 8,
-    marginBottom: 16,
   },
-  statusText: {
-    fontSize: 14,
-    color: '#333',
-  },
-  nodeId: {
-    fontSize: 11,
-    color: '#666',
-    fontFamily: 'Courier',
-  },
-  section: {
-    padding: 12,
-    backgroundColor: 'rgba(128, 128, 128, 0.1)',
-    borderRadius: 8,
-  },
-  sectionHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 8,
-  },
-  sectionTitle: {
+  loadingText: {
     fontSize: 16,
-    fontWeight: '600',
-    color: '#333',
-  },
-  buttonRow: {
-    flexDirection: 'row',
-    gap: 8,
-  },
-  roomList: {
-    marginTop: 8,
-  },
-  roomItem: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingVertical: 8,
-    paddingHorizontal: 8,
-    backgroundColor: 'rgba(255, 255, 255, 0.5)',
-    borderRadius: 4,
-    marginBottom: 4,
-  },
-  roomName: {
-    fontSize: 14,
-    color: '#333',
-  },
-  roomId: {
-    fontSize: 11,
-    color: '#888',
-    fontFamily: 'Courier',
-  },
-  emptyText: {
-    textAlign: 'center',
-    color: '#888',
-    fontStyle: 'italic',
-    paddingVertical: 16,
-  },
-  errorText: {
-    color: '#ff4444',
-    fontSize: 12,
-    paddingVertical: 8,
-  },
-  logContainer: {
-    marginTop: 12,
-    paddingTop: 8,
-    borderTopWidth: 1,
-    borderTopColor: 'rgba(128, 128, 128, 0.2)',
-  },
-  logText: {
-    fontSize: 11,
     color: '#666',
-    fontFamily: 'Courier',
   },
   textLight: {
-    color: '#fff',
+    color: '#ccc',
   },
 });
 
