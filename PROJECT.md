@@ -28,8 +28,39 @@ Port the `ankurah-react-sled-template` browser chat app to React Native, using U
 - Message editing (requires ctx.begin() transaction support in edit flow)
 - Scroll-based pagination in ChatScrollManager (infrastructure in place)
 - Debug overlay components (ChatDebugHeader, DebugOverlay)
-- Integration with ankurah_signals ReactObserver for true reactive updates (currently polling)
-- Consider extracting reusable hooks/utils to an npm package
+
+---
+
+## Open Issues (Blockers for API Parity)
+
+### 1. LiveQuery.subscribe() Missing
+
+The WASM version has `liveQuery.subscribe(callback)` which notifies when the resultset changes. The UniFFI version does not export this method.
+
+**Current workaround:** Polling every 250ms in ChatScrollManager
+**Required:** Add subscribe method to LiveQuery in ankurah's uniffi exports
+
+### 2. JsValueMut / Signal Integration
+
+The WASM `JsValueMut` integrates with the signal observer - when its value is accessed inside a `signalObserver` component, changes automatically trigger re-renders.
+
+The current `useSharedValue` implementation is a **separate system** that:
+- Uses its own listener pattern (not ankurah signals)
+- Does NOT integrate with ReactObserver
+- Requires separate `useSyncExternalStore` subscription
+
+**Required:** A JsValueMut equivalent that participates in the ankurah signal graph. Options:
+1. Export signal primitives from `ankurah_signals` via UniFFI (challenge: generics)
+2. Implement signal protocol in TypeScript npm module that integrates with ReactObserver
+
+**Challenge:** Need ergonomic way for external npm module to access the `CurrentObserver` singleton from ankurah_signals
+
+### 3. npm Module Architecture
+
+Should extract reusable signal/observer code to an npm package rather than duplicating in template repos. Need to resolve:
+- How npm module gets handle to CurrentObserver singleton
+- Whether to export from ankurah_signals or create separate package
+- API design for TypeScript signal primitives
 
 ## Architecture
 
@@ -135,6 +166,20 @@ This checklist tracks TypeScript API parity between WASM (browser) and UniFFI (R
   // UniFFI
   // Acceptable difference: method instead of property
   const error = rooms.error(); // returns string | undefined
+  ```
+
+- [ ] **LiveQuery.subscribe()** ⚠️ MISSING
+
+  ```typescript
+  // WASM - subscribe to changes
+  const guard = liveQuery.subscribe(() => {
+    // called when resultset changes
+  });
+  guard.free(); // cleanup
+
+  // UniFFI - NOT IMPLEMENTED
+  // Currently using polling as workaround (ChatScrollManager polls every 250ms)
+  // This needs to be added to ankurah's uniffi exports
   ```
 
 ---
@@ -284,30 +329,28 @@ This checklist tracks TypeScript API parity between WASM (browser) and UniFFI (R
 
 ### JsValueMut / State Management
 
-- [x] **Shared mutable state**
+- [ ] **Shared mutable state** ⚠️ NOT PROPERLY IMPLEMENTED
 
   ```typescript
-  // WASM - JsValueMut for shared reactive state
+  // WASM - JsValueMut integrates with signal observer
+  // When accessed inside signalObserver component, changes trigger re-renders
   const [selectedRoom, selectedRoomRead] = JsValueMut.newPair<RoomView | null>(null);
   selectedRoom.set(room);
-  const current = selectedRoomRead.get();
+  const current = selectedRoomRead.get(); // tracked by observer
 
-  // UniFFI - useSharedValue hook
-  import { useSharedValue, useSharedValueRead, createSharedValue } from './hooks';
-
-  // Option 1: Within a component
-  const [selectedRoom, selectedRoomRead] = useSharedValue<RoomViewInterface | null>(null);
-  selectedRoom.set(room);
-
-  // Option 2: Module-level (outside components)
-  const [selectedRoom, selectedRoomRead] = createSharedValue<RoomViewInterface | null>(null);
-
-  // In any component, subscribe to updates:
-  function MyComponent({ selectedRoomRead }) {
-    const room = useSharedValueRead(selectedRoomRead);
-    return <Text>{room?.name()}</Text>;
-  }
+  // UniFFI - useSharedValue is a SEPARATE system (NOT acceptable)
+  // Current implementation uses its own listener pattern, does NOT integrate
+  // with ankurah_signals ReactObserver. This means:
+  // - Changes don't participate in the signal dependency graph
+  // - Can't be tracked by signalObserver HOC
+  // - Requires separate subscription mechanism (useSyncExternalStore)
   ```
+
+  **Required:** JsValueMut equivalent that either:
+  1. Wraps ankurah_signals primitives (if UniFFI can export them without generics)
+  2. Implements signal protocol in TypeScript that integrates with ReactObserver
+
+  **Challenge:** Need ergonomic way for npm module to access CurrentObserver singleton
 
 ---
 
