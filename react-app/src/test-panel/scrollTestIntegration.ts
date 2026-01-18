@@ -11,16 +11,16 @@
  */
 
 import { FlatList } from 'react-native';
-import type { MessageViewInterface, RoomViewInterface } from '../generated/ankurah_rn_model';
-import type { MessageScrollManagerInterface, MessageVisibleSetInterface } from '../generated/ankurah_rn_bindings';
+import type { MessageViewInterface, RoomViewInterface } from '../generated/{{crate_name}}_model';
+import type { MessageScrollManagerInterface, MessageVisibleSetInterface } from '../generated/{{crate_name}}_bindings';
 import { messageRowRefs } from '../components/MessageRow';
 import {
   RoomOps,
   RoomInput,
   MessageOps,
   MessageInput,
-} from '../generated/ankurah_rn_model';
-import { getContext } from '../generated/ankurah_rn_bindings';
+} from '../generated/{{crate_name}}_model';
+import { getContext } from '../generated/{{crate_name}}_bindings';
 
 // ============================================================================
 // Types

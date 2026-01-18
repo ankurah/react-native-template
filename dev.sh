@@ -115,7 +115,7 @@ rm -rf node_modules/.cache/metro 2>/dev/null || true
 # Proc-macro fingerprinting doesn't always detect upstream changes correctly,
 # especially for derive macros (ankurah-derive, virtual-scroll-derive).
 # We check all relevant source directories.
-LIBRARY="../target/aarch64-apple-ios-sim/debug/libankurah_rn_bindings.a"
+LIBRARY="../target/aarch64-apple-ios-sim/debug/lib{{crate_name}}_bindings.a"
 NEED_CLEAN=false
 CLEAN_REASON=""
 
@@ -147,8 +147,8 @@ if [ "$NEED_CLEAN" = true ]; then
   echo "🧹 Cleaning fingerprints ($CLEAN_REASON changed)..."
   # Clean all crates that might be affected by proc-macro changes
   rm -rf ../target/aarch64-apple-ios-sim/debug/.fingerprint/ankurah-*
-  rm -rf ../target/aarch64-apple-ios-sim/debug/.fingerprint/ankurah_rn_bindings-*
-  rm -rf ../target/aarch64-apple-ios-sim/debug/.fingerprint/ankurah_rn_model-*
+  rm -rf ../target/aarch64-apple-ios-sim/debug/.fingerprint/{{crate_name}}_bindings-*
+  rm -rf ../target/aarch64-apple-ios-sim/debug/.fingerprint/{{crate_name}}_model-*
   rm -rf ../target/aarch64-apple-ios-sim/debug/.fingerprint/virtual-scroll-*
   rm -rf ../target/aarch64-apple-ios-sim/debug/.fingerprint/virtual_scroll-*
   # Also clean iOS build cache to regenerate bindings with new checksums
@@ -165,14 +165,14 @@ npx ubrn build ios --sim-only --and-generate
 # Clean stale cpp files that ubrn puts in wrong location
 # ubrn generates files at both cpp/*.cpp AND cpp/generated/*.cpp but only the
 # generated/ versions are up-to-date. The top-level files cause linker conflicts.
-rm -f cpp/ankurah_core.cpp cpp/ankurah_proto.cpp cpp/ankurah_rn_bindings.cpp \
-      cpp/ankurah_rn_model.cpp cpp/ankurah_signals.cpp \
-      cpp/ankurah_core.hpp cpp/ankurah_proto.hpp cpp/ankurah_rn_bindings.hpp \
-      cpp/ankurah_rn_model.hpp cpp/ankurah_signals.hpp 2>/dev/null || true
+rm -f cpp/ankurah_core.cpp cpp/ankurah_proto.cpp cpp/{{crate_name}}_bindings.cpp \
+      cpp/{{crate_name}}_model.cpp cpp/ankurah_signals.cpp \
+      cpp/ankurah_core.hpp cpp/ankurah_proto.hpp cpp/{{crate_name}}_bindings.hpp \
+      cpp/{{crate_name}}_model.hpp cpp/ankurah_signals.hpp 2>/dev/null || true
 
 # Clean DerivedData only when xcframework content changed (hash-based detection)
 # This is fast (incremental) but still correct
-XCFRAMEWORK_LIB="AnkurahAppFramework.xcframework/ios-arm64-simulator/libankurah_rn_bindings.a"
+XCFRAMEWORK_LIB="AnkurahAppFramework.xcframework/ios-arm64-simulator/lib{{crate_name}}_bindings.a"
 HASH_FILE=".xcframework_hash"
 NEW_HASH=$(md5 -q "$XCFRAMEWORK_LIB" 2>/dev/null || echo "none")
 OLD_HASH=$(cat "$HASH_FILE" 2>/dev/null || echo "")

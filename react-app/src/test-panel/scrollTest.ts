@@ -26,8 +26,8 @@ import {
   UserOps,
   UserInput,
   type MessageViewInterface,
-} from '../generated/ankurah_rn_model';
-import { getContext, type MessageScrollManagerInterface } from '../generated/ankurah_rn_bindings';
+} from '../generated/{{crate_name}}_model';
+import { getContext, type MessageScrollManagerInterface } from '../generated/{{crate_name}}_bindings';
 import type { ScrollTestResult, ScrollTestStats, ScrollTestConfig } from './scrollTestIntegration';
 
 // ============================================================================

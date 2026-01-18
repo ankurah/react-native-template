@@ -1,12 +1,12 @@
 [package]
-name = "ankurah-rn-bindings"
+name = "{{project-name}}-bindings"
 version.workspace = true
 edition.workspace = true
 license.workspace = true
 
 [lib]
 crate-type = ["cdylib", "staticlib"]
-name = "ankurah_rn_bindings"
+name = "{{crate_name}}_bindings"
 
 [features]
 default = ["uniffi"]
@@ -21,7 +21,7 @@ ankurah-storage-sled = { version = "0.7.15" }
 ankurah-websocket-client = { version = "0.7.15" }
 
 # Local model crate
-ankurah-rn-model = { path = "../model", features = ["uniffi"] }
+{{project-name}}-model = { path = "../model", features = ["uniffi"] }
 
 ankurah-virtual-scroll = { version = "0.7.5", features = ["uniffi"] }
 

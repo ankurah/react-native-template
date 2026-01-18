@@ -1,5 +1,5 @@
 use ankurah::{policy::DEFAULT_CONTEXT as c, Node, PermissiveAgent, Ref};
-use ankurah_rn_model::{Message, MessageView, Room, RoomView, User, UserView};
+use {{crate_name}}_model::{Message, MessageView, Room, RoomView, User, UserView};
 use ankurah_storage_sled::SledStorageEngine;
 use ankurah_websocket_server::WebsocketServer;
 use anyhow::Result;
@@ -15,7 +15,7 @@ async fn main() -> Result<()> {
     tracing_subscriber::fmt().with_max_level(Level::INFO).init();
 
     // Initialize storage engine
-    let storage = SledStorageEngine::with_homedir_folder(".ankurah-rn-template")?;
+    let storage = SledStorageEngine::with_homedir_folder(".{{project-name}}-template")?;
     let node = Node::new_durable(Arc::new(storage), PermissiveAgent::new());
 
     node.system.wait_loaded().await;

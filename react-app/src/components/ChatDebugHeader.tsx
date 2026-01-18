@@ -1,5 +1,5 @@
 import { View, Text, StyleSheet } from 'react-native';
-import type { MessageIntersectionInterface } from '../generated/ankurah_rn_bindings';
+import type { MessageIntersectionInterface } from '../generated/{{crate_name}}_bindings';
 
 interface ChatDebugHeaderProps {
     mode: string | null;

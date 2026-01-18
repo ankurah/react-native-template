@@ -2,8 +2,8 @@
 #include "ankurah-app.h"
 #include "generated/ankurah_core.hpp"
 #include "generated/ankurah_proto.hpp"
-#include "generated/ankurah_rn_bindings.hpp"
-#include "generated/ankurah_rn_model.hpp"
+#include "generated/{{crate_name}}_bindings.hpp"
+#include "generated/{{crate_name}}_model.hpp"
 #include "generated/ankurah_signals.hpp"
 
 namespace ankurahapp {

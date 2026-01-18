@@ -10,7 +10,7 @@ import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import { initAnkurah } from './src/ankurah';
 
 import { getContext, getLastPanic } from './src';
-import { RoomOps, type RoomLiveQueryInterface, type RoomViewInterface } from './src/generated/ankurah_rn_model';
+import { RoomOps, type RoomLiveQueryInterface, type RoomViewInterface } from './src/generated/{{crate_name}}_model';
 import { ensureUser, type UserReadHandle } from './src/utils';
 import { Header, RoomList, Chat } from './src/components';
 // @test-panel-start

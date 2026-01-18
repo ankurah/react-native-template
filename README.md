@@ -40,7 +40,7 @@ cd ..
 ### 2. Start the server
 
 ```bash
-cargo run -p ankurah-rn-server
+cargo run -p {{project-name}}-server
 ```
 
 The server runs on `ws://localhost:9898` and creates a "General" room plus seed data for scroll testing.

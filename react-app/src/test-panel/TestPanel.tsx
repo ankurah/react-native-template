@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, Pressable, ScrollView } from 'react-native';
 import { scrollTest } from './scrollTestIntegration';
-import type { RoomViewInterface } from '../generated/ankurah_rn_model';
+import type { RoomViewInterface } from '../generated/{{crate_name}}_model';
 
 interface TestPanelProps {
     currentUserId: string;

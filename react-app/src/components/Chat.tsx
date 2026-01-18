@@ -4,8 +4,8 @@ import { signalObserver, type UserReadHandle } from '../utils';
 import { MessageRow } from './MessageRow';
 import { MessageInput } from './MessageInput';
 import { ChatDebugHeader } from './ChatDebugHeader';
-import { UserOps, type RoomViewInterface, type MessageViewInterface, type UserLiveQueryInterface } from '../generated/ankurah_rn_model';
-import { getContext, MessageScrollManager, type MessageVisibleSetInterface, type MessageScrollManagerInterface } from '../generated/ankurah_rn_bindings';
+import { UserOps, type RoomViewInterface, type MessageViewInterface, type UserLiveQueryInterface } from '../generated/{{crate_name}}_model';
+import { getContext, MessageScrollManager, type MessageVisibleSetInterface, type MessageScrollManagerInterface } from '../generated/{{crate_name}}_bindings';
 const ctx = getContext;
 
 // Scroll manager configuration

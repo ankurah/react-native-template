@@ -1,12 +1,12 @@
 import { useState, useEffect } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { getContext } from './generated/ankurah_rn_bindings';
+import { getContext } from './generated/{{crate_name}}_bindings';
 import { EntityId } from './generated/ankurah_proto';
 import {
   UserOps,
   UserInput,
   type UserViewInterface,
-} from './generated/ankurah_rn_model';
+} from './generated/{{crate_name}}_model';
 
 // Re-export signalObserver from hooks for backwards compatibility
 export { signalObserver } from './hooks';

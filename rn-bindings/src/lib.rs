@@ -12,13 +12,13 @@ pub use types::*;
 uniffi::setup_scaffolding!();
 
 // Re-export model crate's scaffolding for linking
-ankurah_rn_model::uniffi_reexport_scaffolding!();
+{{crate_name}}_model::uniffi_reexport_scaffolding!();
 
 // Generate MessageScrollManager
-use ankurah_rn_model::MessageView;
+use {{crate_name}}_model::MessageView;
 ankurah_virtual_scroll::generate_scroll_manager!(
-    ankurah_rn_model::Message,
+    {{crate_name}}_model::Message,
     MessageView,
-    ankurah_rn_model::MessageLiveQuery,
+    {{crate_name}}_model::MessageLiveQuery,
     timestamp_field = "timestamp"
 );

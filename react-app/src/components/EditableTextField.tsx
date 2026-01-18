@@ -9,7 +9,7 @@ import {
   TextInputChangeEventData,
 } from 'react-native';
 import { type TransactionInterface, type YrsStringStringInterface } from '../generated/ankurah_core';
-import { getContext } from '../generated/ankurah_rn_bindings';
+import { getContext } from '../generated/{{crate_name}}_bindings';
 import { useObserve } from '../hooks';
 
 // View with a string field K that edits to a Mutable with YrsStringString at K

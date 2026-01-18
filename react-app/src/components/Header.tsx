@@ -3,7 +3,7 @@ import { View, Text, StyleSheet, useColorScheme, Pressable } from 'react-native'
 import { EditableTextField } from './EditableTextField';
 import { useObserve } from '../hooks';
 import { signalObserver, type UserReadHandle } from '../utils';
-import { type UserViewInterface } from '../generated/ankurah_rn_model';
+import { type UserViewInterface } from '../generated/{{crate_name}}_model';
 
 interface HeaderProps {
   currentUser: UserReadHandle;
