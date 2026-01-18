@@ -1,0 +1,25 @@
+# Send a message in the current chat room
+# Usage: runFlow:
+#          file: common/send_message.yaml
+#          env:
+#            MESSAGE: "Hello world"
+appId: org.reactjs.native.example.AnkurahApp
+env:
+  MESSAGE: "Test message"
+---
+# Tap message input
+- tapOn:
+    id: "message-input"
+
+# Type the message
+- inputText: ${MESSAGE}
+
+# Tap send button
+- tapOn:
+    id: "send-btn"
+- waitForAnimationToEnd
+
+# Verify message appears (partial match for messages with timestamps)
+- assertVisible:
+    text: ${MESSAGE}
+    timeout: 5000

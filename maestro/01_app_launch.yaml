@@ -1,0 +1,23 @@
+appId: org.reactjs.native.example.AnkurahApp
+name: "App Launch and Connection"
+---
+# Test that the app launches and initializes successfully
+
+- launchApp:
+    clearState: true
+
+# Wait for app to be visible
+- assertVisible: "Ankurah Chat"
+
+# In standalone mode, "Connected" means node initialized successfully
+- extendedWaitUntil:
+    visible: "Connected"
+    timeout: 15000
+
+# Verify connection status indicator is showing connected
+- assertVisible:
+    id: "connection-status"
+
+# Verify room list is visible
+- assertVisible:
+    id: "room-list"

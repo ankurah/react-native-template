@@ -1,0 +1,12 @@
+# Navigate back to room list if in a chat
+# Usage: runFlow: common/navigate_to_room_list.yaml
+appId: org.reactjs.native.example.AnkurahApp
+---
+# Tap back button if visible (we're in a chat)
+- tapOn:
+    id: "back-btn"
+    optional: true
+- waitForAnimationToEnd
+
+# Verify we're on room list
+- assertVisible: "Rooms"

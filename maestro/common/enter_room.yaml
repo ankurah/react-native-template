@@ -1,0 +1,21 @@
+# Enter a room by name
+# Usage: runFlow:
+#          file: common/enter_room.yaml
+#          env:
+#            ROOM_NAME: "General"
+appId: org.reactjs.native.example.AnkurahApp
+env:
+  ROOM_NAME: "General"
+---
+# Ensure we're on room list
+- runFlow: common/navigate_to_room_list.yaml
+
+# Tap on the room
+- tapOn:
+    text: "# ${ROOM_NAME}"
+- waitForAnimationToEnd
+
+# Verify we're in the room
+- assertVisible:
+    text: "# ${ROOM_NAME}"
+    timeout: 3000

@@ -1,0 +1,28 @@
+appId: org.reactjs.native.example.AnkurahApp
+name: "User Name Editing"
+---
+# Test that user name can be edited and persists across app restarts
+
+- launchApp:
+    clearState: true
+
+- extendedWaitUntil:
+    visible: "Connected"
+    timeout: 15000
+
+# Tap on the user name field using testID
+- tapOn:
+    id: "user-name-input"
+- waitForAnimationToEnd
+
+# Clear existing text and type new name
+- eraseText: 20
+- inputText: "MaestroBot"
+- pressKey: "Enter"
+- waitForAnimationToEnd
+
+# Verify the name changed
+- assertVisible: "MaestroBot"
+
+# TODO: Test persistence across app restart
+# Currently disabled - persistence in standalone mode needs investigation

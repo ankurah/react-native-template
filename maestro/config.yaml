@@ -1,0 +1,17 @@
+# Maestro Test Configuration
+# https://maestro.mobile.dev/
+
+appId: org.reactjs.native.example.AnkurahApp
+name: Ankurah React Native Template Tests
+
+# Test execution settings
+executionOrder:
+  continueOnFailure: false
+
+# Environment variables available in tests
+env:
+  APP_NAME: "AnkurahApp"
+
+# Hooks
+onFlowStart:
+  - evalScript: ${timestamp = new Date().getTime()}

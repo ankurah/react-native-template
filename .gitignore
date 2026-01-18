@@ -1,0 +1,46 @@
+# Rust
+/target/
+Cargo.lock
+
+# macOS
+.DS_Store
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*.code-workspace
+
+# React Native
+react-app/node_modules/
+react-app/.expo/
+react-app/ios/Pods/
+react-app/ios/build/
+react-app/android/build/
+react-app/android/app/build/
+react-app/android/.gradle/
+*.hprof
+
+# Generated bindings (ubrn output)
+react-app/rust-bindings/
+react-app/src/generated/
+react-app/cpp/generated/
+
+# Generated native frameworks (too large for git)
+react-app/AnkurahAppFramework.xcframework/
+
+# Local cargo config (managed by akdev)
+.cargo/config.toml
+
+
+# Build artifacts
+react-app/.xcframework_hash
+react-app/rust-stderr.log
+react-app/rust.log
+react-app/metro.log
+
+# Generated seed data
+seed_messages.txt
+server/seed_messages.json
+server/seed_messages.txt

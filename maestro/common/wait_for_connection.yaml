@@ -1,0 +1,7 @@
+# Wait for app to connect and be ready
+# Usage: runFlow: common/wait_for_connection.yaml
+appId: org.reactjs.native.example.AnkurahApp
+---
+- extendedWaitUntil:
+    visible: "Connected"
+    timeout: 15000

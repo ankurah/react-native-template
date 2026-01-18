@@ -1,0 +1,53 @@
+appId: org.reactjs.native.example.AnkurahApp
+name: "Message Sending"
+---
+# Test sending messages in a room
+
+- launchApp
+
+- extendedWaitUntil:
+    visible: "Connected"
+    timeout: 15000
+
+# Navigate to room list
+- tapOn:
+    id: "back-btn"
+    optional: true
+
+# Wait for room list
+- assertVisible:
+    id: "room-list"
+
+# Create a room for this test
+- tapOn:
+    id: "create-room-btn"
+- extendedWaitUntil:
+    visible: "Room name..."
+    timeout: 3000
+- inputText: "MsgTest"
+- pressKey: "Enter"
+- waitForAnimationToEnd
+
+# Verify we're in the room
+- extendedWaitUntil:
+    visible: "# MsgTest"
+    timeout: 5000
+
+# Tap message input using testID
+- tapOn:
+    id: "message-input"
+- waitForAnimationToEnd
+
+# Type a message
+- inputText: "Hello from Maestro test"
+
+# Use Enter key to send
+- pressKey: "Enter"
+- waitForAnimationToEnd
+
+# Verify message appears (using id pattern since text matching doesn't work on RN Text elements)
+- assertVisible:
+    id: "message-text-.*"
+
+# Verify input cleared (placeholder visible again)
+- assertVisible: "Type a message..."

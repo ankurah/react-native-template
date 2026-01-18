@@ -1,0 +1,43 @@
+appId: org.reactjs.native.example.AnkurahApp
+name: "Room Creation"
+---
+# Test creating a new room
+
+- launchApp:
+    clearState: true
+
+- extendedWaitUntil:
+    visible: "Connected"
+    timeout: 15000
+
+# Navigate to room list (tap back if in a room)
+- tapOn:
+    id: "back-btn"
+    optional: true
+
+# Wait for room list
+- assertVisible:
+    id: "room-list"
+
+# Tap the + button to create a room using testID
+- tapOn:
+    id: "create-room-btn"
+
+# Wait for input and type room name
+- extendedWaitUntil:
+    visible: "Room name..."
+    timeout: 3000
+- inputText: "TestRoom"
+
+# Submit
+- pressKey: "Enter"
+- waitForAnimationToEnd
+
+# Verify we're now in the new room (room name in header)
+- extendedWaitUntil:
+    visible: "# TestRoom"
+    timeout: 5000
+
+# Verify empty room shows no messages placeholder
+- assertVisible:
+    id: "empty-messages"

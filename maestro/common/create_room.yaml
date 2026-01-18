@@ -1,0 +1,28 @@
+# Create a new room with the given name
+# Usage: runFlow:
+#          file: common/create_room.yaml
+#          env:
+#            ROOM_NAME: "MyRoom"
+appId: org.reactjs.native.example.AnkurahApp
+env:
+  ROOM_NAME: "TestRoom"
+---
+# Ensure we're on room list
+- runFlow: common/navigate_to_room_list.yaml
+
+# Tap create room button
+- tapOn:
+    id: "create-room-btn"
+
+# Wait for input to appear and type room name
+- extendedWaitUntil:
+    visible: "Room name..."
+    timeout: 3000
+- inputText: ${ROOM_NAME}
+- pressKey: "Enter"
+- waitForAnimationToEnd
+
+# Verify we're now in the new room
+- assertVisible:
+    text: "# ${ROOM_NAME}"
+    timeout: 5000
