@@ -60,6 +60,9 @@ jobs:
                   mv react-app/ios/AnkurahApp.xcworkspace 'react-app/ios/{{project-name | pascal_case}}.xcworkspace'
                   mv react-app/ios/AnkurahApp.h 'react-app/ios/{{project-name | pascal_case}}.h'
                   mv react-app/ios/AnkurahApp.mm 'react-app/ios/{{project-name | pascal_case}}.mm'
+                  # Rename scheme file inside xcodeproj (path changed after folder rename)
+                  mv 'react-app/ios/{{project-name | pascal_case}}.xcodeproj/xcshareddata/xcschemes/AnkurahApp.xcscheme' \
+                     'react-app/ios/{{project-name | pascal_case}}.xcodeproj/xcshareddata/xcschemes/{{project-name | pascal_case}}.xcscheme'
                   # Replace AnkurahApp in file contents
                   find . -type f -not -path './.git/*' -print0 \
                     | xargs -0 perl -pi -e 's/AnkurahApp/{{project-name | pascal_case}}/g'
