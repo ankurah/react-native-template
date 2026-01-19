@@ -53,6 +53,15 @@ jobs:
                     | while IFS= read -r -d '' file; do \
                         perl -0pi -e 's/\{\{ (.*?:.*?) \}\}/{% raw %}{{$1}}{% endraw %}/gs' "$file"; \
                       done
+                  # Template the iOS app name (PascalCase)
+                  # Rename folders first
+                  mv react-app/ios/AnkurahApp 'react-app/ios/{{project-name | pascal_case}}'
+                  mv react-app/ios/AnkurahApp.xcodeproj 'react-app/ios/{{project-name | pascal_case}}.xcodeproj'
+                  mv react-app/ios/AnkurahAppTests 'react-app/ios/{{project-name | pascal_case}}Tests'
+                  # Replace AnkurahApp in file contents
+                  find . -type f -not -path './.git/*' -print0 \
+                    | xargs -0 perl -pi -e 's/AnkurahApp/{{project-name | pascal_case}}/g'
+                  # Template project name (kebab-case) and crate name (snake_case)
                   find . -type f -not -path './.git/*' -print0 \
                     | xargs -0 perl -pi -e 's/ankurah-rn/{{project-name}}/g'
                   find . -type f -not -path './.git/*' -print0 \
