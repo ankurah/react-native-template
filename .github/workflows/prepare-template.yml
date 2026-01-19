@@ -47,6 +47,8 @@ jobs:
             - name: Prepare transformed tree
               run: |
                   set -euo pipefail
+                  # Remove dev-only files
+                  rm -f akdev
                   find react-app -name '*.tsx' -print0 \
                     | while IFS= read -r -d '' file; do \
                         perl -0pi -e 's/\{\{ (.*?:.*?) \}\}/{% raw %}{{$1}}{% endraw %}/gs' "$file"; \
