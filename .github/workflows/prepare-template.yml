@@ -63,9 +63,13 @@ jobs:
                   # Rename scheme file inside xcodeproj (path changed after folder rename)
                   mv 'react-app/ios/{{project-name | pascal_case}}.xcodeproj/xcshareddata/xcschemes/AnkurahApp.xcscheme' \
                      'react-app/ios/{{project-name | pascal_case}}.xcodeproj/xcshareddata/xcschemes/{{project-name | pascal_case}}.xcscheme'
-                  # Replace AnkurahApp in file contents
+                  # Replace PascalCase names in file contents
+                  # AnkurahApp -> for iOS app name
+                  # AnkurahRn -> for C++ class names (NativeAnkurahRnBindings, NativeAnkurahRnModel)
                   find . -type f -not -path './.git/*' -print0 \
                     | xargs -0 perl -pi -e 's/AnkurahApp/{{project-name | pascal_case}}/g'
+                  find . -type f -not -path './.git/*' -print0 \
+                    | xargs -0 perl -pi -e 's/AnkurahRn/{{project-name | pascal_case}}/g'
                   # Template project name (kebab-case) and crate name (snake_case)
                   find . -type f -not -path './.git/*' -print0 \
                     | xargs -0 perl -pi -e 's/ankurah-rn/{{project-name}}/g'
