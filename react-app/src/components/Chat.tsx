@@ -14,6 +14,7 @@ const ctx = getContext;
 const MIN_ROW_HEIGHT = 57;
 const BUFFER_FACTOR = 2.0;
 const DEFAULT_VIEWPORT_HEIGHT = 600;
+const maintainVisibleContentPosition = { minIndexForVisible: 0 };
 
 // Optional test hook - tests can set this to observe render state
 declare global {
@@ -247,9 +248,8 @@ export const Chat = signalObserver(function Chat({ room, currentUser, connection
                     scrollEventThrottle={16}
                     testID="message-list"
                     // Keep content in place when items are prepended (pagination)
-                    maintainVisibleContentPosition={{
-                        minIndexForVisible: 0,
-                    }}
+                    // Note: Using variable to avoid cargo-generate template syntax conflict with JSX
+                    maintainVisibleContentPosition={maintainVisibleContentPosition}
                 >
                     {messages.length === 0 ? (
                         <View style={styles.emptyState} testID="empty-messages">
