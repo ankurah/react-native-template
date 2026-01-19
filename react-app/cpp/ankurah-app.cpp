@@ -12,8 +12,8 @@ namespace ankurahapp {
 	uint8_t installRustCrate(jsi::Runtime &runtime, std::shared_ptr<react::CallInvoker> callInvoker) {
 		NativeAnkurahCore::registerModule(runtime, callInvoker);
 		NativeAnkurahProto::registerModule(runtime, callInvoker);
-		NativeAnkurahRnBindings::registerModule(runtime, callInvoker);
-		NativeAnkurahRnModel::registerModule(runtime, callInvoker);
+		Native{{project-name | pascal_case}}Bindings::registerModule(runtime, callInvoker);
+		Native{{project-name | pascal_case}}Model::registerModule(runtime, callInvoker);
 		NativeAnkurahSignals::registerModule(runtime, callInvoker);
 		return true;
 	}
