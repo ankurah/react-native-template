@@ -14,7 +14,7 @@ if linkage != nil
   use_frameworks! :linkage => linkage.to_sym
 end
 
-target 'AnkurahApp' do
+target '{{project-name | pascal_case}}' do
   config = use_native_modules!
 
   use_react_native!(
@@ -24,7 +24,7 @@ target 'AnkurahApp' do
   )
 
   # UniFFI native module
-  pod 'AnkurahApp', :path => '..'
+  pod '{{project-name | pascal_case}}', :path => '..'
 
   post_install do |installer|
     react_native_post_install(

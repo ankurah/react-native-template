@@ -1,4 +1,4 @@
-appId: org.reactjs.native.example.AnkurahApp
+appId: org.reactjs.native.example.{{project-name | pascal_case}}
 name: "App Launch and Connection"
 ---
 # Test that the app launches and initializes successfully

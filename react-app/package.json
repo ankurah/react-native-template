@@ -1,5 +1,5 @@
 {
-  "name": "AnkurahApp",
+  "name": "{{project-name | pascal_case}}",
   "version": "0.0.1",
   "private": true,
   "description": "Ankurah React Native Template with UniFFI bindings",

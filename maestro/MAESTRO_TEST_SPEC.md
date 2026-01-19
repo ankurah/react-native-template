@@ -227,7 +227,7 @@ common/
 
 ```yaml
 # common/create_room.yaml
-appId: org.reactjs.native.example.AnkurahApp
+appId: org.reactjs.native.example.{{project-name | pascal_case}}
 env:
   ROOM_NAME: "DefaultRoom"
 ---

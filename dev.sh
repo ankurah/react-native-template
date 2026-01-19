@@ -50,7 +50,7 @@ done
 # Hard clean: nuke everything
 if [ "$HARD_CLEAN" = true ]; then
   echo "🗑️  Deleting DerivedData..."
-  rm -rf ~/Library/Developer/Xcode/DerivedData/AnkurahApp-*
+  rm -rf ~/Library/Developer/Xcode/DerivedData/{{project-name | pascal_case}}-*
   echo "🗑️  cargo clean..."
   (cd .. && cargo clean)
   echo "🗑️  Deleting node_modules..."
@@ -90,8 +90,8 @@ if [ "$BOOTED" -eq 0 ]; then
 fi
 
 # Kill and uninstall app (always needed to reinstall)
-xcrun simctl terminate "$SIMULATOR_ID" org.reactjs.native.example.AnkurahApp 2>/dev/null || true
-xcrun simctl uninstall "$SIMULATOR_ID" org.reactjs.native.example.AnkurahApp 2>/dev/null || true
+xcrun simctl terminate "$SIMULATOR_ID" org.reactjs.native.example.{{project-name | pascal_case}} 2>/dev/null || true
+xcrun simctl uninstall "$SIMULATOR_ID" org.reactjs.native.example.{{project-name | pascal_case}} 2>/dev/null || true
 
 # ALWAYS kill Metro to ensure fresh state
 # Kill by port (more reliable than pattern matching process names)
@@ -156,7 +156,7 @@ if [ "$NEED_CLEAN" = true ]; then
 fi
 
 # Always clean xcframework (cheap operation, ensures fresh)
-rm -rf AnkurahAppFramework.xcframework
+rm -rf {{project-name | pascal_case}}Framework.xcframework
 
 # Build Rust and generate bindings
 echo "🦀 Building Rust..."
@@ -172,25 +172,25 @@ rm -f cpp/ankurah_core.cpp cpp/ankurah_proto.cpp cpp/{{crate_name}}_bindings.cpp
 
 # Clean DerivedData only when xcframework content changed (hash-based detection)
 # This is fast (incremental) but still correct
-XCFRAMEWORK_LIB="AnkurahAppFramework.xcframework/ios-arm64-simulator/lib{{crate_name}}_bindings.a"
+XCFRAMEWORK_LIB="{{project-name | pascal_case}}Framework.xcframework/ios-arm64-simulator/lib{{crate_name}}_bindings.a"
 HASH_FILE=".xcframework_hash"
 NEW_HASH=$(md5 -q "$XCFRAMEWORK_LIB" 2>/dev/null || echo "none")
 OLD_HASH=$(cat "$HASH_FILE" 2>/dev/null || echo "")
 if [ "$NEW_HASH" != "$OLD_HASH" ]; then
   echo "🧹 Clearing DerivedData (native library changed)..."
-  rm -rf ~/Library/Developer/Xcode/DerivedData/AnkurahApp-*
+  rm -rf ~/Library/Developer/Xcode/DerivedData/{{project-name | pascal_case}}-*
   echo "$NEW_HASH" > "$HASH_FILE"
 fi
 
 # Fix ubrn's overly broad source_files glob (only if needed, to preserve timestamp)
-if grep -q 'source_files = "ios/\*\*/\*' AnkurahApp.podspec 2>/dev/null; then
-  sed -i '' 's|s.source_files = "ios/\*\*/\*\.{h,m,mm,swift}".*|s.source_files = "ios/AnkurahApp.h", "ios/AnkurahApp.mm", "cpp/**/*.{hpp,cpp,c,h}"|' AnkurahApp.podspec
+if grep -q 'source_files = "ios/\*\*/\*' {{project-name | pascal_case}}.podspec 2>/dev/null; then
+  sed -i '' 's|s.source_files = "ios/\*\*/\*\.{h,m,mm,swift}".*|s.source_files = "ios/{{project-name | pascal_case}}.h", "ios/{{project-name | pascal_case}}.mm", "cpp/**/*.{hpp,cpp,c,h}"|' {{project-name | pascal_case}}.podspec
 fi
 
 # Install pods (skip if Podfile.lock is newer than Manifest.lock - pods already installed)
 PODFILE_LOCK="ios/Podfile.lock"
 MANIFEST_LOCK="ios/Pods/Manifest.lock"
-if [ "$FORCE_CLEAN" = true ] || [ ! -f "$MANIFEST_LOCK" ] || [ "$PODFILE_LOCK" -nt "$MANIFEST_LOCK" ] || [ "AnkurahApp.podspec" -nt "$MANIFEST_LOCK" ]; then
+if [ "$FORCE_CLEAN" = true ] || [ ! -f "$MANIFEST_LOCK" ] || [ "$PODFILE_LOCK" -nt "$MANIFEST_LOCK" ] || [ "{{project-name | pascal_case}}.podspec" -nt "$MANIFEST_LOCK" ]; then
   echo "📦 Installing pods..."
   cd ios && pod install --silent && cd ..
 else
@@ -198,17 +198,17 @@ else
 fi
 
 # Build iOS app with xcodebuild
-# NOTE: Must use "AnkurahApp (AnkurahApp project)" to distinguish from the Pods project scheme
+# NOTE: Must use "{{project-name | pascal_case}} ({{project-name | pascal_case}} project)" to distinguish from the Pods project scheme
 echo "🔨 Building iOS app..."
-xcodebuild -workspace ios/AnkurahApp.xcworkspace \
+xcodebuild -workspace ios/{{project-name | pascal_case}}.xcworkspace \
   -configuration Debug \
-  -scheme "AnkurahApp (AnkurahApp project)" \
+  -scheme "{{project-name | pascal_case}} ({{project-name | pascal_case}} project)" \
   -sdk iphonesimulator \
   -arch arm64 \
   build 2>&1 | tail -5
 
 # Find the app in DerivedData (xcodebuild ignores -derivedDataPath for RN projects)
-APP_PATH=$(find ~/Library/Developer/Xcode/DerivedData -name "AnkurahApp.app" -path "*/Debug-iphonesimulator/*" -type d 2>/dev/null | head -1)
+APP_PATH=$(find ~/Library/Developer/Xcode/DerivedData -name "{{project-name | pascal_case}}.app" -path "*/Debug-iphonesimulator/*" -type d 2>/dev/null | head -1)
 if [ ! -d "$APP_PATH" ]; then
   echo "❌ Build failed - app not found"
   exit 1
@@ -247,7 +247,7 @@ if [ $WAITED -ge $MAX_WAIT ]; then
 fi
 
 echo "🚀 Launching app..."
-xcrun simctl launch "$SIMULATOR_ID" org.reactjs.native.example.AnkurahApp
+xcrun simctl launch "$SIMULATOR_ID" org.reactjs.native.example.{{project-name | pascal_case}}
 
 echo "✅ Build complete"
 echo ""

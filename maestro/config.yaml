@@ -1,7 +1,7 @@
 # Maestro Test Configuration
 # https://maestro.mobile.dev/
 
-appId: org.reactjs.native.example.AnkurahApp
+appId: org.reactjs.native.example.{{project-name | pascal_case}}
 name: Ankurah React Native Template Tests
 
 # Test execution settings
@@ -10,7 +10,7 @@ executionOrder:
 
 # Environment variables available in tests
 env:
-  APP_NAME: "AnkurahApp"
+  APP_NAME: "{{project-name | pascal_case}}"
 
 # Hooks
 onFlowStart:

@@ -3,7 +3,7 @@
 #          file: common/send_message.yaml
 #          env:
 #            MESSAGE: "Hello world"
-appId: org.reactjs.native.example.AnkurahApp
+appId: org.reactjs.native.example.{{project-name | pascal_case}}
 env:
   MESSAGE: "Test message"
 ---

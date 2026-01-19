@@ -24,7 +24,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     window = UIWindow(frame: UIScreen.main.bounds)
 
     factory.startReactNative(
-      withModuleName: "AnkurahApp",
+      withModuleName: "{{project-name | pascal_case}}",
       in: window,
       launchOptions: launchOptions
     )

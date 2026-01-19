@@ -3,7 +3,7 @@
 #          file: common/create_room.yaml
 #          env:
 #            ROOM_NAME: "MyRoom"
-appId: org.reactjs.native.example.AnkurahApp
+appId: org.reactjs.native.example.{{project-name | pascal_case}}
 env:
   ROOM_NAME: "TestRoom"
 ---

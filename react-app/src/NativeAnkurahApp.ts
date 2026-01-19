@@ -7,4 +7,4 @@ export interface Spec extends TurboModule {
   cleanupRustCrate(): boolean;
 }
 
-export default TurboModuleRegistry.getEnforcing<Spec>('AnkurahApp');
+export default TurboModuleRegistry.getEnforcing<Spec>('{{project-name | pascal_case}}');

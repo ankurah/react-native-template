@@ -1,4 +1,4 @@
 {
-  "name": "AnkurahApp",
-  "displayName": "AnkurahApp"
+  "name": "{{project-name | pascal_case}}",
+  "displayName": "{{project-name | pascal_case}}"
 }

@@ -1,4 +1,4 @@
-appId: org.reactjs.native.example.AnkurahApp
+appId: org.reactjs.native.example.{{project-name | pascal_case}}
 name: "Message Sending"
 ---
 # Test sending messages in a room

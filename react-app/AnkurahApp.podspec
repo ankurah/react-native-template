@@ -5,7 +5,7 @@ package = JSON.parse(File.read(File.join(__dir__, "package.json")))
 folly_compiler_flags = '-DFOLLY_NO_CONFIG -DFOLLY_MOBILE=1 -DFOLLY_USE_LIBCPP=1 -Wno-comma -Wno-shorten-64-to-32'
 
 Pod::Spec.new do |s|
-  s.name         = "AnkurahApp"
+  s.name         = "{{project-name | pascal_case}}"
   s.version      = package["version"]
   s.summary      = package["description"]
   s.homepage     = package["homepage"]
@@ -15,8 +15,8 @@ Pod::Spec.new do |s|
   s.platforms    = { :ios => min_ios_version_supported }
   s.source       = { :git => "https://github.com/ankurah/ankurah-react-native-template.git", :tag => "#{s.version}" }
 
-  s.source_files = "ios/AnkurahApp.h", "ios/AnkurahApp.mm", "cpp/**/*.{hpp,cpp,c,h}"
-  s.vendored_frameworks = "AnkurahAppFramework.xcframework"
+  s.source_files = "ios/{{project-name | pascal_case}}.h", "ios/{{project-name | pascal_case}}.mm", "cpp/**/*.{hpp,cpp,c,h}"
+  s.vendored_frameworks = "{{project-name | pascal_case}}Framework.xcframework"
   s.dependency    "uniffi-bindgen-react-native", "0.29.3-1"
 
   # Use install_modules_dependencies helper to install the dependencies if React Native version >=0.71.0.

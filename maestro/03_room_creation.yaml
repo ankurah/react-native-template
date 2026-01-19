@@ -1,4 +1,4 @@
-appId: org.reactjs.native.example.AnkurahApp
+appId: org.reactjs.native.example.{{project-name | pascal_case}}
 name: "Room Creation"
 ---
 # Test creating a new room

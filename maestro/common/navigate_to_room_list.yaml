@@ -1,6 +1,6 @@
 # Navigate back to room list if in a chat
 # Usage: runFlow: common/navigate_to_room_list.yaml
-appId: org.reactjs.native.example.AnkurahApp
+appId: org.reactjs.native.example.{{project-name | pascal_case}}
 ---
 # Tap back button if visible (we're in a chat)
 - tapOn:

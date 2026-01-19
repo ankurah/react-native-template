@@ -1,4 +1,4 @@
-appId: org.reactjs.native.example.AnkurahApp
+appId: org.reactjs.native.example.{{project-name | pascal_case}}
 name: "User Name Editing"
 ---
 # Test that user name can be edited and persists across app restarts

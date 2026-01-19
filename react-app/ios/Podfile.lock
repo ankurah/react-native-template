@@ -1,5 +1,5 @@
 PODS:
-  - AnkurahApp (0.0.1):
+  - {{project-name | pascal_case}} (0.0.1):
     - boost
     - DoubleConversion
     - fast_float
@@ -2599,7 +2599,7 @@ PODS:
   - Yoga (0.0.0)
 
 DEPENDENCIES:
-  - AnkurahApp (from `..`)
+  - {{project-name | pascal_case}} (from `..`)
   - boost (from `../node_modules/react-native/third-party-podspecs/boost.podspec`)
   - DoubleConversion (from `../node_modules/react-native/third-party-podspecs/DoubleConversion.podspec`)
   - fast_float (from `../node_modules/react-native/third-party-podspecs/fast_float.podspec`)
@@ -2688,7 +2688,7 @@ SPEC REPOS:
     - SocketRocket
 
 EXTERNAL SOURCES:
-  AnkurahApp:
+  {{project-name | pascal_case}}:
     :path: ".."
   boost:
     :podspec: "../node_modules/react-native/third-party-podspecs/boost.podspec"
@@ -2853,7 +2853,7 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native/ReactCommon/yoga"
 
 SPEC CHECKSUMS:
-  AnkurahApp: ebb7c1f928f9a388a26be5adf2c90164f2c15aa9
+  {{project-name | pascal_case}}: ebb7c1f928f9a388a26be5adf2c90164f2c15aa9
   boost: 7e761d76ca2ce687f7cc98e698152abd03a18f90
   DoubleConversion: cb417026b2400c8f53ae97020b2be961b59470cb
   fast_float: b32c788ed9c6a8c584d114d0047beda9664e7cc6

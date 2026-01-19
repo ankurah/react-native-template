@@ -6,11 +6,11 @@
 #ifdef RCT_NEW_ARCH_ENABLED
 #import "RNNativeModuleSpec.h"
 
-@interface AnkurahApp : NSObject <NativeAnkurahAppSpec>
+@interface {{project-name | pascal_case}} : NSObject <Native{{project-name | pascal_case}}Spec>
 #else
 #import <React/RCTBridgeModule.h>
 
-@interface AnkurahApp : NSObject <RCTBridgeModule>
+@interface {{project-name | pascal_case}} : NSObject <RCTBridgeModule>
 #endif
 
 @end

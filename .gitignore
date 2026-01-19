@@ -28,7 +28,7 @@ react-app/src/generated/
 react-app/cpp/generated/
 
 # Generated native frameworks (too large for git)
-react-app/AnkurahAppFramework.xcframework/
+react-app/{{project-name | pascal_case}}Framework.xcframework/
 
 # Local cargo config (managed by akdev)
 .cargo/config.toml
