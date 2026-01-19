@@ -4,6 +4,4 @@ exclude = [
     "react-app/android/app/debug.keystore",
     "react-app/android/app/src/main/res/mipmap-*/*.png",
     "react-app/android/gradle/wrapper/gradle-wrapper.jar",
-    # Files with template-like syntax (React conditional rendering)
-    "react-app/src/components/Chat.tsx",
 ]
