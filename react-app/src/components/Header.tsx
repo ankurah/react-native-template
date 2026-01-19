@@ -29,7 +29,7 @@ export const Header = signalObserver(function Header({ currentUser, connectionSt
       <View style={[styles.header, isDarkMode && styles.headerDark]} testID="header">
         <View style={styles.titleRow}>
           <Text style={[styles.title, isDarkMode && styles.textLight]}>
-            Ankurah Chat
+            {{project-name | pascal_case}}
           </Text>
           {__DEV__ && onToggleTestPanel && (
             <Pressable
