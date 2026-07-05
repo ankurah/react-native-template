@@ -12,6 +12,7 @@ import { initAnkurah } from './src/ankurah';
 import { getContext, getLastPanic } from './src';
 import { RoomOps, type RoomLiveQueryInterface, type RoomViewInterface } from './src/generated/ankurah_rn_model';
 import { ensureUser, type UserReadHandle } from './src/utils';
+import { NotificationManager } from './src/NotificationManager';
 import { Header, RoomList, Chat } from './src/components';
 // @test-panel-start
 import { TestPanel } from './src/test-panel';
@@ -27,6 +28,7 @@ function App(): React.JSX.Element {
   const [showTestPanel, setShowTestPanel] = useState(false);
   // @test-panel-end
   const [currentUser, setCurrentUser] = useState<UserReadHandle | null>(null);
+  const [notificationManager, setNotificationManager] = useState<NotificationManager | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   // Wait for Ankurah init (already started at module load)
@@ -57,6 +59,27 @@ function App(): React.JSX.Element {
       }
     })();
   }, [nodeReady]);
+
+  // Create the notification manager once rooms are available. It tracks unread
+  // counts per room and chimes on messages from other users.
+  useEffect(() => {
+    if (!rooms || !currentUser || notificationManager) return;
+    const initialUserId = currentUser.get()?.id().toString() ?? null;
+    setNotificationManager(new NotificationManager(rooms, initialUserId));
+  }, [rooms, currentUser, notificationManager]);
+
+  // Push the resolved current-user id into the manager once the async user load
+  // completes. Without this the manager compares against a null id and treats
+  // your own messages as someone else's, chiming on your own sends.
+  useEffect(() => {
+    if (!currentUser || !notificationManager) return;
+    const update = () => {
+      const id = currentUser.get()?.id().toString() ?? null;
+      if (id) notificationManager.setCurrentUserId(id);
+    };
+    update();
+    return currentUser.subscribe(update);
+  }, [currentUser, notificationManager]);
 
   // Loading state
   if (!nodeReady || !currentUser) {
@@ -104,10 +127,15 @@ function App(): React.JSX.Element {
               room={selectedRoom}
               currentUser={currentUser}
               connectionStatus={nodeReady ? 'Connected' : 'Connecting...'}
+              notificationManager={notificationManager}
               onBack={() => setSelectedRoom(null)}
             />
           ) : rooms ? (
-            <RoomList onSelectRoom={setSelectedRoom} rooms={rooms} />
+            <RoomList
+              onSelectRoom={setSelectedRoom}
+              rooms={rooms}
+              notificationManager={notificationManager}
+            />
           ) : (
             <View style={styles.loadingContainer}>
               <Text style={[styles.loadingText, isDarkMode && styles.textLight]}>
