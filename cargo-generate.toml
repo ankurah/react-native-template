@@ -5,3 +5,14 @@ exclude = [
     "react-app/android/app/src/main/res/mipmap-*/*.png",
     "react-app/android/gradle/wrapper/gradle-wrapper.jar",
 ]
+
+# Storage engine for the durable (server) node. Choose at generate time, e.g.
+#   cargo generate ... --define storage=postgres
+# The web templates' dev.sh brings up a Postgres container automatically; the RN
+# server is run directly (`cargo run -p <name>-server`), so a Postgres build
+# reads DATABASE_URL — point it at your own Postgres.
+[placeholders.storage]
+type = "string"
+prompt = "Storage engine for the durable (server) node"
+choices = ["sled", "postgres"]
+default = "sled"
