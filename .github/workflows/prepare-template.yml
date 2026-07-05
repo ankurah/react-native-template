@@ -78,7 +78,7 @@ jobs:
                   git log -1 --pretty=%B dev > /tmp/dev-commit-msg
                   rm -rf .github
                   mkdir -p /tmp/prepared
-                  rsync -a --delete --exclude '.git/' ./ /tmp/prepared/
+                  rsync -a --checksum --delete --exclude '.git/' ./ /tmp/prepared/
                   git reset --hard HEAD
                   git clean -fd
 
@@ -91,7 +91,7 @@ jobs:
                   else
                     git checkout -B main
                   fi
-                  rsync -a --delete --exclude '.git/' /tmp/prepared/ ./
+                  rsync -a --checksum --delete --exclude '.git/' /tmp/prepared/ ./
                   rm -rf .github
                   git config user.name "ankurah-bot"
                   git config user.email "infra@ankurah.dev"
