@@ -16,20 +16,25 @@ import {
   type RoomLiveQueryInterface,
 } from '../generated/{{crate_name}}_model';
 import { getContext } from '../generated/{{crate_name}}_bindings';
+import { NotificationManager } from '../NotificationManager';
 
 interface RoomListProps {
   onSelectRoom: (room: RoomViewInterface) => void;
   rooms: RoomLiveQueryInterface;
+  notificationManager: NotificationManager | null;
 }
 
-export const RoomList = signalObserver(function RoomList({ onSelectRoom, rooms }: RoomListProps) {
+export const RoomList = signalObserver(function RoomList({ onSelectRoom, rooms, notificationManager }: RoomListProps) {
   const isDarkMode = useColorScheme() === 'dark';
   const [isCreating, setIsCreating] = useState(false);
   const [selectedRoomId, setSelectedRoomId] = useState<string | null>(null);
 
-  // Signal access - signalObserver HOC handles tracking automatically
+  // Signal access - signalObserver HOC handles tracking automatically.
+  // Reading unreadCounts here (inside the observer) makes the badges reactive:
+  // they update live as messages arrive.
   const resultset = rooms.resultset();
   const items = resultset.items();
+  const unreadCounts = notificationManager?.unreadCounts.get() ?? {};
 
   const handleSelectRoom = (room: RoomViewInterface) => {
     setSelectedRoomId(room.id().toString());
@@ -66,6 +71,7 @@ export const RoomList = signalObserver(function RoomList({ onSelectRoom, rooms }
           items.map(room => {
             const roomId = room.id().toString();
             const isSelected = selectedRoomId === roomId;
+            const unreadCount = unreadCounts[roomId] ?? 0;
             return (
               <Pressable
                 key={roomId}
@@ -82,9 +88,17 @@ export const RoomList = signalObserver(function RoomList({ onSelectRoom, rooms }
                     styles.roomName,
                     isDarkMode && styles.textLight,
                     isSelected && styles.roomNameSelected,
-                  ]}>
+                  ]}
+                  numberOfLines={1}>
                   # {room.name()}
                 </Text>
+                {unreadCount > 0 && (
+                  <View style={styles.unreadBadge} testID={`unread-badge-${roomId}`}>
+                    <Text style={styles.unreadBadgeText}>
+                      {unreadCount >= 10 ? '10+' : unreadCount}
+                    </Text>
+                  </View>
+                )}
               </Pressable>
             );
           })
@@ -182,6 +196,8 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   roomItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
     paddingHorizontal: 12,
     paddingVertical: 10,
     borderBottomWidth: StyleSheet.hairlineWidth,
@@ -197,11 +213,27 @@ const styles = StyleSheet.create({
     backgroundColor: '#1a3a5c',
   },
   roomName: {
+    flex: 1,
     fontSize: 14,
     color: '#333',
   },
   roomNameSelected: {
     fontWeight: '600',
+  },
+  unreadBadge: {
+    marginLeft: 8,
+    minWidth: 20,
+    height: 20,
+    borderRadius: 10,
+    paddingHorizontal: 6,
+    backgroundColor: '#ff3b30',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  unreadBadgeText: {
+    color: '#fff',
+    fontSize: 11,
+    fontWeight: '700',
   },
   emptyText: {
     padding: 16,

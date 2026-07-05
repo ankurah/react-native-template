@@ -1,7 +1,8 @@
 import React, { useRef, useEffect } from 'react';
-import { View, Text, Pressable, StyleSheet, useColorScheme } from 'react-native';
+import { View, Text, Pressable, StyleSheet, useColorScheme, Alert } from 'react-native';
 import { useObserve } from '../hooks';
 import { signalObserver } from '../utils';
+import { getContext } from '../generated/{{crate_name}}_bindings';
 import {
   type MessageViewInterface,
   type UserLiveQueryInterface,
@@ -57,10 +58,26 @@ export const MessageRow = signalObserver(function MessageRow({
   // Check if this is the current user's message
   const isOwnMessage = currentUserId ? messageUserId === currentUserId.toString() : false;
 
-  const handleLongPress = () => {
-    if (isOwnMessage) {
-      onEdit(message);
+  const handleDelete = async () => {
+    try {
+      const trx = getContext().begin();
+      // Soft delete: the message queries all filter on `deleted = false`.
+      message.edit(trx).deleted().set(true);
+      await trx.commit();
+    } catch (error) {
+      console.error('Failed to delete message:', error);
     }
+  };
+
+  // Long-press your own message to edit or delete it (mobile equivalent of the
+  // web templates' right-click context menu).
+  const handleLongPress = () => {
+    if (!isOwnMessage) return;
+    Alert.alert('Message', undefined, [
+      { text: 'Edit', onPress: () => onEdit(message) },
+      { text: 'Delete', style: 'destructive', onPress: handleDelete },
+      { text: 'Cancel', style: 'cancel' },
+    ]);
   };
 
   return (

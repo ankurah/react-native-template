@@ -1,6 +1,7 @@
 import React, { useEffect, useCallback, useRef, useMemo, useState } from 'react';
 import { View, Text, ScrollView, StyleSheet, useColorScheme, Pressable, LayoutChangeEvent, NativeScrollEvent, NativeSyntheticEvent } from 'react-native';
 import { signalObserver, type UserReadHandle } from '../utils';
+import { NotificationManager } from '../NotificationManager';
 import { MessageRow } from './MessageRow';
 import { MessageInput } from './MessageInput';
 import { ChatDebugHeader } from './ChatDebugHeader';
@@ -30,10 +31,11 @@ interface ChatProps {
     room: RoomViewInterface | null;
     currentUser: UserReadHandle;
     connectionStatus?: string;
+    notificationManager?: NotificationManager | null;
     onBack?: () => void;
 }
 
-export const Chat = signalObserver(function Chat({ room, currentUser, connectionStatus = 'Connected', onBack }: ChatProps) {
+export const Chat = signalObserver(function Chat({ room, currentUser, connectionStatus = 'Connected', notificationManager, onBack }: ChatProps) {
     const isDarkMode = useColorScheme() === 'dark';
     const [editingMessage, setEditingMessage] = useState<MessageViewInterface | null>(null);
     const [viewportHeight, setViewportHeight] = useState(DEFAULT_VIEWPORT_HEIGHT);
@@ -103,6 +105,14 @@ export const Chat = signalObserver(function Chat({ room, currentUser, connection
         new UserOps().query(ctx(), 'true', []).then(q => { userQueryRef.current = q; });
     }, []);
 
+    // Mark this room active while it's open so its unread badge clears on
+    // selection (not only on scroll), and clear the active room when leaving.
+    useEffect(() => {
+        if (!notificationManager || !roomId) return;
+        notificationManager.setActiveRoom(roomId);
+        return () => notificationManager.setActiveRoom(null);
+    }, [notificationManager, roomId]);
+
     const scrollToEnd = useCallback(() => {
         isProgrammaticScrollRef.current = true;
         scrollViewRef.current?.scrollToEnd({ animated: false });
@@ -161,7 +171,11 @@ export const Chat = signalObserver(function Chat({ room, currentUser, connection
         if (firstId && lastId && !isProgrammaticScrollRef.current) {
             mgr.onScroll(firstId, lastId, scrollingBackward);
         }
-    }, [getVisibleItems]);
+
+        // Only the room viewed live counts as "active": once the user scrolls
+        // into history, new messages here should bump its unread badge again.
+        notificationManager?.setActiveRoom(mgr.mode() === 'Live' ? roomId : null);
+    }, [getVisibleItems, notificationManager, roomId]);
 
     // Track item layout when it mounts/changes
     const handleItemLayout = useCallback((id: string, e: LayoutChangeEvent) => {
@@ -171,7 +185,8 @@ export const Chat = signalObserver(function Chat({ room, currentUser, connection
 
     const handleJumpToLive = useCallback(() => {
         scrollToEnd();
-    }, [scrollToEnd]);
+        notificationManager?.setActiveRoom(roomId);
+    }, [scrollToEnd, notificationManager, roomId]);
 
     const handleMessageSent = useCallback(() => {
         // Scroll to end when sending a message in Live mode
