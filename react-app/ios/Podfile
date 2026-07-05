@@ -33,5 +33,22 @@ target 'AnkurahApp' do
       :mac_catalyst_enabled => false,
       # :ccache_enabled => true
     )
+
+    # fmt 11.0.2 (pinned by React Native 0.83) turns on consteval format-string
+    # checking whenever the compiler advertises __cpp_consteval, but Xcode 26's
+    # clang rejects those consteval calls ("call to consteval function ... is not
+    # a constant expression"), breaking the fmt/folly build. A -D override can't
+    # win because base.h (re)defines FMT_USE_CONSTEVAL unconditionally, so force
+    # the header onto its (fully supported) runtime path instead. Self-healing:
+    # re-applied on every `pod install`.
+    fmt_base = File.join(installer.sandbox.root, 'fmt', 'include', 'fmt', 'base.h')
+    if File.exist?(fmt_base)
+      text = File.read(fmt_base)
+      patched = text.gsub('#  define FMT_USE_CONSTEVAL 1', '#  define FMT_USE_CONSTEVAL 0')
+      if patched != text
+        File.write(fmt_base, patched)
+        Pod::UI.puts "Patched fmt/base.h to disable consteval (Xcode 26 compatibility)".green
+      end
+    end
   end
 end
