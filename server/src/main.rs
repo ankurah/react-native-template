@@ -1,10 +1,37 @@
 use ankurah::{policy::DEFAULT_CONTEXT as c, Node, PermissiveAgent, Ref};
 use {{crate_name}}_model::{Message, MessageView, Room, RoomView, User, UserView};
-use ankurah_storage_sled::SledStorageEngine;
 use ankurah_websocket_server::WebsocketServer;
 use anyhow::Result;
 use std::sync::Arc;
 use tracing::{info, Level};
+
+// Storage engine selected at generate time (this crate's default feature — see
+// server/Cargo.toml). Sled is the default; choose Postgres with
+// `cargo generate --define storage=postgres`.
+#[cfg(all(feature = "sled", not(feature = "postgres")))]
+use ankurah_storage_sled::SledStorageEngine;
+#[cfg(feature = "postgres")]
+use ankurah_storage_postgres::Postgres;
+
+#[cfg(all(feature = "sled", not(feature = "postgres")))]
+type Storage = SledStorageEngine;
+#[cfg(feature = "postgres")]
+type Storage = Postgres;
+
+#[cfg(all(feature = "sled", not(feature = "postgres")))]
+async fn make_storage() -> Result<Storage> {
+    Ok(SledStorageEngine::with_homedir_folder(".{{project-name}}-template")?)
+}
+
+#[cfg(feature = "postgres")]
+async fn make_storage() -> Result<Storage> {
+    // DATABASE_URL points at your Postgres. Unlike the web templates (whose
+    // dev.sh manages a container), the RN server is run directly, so provide
+    // your own Postgres; the fallback assumes a local one.
+    let uri = std::env::var("DATABASE_URL")
+        .unwrap_or_else(|_| "postgres://postgres:ankurah@localhost:5432/{{crate_name}}_template".to_string());
+    Ok(Postgres::open(&uri).await?)
+}
 
 const SEED_MESSAGE_COUNT: i64 = 100;
 const SEED_TIMESTAMP_START: i64 = 1700000000000; // Nov 2023, well in the past
@@ -14,8 +41,8 @@ const SEED_TIMESTAMP_INTERVAL: i64 = 1000; // 1 second between messages
 async fn main() -> Result<()> {
     tracing_subscriber::fmt().with_max_level(Level::INFO).init();
 
-    // Initialize storage engine
-    let storage = SledStorageEngine::with_homedir_folder(".{{project-name}}-template")?;
+    // Initialize storage engine (Sled or Postgres — see this crate's features)
+    let storage = make_storage().await?;
     let node = Node::new_durable(Arc::new(storage), PermissiveAgent::new());
 
     node.system.wait_loaded().await;
@@ -37,7 +64,7 @@ async fn main() -> Result<()> {
 }
 
 /// Ensure a room with the given name exists
-async fn ensure_room(node: &Node<SledStorageEngine, PermissiveAgent>, name: &str) -> Result<String> {
+async fn ensure_room(node: &Node<Storage, PermissiveAgent>, name: &str) -> Result<String> {
     let context = node.context_async(c).await;
     let query = format!("name = '{}'", name);
     let rooms = context.fetch::<RoomView>(query.as_str()).await?;
@@ -57,7 +84,7 @@ async fn ensure_room(node: &Node<SledStorageEngine, PermissiveAgent>, name: &str
     }
 }
 
-async fn ensure_seed_data(node: &Node<SledStorageEngine, PermissiveAgent>) -> Result<String> {
+async fn ensure_seed_data(node: &Node<Storage, PermissiveAgent>) -> Result<String> {
     let context = node.context_async(c).await;
 
     // Ensure "Scroll Test" room exists for seed data
@@ -108,7 +135,7 @@ async fn ensure_seed_data(node: &Node<SledStorageEngine, PermissiveAgent>) -> Re
     Ok(room_id)
 }
 
-async fn print_all_messages(node: &Node<SledStorageEngine, PermissiveAgent>, room_id: &str) -> Result<()> {
+async fn print_all_messages(node: &Node<Storage, PermissiveAgent>, room_id: &str) -> Result<()> {
     let context = node.context_async(c).await;
 
     let query = format!("room = '{}' AND deleted = false", room_id);
