@@ -105,6 +105,14 @@ const DEFAULT_SERVER_URL: &str = "ws://your-server:9898";
 
 Or pass a custom URL when initializing in `App.tsx`.
 
+### Server storage engine
+
+The server (`ankurah-rn-server`) stores data in **Sled** by default. Generate the
+project with `--define storage=postgres` to back it with **Postgres** instead; the
+server then reads `DATABASE_URL` (point it at your Postgres). Both are wired through
+the `sled` / `postgres` features in `server/Cargo.toml`. This is independent of the
+app's on-device storage.
+
 ## Running Tests
 
 ```bash
